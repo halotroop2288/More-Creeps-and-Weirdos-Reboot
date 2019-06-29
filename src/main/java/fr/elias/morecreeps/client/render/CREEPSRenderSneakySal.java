@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelSneakySal;
-import fr.elias.morecreeps.common.entity.CREEPSEntitySchlump;
-import fr.elias.morecreeps.common.entity.CREEPSEntitySneakySal;
+import fr.elias.morecreeps.common.entity.SchlumpEntity;
+import fr.elias.morecreeps.common.entity.SneakySalEntity;
 
 public class CREEPSRenderSneakySal extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderSneakySal extends RenderLiving
         modelBipedMain = creepsmodelsneakysal;
     }
 
-    protected void fattenup(CREEPSEntitySneakySal creepsentitysneakysal, float f)
+    protected void fattenup(SneakySalEntity creepsentitysneakysal, float f)
     {
         GL11.glScalef(creepsentitysneakysal.modelsize, creepsentitysneakysal.modelsize + 0.1F, creepsentitysneakysal.modelsize);
     }
@@ -33,18 +33,18 @@ public class CREEPSRenderSneakySal extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntitySneakySal creepsentitysneakysal = (CREEPSEntitySneakySal)entityliving;
+        SneakySalEntity creepsentitysneakysal = (SneakySalEntity)entityliving;
         modelBipedMain.shooting = creepsentitysneakysal.shooting;
-        fattenup((CREEPSEntitySneakySal)entityliving, f);
+        fattenup((SneakySalEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntitySneakySal entity)
+    protected ResourceLocation getEntityTexture(SneakySalEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntitySneakySal) entity);
+		return getEntityTexture((SneakySalEntity) entity);
 	}
 }

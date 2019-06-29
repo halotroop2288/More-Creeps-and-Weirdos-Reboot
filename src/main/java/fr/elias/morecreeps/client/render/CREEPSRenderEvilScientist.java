@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelEvilScientist;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilPig;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilScientist;
+import fr.elias.morecreeps.common.entity.EvilPigEntity;
+import fr.elias.morecreeps.common.entity.EvilScientistEntity;
 
 public class CREEPSRenderEvilScientist extends RenderLiving
 {
@@ -22,22 +22,22 @@ public class CREEPSRenderEvilScientist extends RenderLiving
         modelBipedMain = creepsmodelevilscientist;
     }
 
-    protected void fattenup(CREEPSEntityEvilScientist creepsentityevilscientist, float f)
+    protected void fattenup(EvilScientistEntity creepsentityevilscientist, float f)
     {
         GL11.glScalef(creepsentityevilscientist.modelsize, creepsentityevilscientist.modelsize, creepsentityevilscientist.modelsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityEvilScientist)entityliving, f);
+        fattenup((EvilScientistEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityEvilScientist entity)
+    protected ResourceLocation getEntityTexture(EvilScientistEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityEvilScientist) entity);
+		return getEntityTexture((EvilScientistEntity) entity);
 	}
 }

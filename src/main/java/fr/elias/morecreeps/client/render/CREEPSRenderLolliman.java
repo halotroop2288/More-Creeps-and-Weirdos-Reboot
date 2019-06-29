@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelLolliman;
-import fr.elias.morecreeps.common.entity.CREEPSEntityLawyerFromHell;
-import fr.elias.morecreeps.common.entity.CREEPSEntityLolliman;
+import fr.elias.morecreeps.common.entity.LawyerFromHellEntity;
+import fr.elias.morecreeps.common.entity.LollimanEntity;
 
 public class CREEPSRenderLolliman extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderLolliman extends RenderLiving
         modelLollimanMain = creepsmodellolliman;
     }
 
-    protected void fattenup(CREEPSEntityLolliman creepsentitylolliman, float f)
+    protected void fattenup(LollimanEntity creepsentitylolliman, float f)
     {
         GL11.glScalef(creepsentitylolliman.modelsize, creepsentitylolliman.modelsize, creepsentitylolliman.modelsize);
     }
@@ -33,18 +33,18 @@ public class CREEPSRenderLolliman extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityLolliman creepsentitylolliman = (CREEPSEntityLolliman)entityliving;
+        LollimanEntity creepsentitylolliman = (LollimanEntity)entityliving;
         modelLollimanMain.kidmounted = creepsentitylolliman.kidmounted;
-        fattenup((CREEPSEntityLolliman)entityliving, f);
+        fattenup((LollimanEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityLolliman entity)
+    protected ResourceLocation getEntityTexture(LollimanEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityLolliman) entity);
+		return getEntityTexture((LollimanEntity) entity);
 	}
 }

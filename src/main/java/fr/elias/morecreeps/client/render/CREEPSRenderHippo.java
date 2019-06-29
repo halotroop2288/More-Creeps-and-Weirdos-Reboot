@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelHippo;
-import fr.elias.morecreeps.common.entity.CREEPSEntityGuineaPig;
-import fr.elias.morecreeps.common.entity.CREEPSEntityHippo;
+import fr.elias.morecreeps.common.entity.GuineaPigEntity;
+import fr.elias.morecreeps.common.entity.HippoEntity;
 
 public class CREEPSRenderHippo extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderHippo extends RenderLiving
         modelBipedMain = creepsmodelhippo;
     }
 
-    protected void fattenup(CREEPSEntityHippo creepsentityhippo, float f)
+    protected void fattenup(HippoEntity creepsentityhippo, float f)
     {
         GL11.glScalef(creepsentityhippo.modelsize, creepsentityhippo.modelsize, creepsentityhippo.modelsize);
     }
@@ -33,16 +33,16 @@ public class CREEPSRenderHippo extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityHippo)entityliving, f);
+        fattenup((HippoEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityHippo entity)
+    protected ResourceLocation getEntityTexture(HippoEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityHippo) entity);
+		return getEntityTexture((HippoEntity) entity);
 	}
 }

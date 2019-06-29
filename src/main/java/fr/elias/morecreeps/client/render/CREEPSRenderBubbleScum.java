@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelBubbleScum;
-import fr.elias.morecreeps.common.entity.CREEPSEntityBubbleScum;
+import fr.elias.morecreeps.common.entity.BubbleScumEntity;
 
 public class CREEPSRenderBubbleScum extends RenderLiving
 {
@@ -24,10 +24,10 @@ public class CREEPSRenderBubbleScum extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityBubbleScum)entityliving, f);
+        fattenup((BubbleScumEntity)entityliving, f);
     }
 
-    protected void fattenup(CREEPSEntityBubbleScum creepsentitybubblescum, float f)
+    protected void fattenup(BubbleScumEntity creepsentitybubblescum, float f)
     {
         GL11.glScalef(creepsentitybubblescum.modelsize, creepsentitybubblescum.modelsize, creepsentitybubblescum.modelsize);
     }
@@ -40,16 +40,16 @@ public class CREEPSRenderBubbleScum extends RenderLiving
      */
     public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
     {
-        doRender((CREEPSEntityBubbleScum)entity, d, d1, d2, f, f1);
+        doRender((BubbleScumEntity)entity, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityBubbleScum entity) {
+    protected ResourceLocation getEntityTexture(BubbleScumEntity entity) {
 		
 		return new ResourceLocation(entity.texture);
 	}
     
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
-		return getEntityTexture((CREEPSEntityBubbleScum) entity);
+		return getEntityTexture((BubbleScumEntity) entity);
 	}
 }

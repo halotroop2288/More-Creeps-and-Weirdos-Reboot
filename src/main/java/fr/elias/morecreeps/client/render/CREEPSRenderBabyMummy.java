@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import fr.elias.morecreeps.common.entity.CREEPSEntityBabyMummy;
+import fr.elias.morecreeps.common.entity.BabyMummyEntity;
 
 public class CREEPSRenderBabyMummy extends RenderLiving
 {
@@ -28,15 +28,15 @@ public class CREEPSRenderBabyMummy extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        updateBabyMummyScale((CREEPSEntityBabyMummy)entityliving, f);
+        updateBabyMummyScale((BabyMummyEntity)entityliving, f);
     }
 
-    protected void updateBabyMummyScale(CREEPSEntityBabyMummy creepsentitybabymummy, float f)
+    protected void updateBabyMummyScale(BabyMummyEntity creepsentitybabymummy, float f)
     {
         GL11.glScalef(creepsentitybabymummy.babysize, creepsentitybabymummy.babysize, creepsentitybabymummy.babysize);
     }
 
-	protected ResourceLocation getEntityTexture(CREEPSEntityBabyMummy entity)
+	protected ResourceLocation getEntityTexture(BabyMummyEntity entity)
 	{
 		return entity.texture;
 	}
@@ -44,6 +44,6 @@ public class CREEPSRenderBabyMummy extends RenderLiving
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity)
 	{
-		return getEntityTexture((CREEPSEntityBabyMummy) entity);
+		return getEntityTexture((BabyMummyEntity) entity);
 	}
 }

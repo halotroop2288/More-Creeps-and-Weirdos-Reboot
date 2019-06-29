@@ -9,12 +9,12 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelCaveman;
-import fr.elias.morecreeps.common.entity.CREEPSEntityCastleKing;
-import fr.elias.morecreeps.common.entity.CREEPSEntityCaveman;
+import fr.elias.morecreeps.common.entity.CastleKingEntity;
+import fr.elias.morecreeps.common.entity.CavemanEntity;
 
 public class CREEPSRenderCaveman extends RenderLiving
 {
-	CREEPSEntityCaveman ecaveman;
+	CavemanEntity ecaveman;
     protected CREEPSModelCaveman modelcavemanmain;
 
     public CREEPSRenderCaveman(CREEPSModelCaveman creepsmodelcaveman, float f)
@@ -23,27 +23,27 @@ public class CREEPSRenderCaveman extends RenderLiving
         modelcavemanmain = creepsmodelcaveman;
     }
 
-    protected void fattenup(CREEPSEntityCaveman creepsentitycaveman, float f)
+    protected void fattenup(CavemanEntity creepsentitycaveman, float f)
     {
         GL11.glScalef(creepsentitycaveman.modelsize + creepsentitycaveman.fat, creepsentitycaveman.modelsize, creepsentitycaveman.modelsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityCaveman creepsentitycaveman = (CREEPSEntityCaveman)entityliving;
+        CavemanEntity creepsentitycaveman = (CavemanEntity)entityliving;
         modelcavemanmain.hammerswing = creepsentitycaveman.hammerswing;
         modelcavemanmain.frozen = creepsentitycaveman.frozen;
         modelcavemanmain.cavegirl = creepsentitycaveman.cavegirl;
         modelcavemanmain.evil = creepsentitycaveman.evil;
-        fattenup((CREEPSEntityCaveman)entityliving, f);
+        fattenup((CavemanEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityCaveman entity)
+    protected ResourceLocation getEntityTexture(CavemanEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityCaveman) entity);
+		return getEntityTexture((CavemanEntity) entity);
 	}
 }

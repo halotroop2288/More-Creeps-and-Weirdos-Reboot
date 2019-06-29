@@ -1,7 +1,8 @@
 package fr.elias.morecreeps.client.config;
 
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.logging.log4j.core.config.Configuration;
+
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class CREEPSConfig {
 	
@@ -76,9 +77,10 @@ public class CREEPSConfig {
 	public static int armyguy_ID,
 					  armyguyArm_ID;
 	
-	public static void preInit(FMLPreInitializationEvent event){
+	public static void preInit(FMLCommonSetupEvent event)
+	{
 		
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		Configuration config;
 		String spawnNbr = "Spawn Number";
 		String entityID = "Entity";
 		String mobProperty = "Mob Property";

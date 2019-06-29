@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelHotdog;
 import fr.elias.morecreeps.common.entity.CREEPSEntityHorseHead;
-import fr.elias.morecreeps.common.entity.CREEPSEntityHotdog;
+import fr.elias.morecreeps.common.entity.HotdogEntity;
 
 public class CREEPSRenderHotdog extends RenderLiving
 {
@@ -35,15 +35,15 @@ public class CREEPSRenderHotdog extends RenderLiving
         float f4 = entityliving.getDistanceToEntity(renderManager.livingPlayer);
         String s = "";
 
-        if (((CREEPSEntityHotdog)entityliving).speedboost > 0)
+        if (((HotdogEntity)entityliving).speedboost > 0)
         {
             s = "\2473* \247f";
         }
 
-        s = (new StringBuilder()).append(s).append(((CREEPSEntityHotdog)entityliving).name).toString();
-        String s1 = String.valueOf(((CREEPSEntityHotdog)entityliving).level);
+        s = (new StringBuilder()).append(s).append(((HotdogEntity)entityliving).name).toString();
+        String s1 = String.valueOf(((HotdogEntity)entityliving).level);
 
-        if (((CREEPSEntityHotdog)entityliving).getHealth() < ((CREEPSEntityHotdog)entityliving).getMaxHealth() / 2 && s.length() > 0)
+        if (((HotdogEntity)entityliving).getHealth() < ((HotdogEntity)entityliving).getMaxHealth() / 2 && s.length() > 0)
         {
             s = (new StringBuilder()).append(s).append(" \247c * WOUNDED *").toString();
         }
@@ -65,7 +65,7 @@ public class CREEPSRenderHotdog extends RenderLiving
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-            float f5 = (1.0F - ((CREEPSEntityHotdog)entityliving).dogsize) * 35F;
+            float f5 = (1.0F - ((HotdogEntity)entityliving).dogsize) * 35F;
             int i = -20 + (int)f5;
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 //            worldRenderer.startDrawingQuads();
@@ -75,8 +75,8 @@ public class CREEPSRenderHotdog extends RenderLiving
 //            worldRenderer.addVertex(-j - 1, 8 + i, 0.0D);
 //            worldRenderer.addVertex(j + 1, 8 + i, 0.0D);
 //            worldRenderer.addVertex(j + 1, -1 + i, 0.0D);
-            float f6 = ((CREEPSEntityHotdog)entityliving).getHealth();
-            float f7 = ((CREEPSEntityHotdog)entityliving).getMaxHealth();
+            float f6 = ((HotdogEntity)entityliving).getHealth();
+            float f7 = ((HotdogEntity)entityliving).getMaxHealth();
             float f8 = f6 / f7;
             float f9 = 50F * f8;
 //            worldRenderer.setColorRGBA_F(1.0F, 0.0F, 0.0F, 1.0F);
@@ -112,20 +112,20 @@ public class CREEPSRenderHotdog extends RenderLiving
     {
         doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
 
-        if (((CREEPSEntityHotdog)entity).firepower > 0)
+        if (((HotdogEntity)entity).firepower > 0)
         {
             burnDog((EntityLiving)entity, d, d1, d2, 3F);
         }
     }
 
-    protected void fattenup(CREEPSEntityHotdog creepsentityhotdog, float f)
+    protected void fattenup(HotdogEntity creepsentityhotdog, float f)
     {
         GL11.glScalef(creepsentityhotdog.dogsize, creepsentityhotdog.dogsize, creepsentityhotdog.dogsize + 0.25F);
     }
 
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityHotdog)entityliving, f);
+        fattenup((HotdogEntity)entityliving, f);
     }
 
     public void burnDog(Entity entity, double d, double d1, double d2, float f)
@@ -190,13 +190,13 @@ public class CREEPSRenderHotdog extends RenderLiving
         GL11.glEnable(GL11.GL_LIGHTING);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityHotdog entity)
+    protected ResourceLocation getEntityTexture(HotdogEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityHotdog) entity);
+		return getEntityTexture((HotdogEntity) entity);
 	}
 }

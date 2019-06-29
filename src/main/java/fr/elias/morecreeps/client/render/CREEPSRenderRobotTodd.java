@@ -15,8 +15,8 @@ import org.lwjgl.opengl.GL12;
 
 import fr.elias.morecreeps.client.models.CREEPSModelRobotTodd;
 import fr.elias.morecreeps.client.render.layers.LayerRobotTodd;
-import fr.elias.morecreeps.common.entity.CREEPSEntityRobotTed;
-import fr.elias.morecreeps.common.entity.CREEPSEntityRobotTodd;
+import fr.elias.morecreeps.common.entity.RobotTedEntity;
+import fr.elias.morecreeps.common.entity.RobotToddEntity;
 
 public class CREEPSRenderRobotTodd extends RenderLiving
 {
@@ -87,7 +87,7 @@ public class CREEPSRenderRobotTodd extends RenderLiving
         return -1;
     }*/
 
-    public void doRenderTodd(CREEPSEntityRobotTodd creepsentityrobottodd, double d, double d1, double d2, float f, float f1)
+    public void doRenderTodd(RobotToddEntity creepsentityrobottodd, double d, double d1, double d2, float f, float f1)
     {
         GL11.glPushMatrix();
         GL11.glDisable(GL11.GL_CULL_FACE);
@@ -170,7 +170,7 @@ public class CREEPSRenderRobotTodd extends RenderLiving
     /**
      * sets the scale for the slime based on getSlimeSize in EntitySlime
      */
-    protected void scaleSlime(CREEPSEntityRobotTodd creepsentityrobottodd, float f)
+    protected void scaleSlime(RobotToddEntity creepsentityrobottodd, float f)
     {
         GL11.glScalef(creepsentityrobottodd.robotsize, creepsentityrobottodd.robotsize, creepsentityrobottodd.robotsize);
     }
@@ -181,7 +181,7 @@ public class CREEPSRenderRobotTodd extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        scaleSlime((CREEPSEntityRobotTodd)entityliving, f);
+        scaleSlime((RobotToddEntity)entityliving, f);
     }
     /*protected int shouldRenderPass(EntityLiving entityliving, int i, float f)
     {
@@ -190,16 +190,16 @@ public class CREEPSRenderRobotTodd extends RenderLiving
 
     public void doRender(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
     {
-        doRenderTodd((CREEPSEntityRobotTodd)entityliving, d, d1, d2, f, f1);
+        doRenderTodd((RobotToddEntity)entityliving, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityRobotTodd entity)
+    protected ResourceLocation getEntityTexture(RobotToddEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityRobotTodd) entity);
+		return getEntityTexture((RobotToddEntity) entity);
 	}
 }

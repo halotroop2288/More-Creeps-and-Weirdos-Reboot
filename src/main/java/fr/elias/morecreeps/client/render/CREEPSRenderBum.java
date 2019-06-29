@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelBum;
-import fr.elias.morecreeps.common.entity.CREEPSEntityBum;
+import fr.elias.morecreeps.common.entity.BumEntity;
 
 public class CREEPSRenderBum extends RenderLiving
 {
@@ -23,12 +23,12 @@ public class CREEPSRenderBum extends RenderLiving
     }
     public void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityBum creepsentitybum = (CREEPSEntityBum)entityliving;
+        BumEntity creepsentitybum = (BumEntity)entityliving;
         modelBipedMain.modelsize = creepsentitybum.modelsize;
-        fattenup((CREEPSEntityBum)entityliving, f);
+        fattenup((BumEntity)entityliving, f);
     }
 
-    protected void fattenup(CREEPSEntityBum creepsentitybum, float f)
+    protected void fattenup(BumEntity creepsentitybum, float f)
     {
         GL11.glScalef(creepsentitybum.modelsize, creepsentitybum.modelsize, creepsentitybum.modelsize);
     }
@@ -41,15 +41,15 @@ public class CREEPSRenderBum extends RenderLiving
      */
     public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
     {
-        doRender((CREEPSEntityBum)entity, d, d1, d2, f, f1);
+        doRender((BumEntity)entity, d, d1, d2, f, f1);
     }
-    protected ResourceLocation getEntityTexture(CREEPSEntityBum entity) {
+    protected ResourceLocation getEntityTexture(BumEntity entity) {
 		
 		return entity.texture;
 	}
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
 		
-		return getEntityTexture((CREEPSEntityBum) entity);
+		return getEntityTexture((BumEntity) entity);
 	}
 }

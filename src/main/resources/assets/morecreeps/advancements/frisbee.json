@@ -1,0 +1,38 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "Catch!",
+            "color": "dark_purple",
+            "bold": true
+        },
+        "description": {
+            "text": "Craft some frisbees",
+            "color": "white"
+        },
+        "icon": {
+            "item": "minecraft:stone"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "criteria": {
+        "get4frisbees": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "morecreeps:frisbee",
+                        "count": {
+                            "min": 4,
+                            "max": 4
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "parent": "morecreeps:root"
+}

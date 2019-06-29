@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelRocketGiraffe;
-import fr.elias.morecreeps.common.entity.CREEPSEntityRocketGiraffe;
+import fr.elias.morecreeps.common.entity.RocketGiraffeEntity;
 
 public class CREEPSRenderRocketGiraffe extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderRocketGiraffe extends RenderLiving
         super(Minecraft.getMinecraft().getRenderManager(), creepsmodelrocketgiraffe, f);
     }
 
-    protected void fattenup(CREEPSEntityRocketGiraffe creepsentityrocketgiraffe, float f)
+    protected void fattenup(RocketGiraffeEntity creepsentityrocketgiraffe, float f)
     {
         GL11.glScalef(creepsentityrocketgiraffe.modelsize, creepsentityrocketgiraffe.modelsize, creepsentityrocketgiraffe.modelsize);
     }
@@ -33,7 +33,7 @@ public class CREEPSRenderRocketGiraffe extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityRocketGiraffe)entityliving, f);
+        fattenup((RocketGiraffeEntity)entityliving, f);
     }
 
     public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
@@ -43,7 +43,7 @@ public class CREEPSRenderRocketGiraffe extends RenderLiving
         float f3 = 0.01666667F * f2;
         float f4 = entityliving.getDistanceToEntity(renderManager.livingPlayer);
         String s = "";
-        s = (new StringBuilder()).append(s).append(((CREEPSEntityRocketGiraffe)entityliving).name).toString();
+        s = (new StringBuilder()).append(s).append(((RocketGiraffeEntity)entityliving).name).toString();
 
         if (f4 < 32F && s.length() > 0)
         {
@@ -62,7 +62,7 @@ public class CREEPSRenderRocketGiraffe extends RenderLiving
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-            float f5 = (1.0F - ((CREEPSEntityRocketGiraffe)entityliving).modelsize) * 160F;
+            float f5 = (1.0F - ((RocketGiraffeEntity)entityliving).modelsize) * 160F;
             int i = -150 + (int)f5;
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 //            worldRenderer.startDrawingQuads();
@@ -96,13 +96,13 @@ public class CREEPSRenderRocketGiraffe extends RenderLiving
         doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityRocketGiraffe entity)
+    protected ResourceLocation getEntityTexture(RocketGiraffeEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityRocketGiraffe) entity);
+		return getEntityTexture((RocketGiraffeEntity) entity);
 	}
 }

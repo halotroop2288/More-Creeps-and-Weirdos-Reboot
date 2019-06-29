@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.render.layers.LayerBlackSoulEyes;
 import fr.elias.morecreeps.common.Reference;
-import fr.elias.morecreeps.common.entity.CREEPSEntityBlackSoul;
+import fr.elias.morecreeps.common.entity.BlackSoulEntity;
 
 public class CREEPSRenderBlackSoul extends RenderLiving
 {
@@ -26,7 +26,7 @@ public class CREEPSRenderBlackSoul extends RenderLiving
     }
 
     
-    protected int eyeGlow(CREEPSEntityBlackSoul creepsentityblacksoul, int i, float f)
+    protected int eyeGlow(BlackSoulEntity creepsentityblacksoul, int i, float f)
     {
         if (i != 0)
         {
@@ -49,16 +49,16 @@ public class CREEPSRenderBlackSoul extends RenderLiving
         }
     }
 
-    protected void fattenup(CREEPSEntityBlackSoul creepsentityblacksoul, float f)
+    protected void fattenup(BlackSoulEntity creepsentityblacksoul, float f)
     {
         GL11.glScalef(creepsentityblacksoul.modelsize, creepsentityblacksoul.modelsize, creepsentityblacksoul.modelsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityBlackSoul)entityliving, f);
+        fattenup((BlackSoulEntity)entityliving, f);
     }
 
-	protected ResourceLocation getEntityTexture(CREEPSEntityBlackSoul entity) {
+	protected ResourceLocation getEntityTexture(BlackSoulEntity entity) {
 		
 		return entity.texture;
 	}
@@ -66,6 +66,6 @@ public class CREEPSRenderBlackSoul extends RenderLiving
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
 	
-		return getEntityTexture((CREEPSEntityBlackSoul) entity);
+		return getEntityTexture((BlackSoulEntity) entity);
 	}
 }

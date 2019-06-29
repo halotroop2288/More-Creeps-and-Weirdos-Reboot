@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelBlorp;
-import fr.elias.morecreeps.common.entity.CREEPSEntityBlorp;
+import fr.elias.morecreeps.common.entity.BlorpEntity;
 
 public class CREEPSRenderBlorp extends RenderLiving
 {
@@ -27,7 +27,7 @@ public class CREEPSRenderBlorp extends RenderLiving
         modelBipedMain = creepsmodelblorp;
     }
 
-    protected float getWingRotation(CREEPSEntityBlorp creepsentityblorp, float f)
+    protected float getWingRotation(BlorpEntity creepsentityblorp, float f)
     {
         float f1 = 0.35F;
         float f2 = 0.35F;
@@ -40,15 +40,15 @@ public class CREEPSRenderBlorp extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        updateBlorpScale((CREEPSEntityBlorp)entityliving, f);
+        updateBlorpScale((BlorpEntity)entityliving, f);
     }
 
-    protected void updateBlorpScale(CREEPSEntityBlorp creepsentityblorp, float f)
+    protected void updateBlorpScale(BlorpEntity creepsentityblorp, float f)
     {
         GL11.glScalef(creepsentityblorp.blorpsize, creepsentityblorp.blorpsize, creepsentityblorp.blorpsize);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityBlorp entity)
+    protected ResourceLocation getEntityTexture(BlorpEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
@@ -56,6 +56,6 @@ public class CREEPSRenderBlorp extends RenderLiving
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityBlorp) entity);
+		return getEntityTexture((BlorpEntity) entity);
 	}
 }

@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL11;
 import fr.elias.morecreeps.client.models.CREEPSModelAtom;
 import fr.elias.morecreeps.client.render.layers.LayerAtom;
 import fr.elias.morecreeps.common.Reference;
-import fr.elias.morecreeps.common.entity.CREEPSEntityAtom;
+import fr.elias.morecreeps.common.entity.AtomEntity;
 
 public class CREEPSRenderAtom extends RenderLiving
 {
@@ -33,7 +33,7 @@ public class CREEPSRenderAtom extends RenderLiving
     /**
      * sets the scale for the slime based on getSlimeSize in EntitySlime
      */
-    protected void scaleSlime(CREEPSEntityAtom creepsentityatom, float f)
+    protected void scaleSlime(AtomEntity creepsentityatom, float f)
     {
         GL11.glScalef(creepsentityatom.atomsize * 0.3F, creepsentityatom.atomsize * 0.3F, creepsentityatom.atomsize * 0.3F);
     }
@@ -44,7 +44,7 @@ public class CREEPSRenderAtom extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        scaleSlime((CREEPSEntityAtom)entityliving, f);
+        scaleSlime((AtomEntity)entityliving, f);
     }
 
     /**

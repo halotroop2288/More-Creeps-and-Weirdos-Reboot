@@ -10,9 +10,9 @@ import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelEvilLight;
 import fr.elias.morecreeps.client.render.layers.LayerEvilLightGlow;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilChicken;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilLight;
-import fr.elias.morecreeps.common.entity.CREEPSEntityFloobShip;
+import fr.elias.morecreeps.common.entity.EvilChickenEntity;
+import fr.elias.morecreeps.common.entity.EvilLightEntity;
+import fr.elias.morecreeps.common.entity.FloobShipEntity;
 
 public class CREEPSRenderEvilLight extends RenderLiving
 {
@@ -48,13 +48,13 @@ public class CREEPSRenderEvilLight extends RenderLiving
         return glow((CREEPSEntityEvilLight)entityliving, i, f);
     }*/
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityEvilLight entity)
+    protected ResourceLocation getEntityTexture(EvilLightEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityEvilLight) entity);
+		return getEntityTexture((EvilLightEntity) entity);
 	}
 }

@@ -12,9 +12,9 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelLawyerFromHell;
-import fr.elias.morecreeps.common.MoreCreepsAndWeirdos;
-import fr.elias.morecreeps.common.entity.CREEPSEntityKid;
-import fr.elias.morecreeps.common.entity.CREEPSEntityLawyerFromHell;
+import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.entity.KidEntity;
+import fr.elias.morecreeps.common.entity.LawyerFromHellEntity;
 
 public class CREEPSRenderLawyerFromHell extends RenderLiving
 {
@@ -32,12 +32,12 @@ public class CREEPSRenderLawyerFromHell extends RenderLiving
      */
     protected void preRenderCallback(EntityLiving entityliving, float f)
     {
-        CREEPSEntityLawyerFromHell creepsentitylawyerfromhell = (CREEPSEntityLawyerFromHell)entityliving;
+        LawyerFromHellEntity creepsentitylawyerfromhell = (LawyerFromHellEntity)entityliving;
         modelBipedMain.modelsize = creepsentitylawyerfromhell.modelsize;
-        fattenup((CREEPSEntityLawyerFromHell)entityliving, f);
+        fattenup((LawyerFromHellEntity)entityliving, f);
     }
 
-    protected void fattenup(CREEPSEntityLawyerFromHell creepsentitylawyerfromhell, float f)
+    protected void fattenup(LawyerFromHellEntity creepsentitylawyerfromhell, float f)
     {
         GL11.glScalef(creepsentitylawyerfromhell.modelsize, creepsentitylawyerfromhell.modelsize, creepsentitylawyerfromhell.modelsize);
     }
@@ -49,7 +49,7 @@ public class CREEPSRenderLawyerFromHell extends RenderLiving
         float f3 = 0.01666667F * f2;
         float f4 = entityliving.getDistanceToEntity(renderManager.livingPlayer);
         String s = "";
-        int i = MoreCreepsAndWeirdos.instance.currentfine;
+        int i = MoreCreepsReboot.instance.currentfine;
 
         if (i > 0)
         {
@@ -61,7 +61,7 @@ public class CREEPSRenderLawyerFromHell extends RenderLiving
             s = "\247cJAIL TIME!";
         }
 
-        if (((CREEPSEntityLawyerFromHell)entityliving).undead)
+        if (((LawyerFromHellEntity)entityliving).undead)
         {
             s = "";
         }
@@ -82,7 +82,7 @@ public class CREEPSRenderLawyerFromHell extends RenderLiving
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-            float f5 = (1.0F - ((CREEPSEntityLawyerFromHell)entityliving).modelsize) * 9F;
+            float f5 = (1.0F - ((LawyerFromHellEntity)entityliving).modelsize) * 9F;
             int j = -60 + (int)f5;
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 //            worldRenderer.startDrawingQuads();
@@ -116,13 +116,13 @@ public class CREEPSRenderLawyerFromHell extends RenderLiving
         doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityLawyerFromHell entity)
+    protected ResourceLocation getEntityTexture(LawyerFromHellEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityLawyerFromHell) entity);
+		return getEntityTexture((LawyerFromHellEntity) entity);
 	}
 }

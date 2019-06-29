@@ -1,18 +1,23 @@
 package fr.elias.morecreeps.client.particles;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.particles.BasicParticleType;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.world.World;
 
 public class CREEPSFxSpit extends EntityFX
 {
-    public CREEPSFxSpit(World world, double d, double d1, double d2, Item item)
+    private TextureAtlasSprite particleIcon;
+
+
+	public CREEPSFxSpit(World world, double d, double d1, double d2, BasicParticleType CREEPS_BUBBLE)
     {
         super(world, d, d1, d2, 0.0D, 0.0D, 0.0D);
-        this.particleIcon = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getParticleIcon(item);
+        this.particleIcon = Minecraft.getInstance().getItemRenderer().getItemModelMesher().getParticleIcon((IItemProvider) CREEPS_BUBBLE);
         setSize(0.3F, 0.3F);
         particleRed = 1.0F;
         particleBlue = 1.0F;

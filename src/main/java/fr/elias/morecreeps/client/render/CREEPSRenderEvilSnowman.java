@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelEvilSnowman;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilScientist;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilSnowman;
+import fr.elias.morecreeps.common.entity.EvilScientistEntity;
+import fr.elias.morecreeps.common.entity.EvilSnowmanEntity;
 
 public class CREEPSRenderEvilSnowman extends RenderLiving
 {
@@ -24,23 +24,23 @@ public class CREEPSRenderEvilSnowman extends RenderLiving
         modelBipedMain = creepsmodelevilsnowman;
     }
 
-    protected void preRenderScale(CREEPSEntityEvilSnowman creepsentityevilsnowman, float f)
+    protected void preRenderScale(EvilSnowmanEntity creepsentityevilsnowman, float f)
     {
         shadowSize = creepsentityevilsnowman.snowsize * 0.5F;
         GL11.glScalef(creepsentityevilsnowman.snowsize, creepsentityevilsnowman.snowsize, creepsentityevilsnowman.snowsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        preRenderScale((CREEPSEntityEvilSnowman)entityliving, f);
+        preRenderScale((EvilSnowmanEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityEvilSnowman entity)
+    protected ResourceLocation getEntityTexture(EvilSnowmanEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityEvilSnowman) entity);
+		return getEntityTexture((EvilSnowmanEntity) entity);
 	}
 }

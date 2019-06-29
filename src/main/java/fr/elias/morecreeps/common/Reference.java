@@ -3,9 +3,9 @@ package fr.elias.morecreeps.common;
 public class Reference {
 	
 	//Main Stuff
-	public static final String MOD_ID = "morecreeps";
+	public static final String MODID = "morecreeps";
     public static final String NAME = "More Creeps And Weirdos Reboot";
-    public static final String VERSION = "1.0.0-beta";
+    public static final String VERSION = "1.0.0-alpha";
     
     //Entities
     public static final String TEXTURE_PATH_ENTITES = "textures/entity/";

@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelDoghouse;
-import fr.elias.morecreeps.common.entity.CREEPSEntityDigBug;
-import fr.elias.morecreeps.common.entity.CREEPSEntityDoghouse;
+import fr.elias.morecreeps.common.entity.DigBugEntity;
+import fr.elias.morecreeps.common.entity.DogHouseEntity;
 
 public class CREEPSRenderDoghouse extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderDoghouse extends RenderLiving
         modelBipedMain = creepsmodeldoghouse;
     }
 
-    protected void fattenup(CREEPSEntityDoghouse creepsentitydoghouse, float f)
+    protected void fattenup(DogHouseEntity creepsentitydoghouse, float f)
     {
         GL11.glScalef(2.5F, 2.5F, 2.5F);
     }
@@ -33,16 +33,16 @@ public class CREEPSRenderDoghouse extends RenderLiving
      */
     protected void preRenderCallback(EntityLiving entityliving, float f)
     {
-        fattenup((CREEPSEntityDoghouse)entityliving, f);
+        fattenup((DogHouseEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityDoghouse entity)
+    protected ResourceLocation getEntityTexture(DogHouseEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityDoghouse) entity);
+		return getEntityTexture((DogHouseEntity) entity);
 	}
 }

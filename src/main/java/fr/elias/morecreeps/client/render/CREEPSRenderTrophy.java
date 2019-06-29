@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import fr.elias.morecreeps.client.models.CREEPSModelTrophy;
-import fr.elias.morecreeps.common.entity.CREEPSEntityTrophy;
+import fr.elias.morecreeps.common.entity.TrophyEntity;
 
 public class CREEPSRenderTrophy extends RenderLiving
 {
@@ -17,13 +17,13 @@ public class CREEPSRenderTrophy extends RenderLiving
         modelBipedMain = creepsmodeltrophy;
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityTrophy entity)
+    protected ResourceLocation getEntityTexture(TrophyEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityTrophy) entity);
+		return getEntityTexture((TrophyEntity) entity);
 	}
 }

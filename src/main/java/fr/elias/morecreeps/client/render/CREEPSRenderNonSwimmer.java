@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelNonSwimmer;
-import fr.elias.morecreeps.common.entity.CREEPSEntityManDog;
-import fr.elias.morecreeps.common.entity.CREEPSEntityNonSwimmer;
+import fr.elias.morecreeps.common.entity.ManDogEntity;
+import fr.elias.morecreeps.common.entity.NonSwimmerEntity;
 
 public class CREEPSRenderNonSwimmer extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderNonSwimmer extends RenderLiving
         modelBipedMain = creepsmodelnonswimmer;
     }
 
-    protected void fattenup(CREEPSEntityNonSwimmer creepsentitynonswimmer, float f)
+    protected void fattenup(NonSwimmerEntity creepsentitynonswimmer, float f)
     {
         GL11.glScalef(creepsentitynonswimmer.modelsize, creepsentitynonswimmer.modelsize, creepsentitynonswimmer.modelsize);
     }
@@ -33,19 +33,19 @@ public class CREEPSRenderNonSwimmer extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityNonSwimmer creepsentitynonswimmer = (CREEPSEntityNonSwimmer)entityliving;
+        NonSwimmerEntity creepsentitynonswimmer = (NonSwimmerEntity)entityliving;
         modelBipedMain.modelsize = creepsentitynonswimmer.modelsize;
         modelBipedMain.swimming = creepsentitynonswimmer.swimming;
-        fattenup((CREEPSEntityNonSwimmer)entityliving, f);
+        fattenup((NonSwimmerEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityNonSwimmer entity)
+    protected ResourceLocation getEntityTexture(NonSwimmerEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityNonSwimmer) entity);
+		return getEntityTexture((NonSwimmerEntity) entity);
 	}
 }

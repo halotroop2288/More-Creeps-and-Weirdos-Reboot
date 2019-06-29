@@ -12,8 +12,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelEvilChicken;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilChicken;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilCreature;
+import fr.elias.morecreeps.common.entity.EvilChickenEntity;
+import fr.elias.morecreeps.common.entity.EvilCreatureEntity;
 
 public class CREEPSRenderEvilChicken extends RenderLiving
 {
@@ -32,16 +32,16 @@ public class CREEPSRenderEvilChicken extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityEvilChicken creepsentityevilchicken = (CREEPSEntityEvilChicken)entityliving;
+        EvilChickenEntity creepsentityevilchicken = (EvilChickenEntity)entityliving;
         modelBipedMain.modelsize = creepsentityevilchicken.modelsize;
-        fattenup((CREEPSEntityEvilChicken)entityliving, f);
+        fattenup((EvilChickenEntity)entityliving, f);
     }
 
-    protected void fattenup(CREEPSEntityEvilChicken creepsentityevilchicken, float f)
+    protected void fattenup(EvilChickenEntity creepsentityevilchicken, float f)
     {
         GL11.glScalef(creepsentityevilchicken.modelsize, creepsentityevilchicken.modelsize, creepsentityevilchicken.modelsize);
     }
-    protected float func_180569_a(CREEPSEntityEvilChicken creepsentityevilchicken, float f)
+    protected float func_180569_a(EvilChickenEntity creepsentityevilchicken, float f)
     {
         float f1 = creepsentityevilchicken.field_756_e + (creepsentityevilchicken.field_752_b - creepsentityevilchicken.field_756_e) * f;
         float f2 = creepsentityevilchicken.field_757_d + (creepsentityevilchicken.destPos - creepsentityevilchicken.field_757_d) * f;
@@ -53,17 +53,17 @@ public class CREEPSRenderEvilChicken extends RenderLiving
      */
     protected float handleRotationFloat(EntityLivingBase p_77044_1_, float p_77044_2_)
     {
-        return this.func_180569_a((CREEPSEntityEvilChicken)p_77044_1_, p_77044_2_);
+        return this.func_180569_a((EvilChickenEntity)p_77044_1_, p_77044_2_);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityEvilChicken entity)
+    protected ResourceLocation getEntityTexture(EvilChickenEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityEvilChicken) entity);
+		return getEntityTexture((EvilChickenEntity) entity);
 	}
     
 }

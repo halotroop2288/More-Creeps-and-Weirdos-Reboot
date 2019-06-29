@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelCastleCritter;
 import fr.elias.morecreeps.client.render.layers.LayerCastleCritterEyes;
-import fr.elias.morecreeps.common.entity.CREEPSEntityCastleCritter;
+import fr.elias.morecreeps.common.entity.CastleCritterEntity;
 
 public class CREEPSRenderCastleCritter extends RenderLiving
 {
@@ -46,26 +46,26 @@ public class CREEPSRenderCastleCritter extends RenderLiving
         }
     }*/
 
-    protected void fattenup(CREEPSEntityCastleCritter creepsentitycastlecritter, float f)
+    protected void fattenup(CastleCritterEntity creepsentitycastlecritter, float f)
     {
         GL11.glScalef(creepsentitycastlecritter.modelsize, creepsentitycastlecritter.modelsize, creepsentitycastlecritter.modelsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityCastleCritter)entityliving, f);
+        fattenup((CastleCritterEntity)entityliving, f);
     }
     /*protected int shouldRenderPass(EntityLiving entityliving, int i, float f)
     {
         return eyeGlow((CREEPSEntityCastleCritter)entityliving, i, f);
     }*/
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityCastleCritter entity)
+    protected ResourceLocation getEntityTexture(CastleCritterEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityCastleCritter) entity);
+		return getEntityTexture((CastleCritterEntity) entity);
 	}
 }

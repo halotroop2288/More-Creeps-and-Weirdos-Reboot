@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import fr.elias.morecreeps.common.entity.CREEPSEntitySnowDevil;
-import fr.elias.morecreeps.common.entity.CREEPSEntityThief;
+import fr.elias.morecreeps.common.entity.SnowDevilEntity;
+import fr.elias.morecreeps.common.entity.ThiefEntity;
 
 public class CREEPSRenderThief extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderThief extends RenderLiving
         modelBipedMain = modelbiped;
     }
 
-    protected void fattenup(CREEPSEntityThief creepsentitythief, float f)
+    protected void fattenup(ThiefEntity creepsentitythief, float f)
     {
         GL11.glScalef(creepsentitythief.modelsize, creepsentitythief.modelsize, creepsentitythief.modelsize);
     }
@@ -33,16 +33,16 @@ public class CREEPSRenderThief extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityThief)entityliving, f);
+        fattenup((ThiefEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityThief entity)
+    protected ResourceLocation getEntityTexture(ThiefEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityThief) entity);
+		return getEntityTexture((ThiefEntity) entity);
 	}
 }

@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import fr.elias.morecreeps.common.entity.CREEPSEntityPreacher;
-import fr.elias.morecreeps.common.entity.CREEPSEntityPrisoner;
+import fr.elias.morecreeps.common.entity.PreacherEntity;
+import fr.elias.morecreeps.common.entity.PrisonerEntity;
 
 public class CREEPSRenderPrisoner extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderPrisoner extends RenderLiving
         modelBipedMain = modelbiped;
     }
 
-    protected void fattenup(CREEPSEntityPrisoner creepsentityprisoner, float f)
+    protected void fattenup(PrisonerEntity creepsentityprisoner, float f)
     {
         GL11.glScalef(0.75F, 1.0F, 0.9F);
     }
@@ -33,17 +33,17 @@ public class CREEPSRenderPrisoner extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityPrisoner creepsentityprisoner = (CREEPSEntityPrisoner)entityliving;
-        fattenup((CREEPSEntityPrisoner)entityliving, f);
+        PrisonerEntity creepsentityprisoner = (PrisonerEntity)entityliving;
+        fattenup((PrisonerEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityPrisoner entity)
+    protected ResourceLocation getEntityTexture(PrisonerEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityPrisoner) entity);
+		return getEntityTexture((PrisonerEntity) entity);
 	}
 }

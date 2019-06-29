@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelFloobShip;
-import fr.elias.morecreeps.common.entity.CREEPSEntityFloob;
-import fr.elias.morecreeps.common.entity.CREEPSEntityFloobShip;
+import fr.elias.morecreeps.common.entity.FloobEntity;
+import fr.elias.morecreeps.common.entity.FloobShipEntity;
 
 public class CREEPSRenderFloobShip extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderFloobShip extends RenderLiving
     /**
      * sets the scale for the slime based on getSlimeSize in EntitySlime
      */
-    protected void scaleSlime(CREEPSEntityFloobShip creepsentityfloobship, float f)
+    protected void scaleSlime(FloobShipEntity creepsentityfloobship, float f)
     {
         GL11.glScalef(4F, 3F, 4F);
     }
@@ -33,16 +33,16 @@ public class CREEPSRenderFloobShip extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        scaleSlime((CREEPSEntityFloobShip)entityliving, f);
+        scaleSlime((FloobShipEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityFloobShip entity)
+    protected ResourceLocation getEntityTexture(FloobShipEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityFloobShip) entity);
+		return getEntityTexture((FloobShipEntity) entity);
 	}
 }

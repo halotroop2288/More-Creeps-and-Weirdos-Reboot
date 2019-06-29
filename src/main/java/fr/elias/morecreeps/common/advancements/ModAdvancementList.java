@@ -1,0 +1,62 @@
+package fr.elias.morecreeps.common.advancements;
+
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementList;
+
+public class ModAdvancementList extends AdvancementList
+{
+	public static Advancement frisbee;
+    public static Advancement radio;
+    public static Advancement gotohell;
+    public static Advancement chugcola;
+    public static Advancement pigtaming;
+    public static Advancement piglevel5;
+    public static Advancement piglevel10;
+    public static Advancement piglevel20;
+    public static Advancement rocketgiraffe;
+    public static Advancement rocket;
+    public static Advancement rocketrampage;
+    public static Advancement pyramid;
+    public static Advancement floobkill;
+    public static Advancement floobicide;
+    public static Advancement gookill;
+    public static Advancement gookill10;
+    public static Advancement gookill25;
+    public static Advancement snowdevil;
+    public static Advancement hunchback;
+    public static Advancement rockmonster;
+    public static Advancement bumflower;
+    public static Advancement bumpot;
+    public static Advancement bumlava;
+    public static Advancement one_hundred_bucks;
+    public static Advancement five_hundred_bucks;
+    public static Advancement one_thousand_bucks;
+    public static Advancement pighotel;
+    public static Advancement ten_bubble;
+    public static Advancement twenty_five_bubble;
+    public static Advancement fifty_bubble;
+    public static Advancement one_hundred_bubble;
+    public static Advancement snow;
+    public static Advancement snowtiny;
+    public static Advancement snowtall;
+    public static Advancement hotdoglevel5;
+    public static Advancement hotdoglevel10;
+    public static Advancement hotdoglevel25;
+    public static Advancement hotdogheaven;
+    public static Advancement hotdogtaming;
+    public static Advancement ram128;
+    public static Advancement ram512;
+    public static Advancement ram1024;
+    public static Advancement falseidol;
+    public static Advancement camel;
+    public static Advancement lolliman;
+    public static Advancement zebra;
+    public static Advancement schlump;
+    public static Advancement nonswimmer;
+    public static Advancement prisoner;
+    public static Advancement five_prisoner;
+    public static Advancement ten_prisoner;
+    public static Advancement one_caveman;
+    public static Advancement ten_caveman;
+    public static Advancement fifty_caveman;
+}

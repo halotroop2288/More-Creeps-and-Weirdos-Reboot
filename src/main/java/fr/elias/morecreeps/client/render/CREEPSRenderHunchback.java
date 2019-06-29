@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelHunchback;
 import fr.elias.morecreeps.common.entity.CREEPSEntityHorseHead;
-import fr.elias.morecreeps.common.entity.CREEPSEntityHunchback;
+import fr.elias.morecreeps.common.entity.HunchbackEntity;
 
 public class CREEPSRenderHunchback extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderHunchback extends RenderLiving
         modelBipedMain = creepsmodelhunchback;
     }
 
-    protected void fattenup(CREEPSEntityHunchback creepsentityhunchback, float f)
+    protected void fattenup(HunchbackEntity creepsentityhunchback, float f)
     {
         GL11.glScalef(creepsentityhunchback.modelsize, creepsentityhunchback.modelsize, creepsentityhunchback.modelsize);
     }
@@ -33,17 +33,17 @@ public class CREEPSRenderHunchback extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityHunchback)entityliving, f);
+        fattenup((HunchbackEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityHunchback entity)
+    protected ResourceLocation getEntityTexture(HunchbackEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityHunchback) entity);
+		return getEntityTexture((HunchbackEntity) entity);
 	}
 
 }

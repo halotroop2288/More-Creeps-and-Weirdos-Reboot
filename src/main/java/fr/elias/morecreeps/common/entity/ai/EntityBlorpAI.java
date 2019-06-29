@@ -9,13 +9,13 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
-import fr.elias.morecreeps.common.entity.CREEPSEntityBlorp;
+import fr.elias.morecreeps.common.entity.BlorpEntity;
 
 public class EntityBlorpAI extends EntityAIBase {
 
-	public CREEPSEntityBlorp blorp;
+	public BlorpEntity blorp;
 	public Random rand = new Random();
-	public EntityBlorpAI(CREEPSEntityBlorp creepsblorp)
+	public EntityBlorpAI(BlorpEntity creepsblorp)
 	{
 		blorp = creepsblorp;
 	}
@@ -60,7 +60,7 @@ public class EntityBlorpAI extends EntityAIBase {
 
         if (f < 0.0F || blorp.angry)
         {
-            EntityPlayer entityplayer = blorp.worldObj.getClosestPlayerToEntity(blorp, blorp.attackrange);
+            EntityPlayer entityplayer = blorp.world.getClosestPlayerToEntity(blorp, blorp.attackrange);
 
             if (entityplayer != null)
             {
@@ -83,11 +83,11 @@ public class EntityBlorpAI extends EntityAIBase {
         double d1 = -1D;
         EntityLivingBase entityliving = null;
 
-        for (int i = 0; i < blorp.worldObj.loadedEntityList.size(); i++)
+        for (int i = 0; i < blorp.world.loadedEntityList.size(); i++)
         {
-            Entity entity1 = (Entity)blorp.worldObj.loadedEntityList.get(i);
+            Entity entity1 = (Entity)blorp.world.loadedEntityList.get(i);
 
-            if (!(entity1 instanceof EntityLivingBase) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof EntityPlayer) || (entity1 instanceof EntityMob) || (entity1 instanceof EntityAnimal) && !(entity1 instanceof CREEPSEntityBlorp))
+            if (!(entity1 instanceof EntityLivingBase) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof EntityPlayer) || (entity1 instanceof EntityMob) || (entity1 instanceof EntityAnimal) && !(entity1 instanceof BlorpEntity))
             {
                 continue;
             }

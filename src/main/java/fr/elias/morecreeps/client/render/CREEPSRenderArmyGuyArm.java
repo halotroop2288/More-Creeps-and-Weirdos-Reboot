@@ -3,7 +3,7 @@ package fr.elias.morecreeps.client.render;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelArmyGuyArm;
-import fr.elias.morecreeps.common.entity.CREEPSEntityArmyGuyArm;
+import fr.elias.morecreeps.common.entity.ArmyGuyArmEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
@@ -27,17 +27,17 @@ public class CREEPSRenderArmyGuyArm extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityArmyGuyArm creepsentityarmyguyarm = (CREEPSEntityArmyGuyArm)entityliving;
+        ArmyGuyArmEntity creepsentityarmyguyarm = (ArmyGuyArmEntity)entityliving;
         modelBipedMain.modelsize = creepsentityarmyguyarm.modelsize;
-        fattenup((CREEPSEntityArmyGuyArm)entityliving, f);
+        fattenup((ArmyGuyArmEntity)entityliving, f);
     }
 
-    protected void fattenup(CREEPSEntityArmyGuyArm creepsentityarmyguyarm, float f)
+    protected void fattenup(ArmyGuyArmEntity creepsentityarmyguyarm, float f)
     {
         GL11.glScalef(creepsentityarmyguyarm.modelsize, creepsentityarmyguyarm.modelsize, creepsentityarmyguyarm.modelsize);
     }
 
-	protected ResourceLocation getEntityTexture(CREEPSEntityArmyGuyArm entity)
+	protected ResourceLocation getEntityTexture(ArmyGuyArmEntity entity)
 	{
 		return entity.texture;
 	}
@@ -45,6 +45,6 @@ public class CREEPSRenderArmyGuyArm extends RenderLiving
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
 		
-		return getEntityTexture((CREEPSEntityArmyGuyArm) entity);
+		return getEntityTexture((ArmyGuyArmEntity) entity);
 	}
 }

@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelDigBug;
-import fr.elias.morecreeps.common.entity.CREEPSEntityDesertLizard;
-import fr.elias.morecreeps.common.entity.CREEPSEntityDigBug;
+import fr.elias.morecreeps.common.entity.DesertLizardEntity;
+import fr.elias.morecreeps.common.entity.DigBugEntity;
 
 public class CREEPSRenderDigBug extends RenderLiving
 {
@@ -19,7 +19,7 @@ public class CREEPSRenderDigBug extends RenderLiving
         super(Minecraft.getMinecraft().getRenderManager(), creepsmodeldigbug, f);
     }
 
-    protected void fattenup(CREEPSEntityDigBug creepsentitydigbug, float f)
+    protected void fattenup(DigBugEntity creepsentitydigbug, float f)
     {
         GL11.glScalef(creepsentitydigbug.modelsize, creepsentitydigbug.modelsize, creepsentitydigbug.modelsize);
     }
@@ -30,16 +30,16 @@ public class CREEPSRenderDigBug extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityDigBug)entityliving, f);
+        fattenup((DigBugEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityDigBug entity)
+    protected ResourceLocation getEntityTexture(DigBugEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityDigBug) entity);
+		return getEntityTexture((DigBugEntity) entity);
 	}
 }

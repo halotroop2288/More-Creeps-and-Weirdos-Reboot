@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import fr.elias.morecreeps.common.entity.CREEPSEntityHunchbackSkeleton;
-import fr.elias.morecreeps.common.entity.CREEPSEntityInvisibleMan;
+import fr.elias.morecreeps.common.entity.HunchbackSkeletonEntity;
+import fr.elias.morecreeps.common.entity.InvisibleManEntity;
 
 public class CREEPSRenderHunchbackSkeleton extends RenderLiving
 {
@@ -22,23 +22,23 @@ public class CREEPSRenderHunchbackSkeleton extends RenderLiving
         modelBipedMain = modelbiped;
     }
 
-    protected void fattenup(CREEPSEntityHunchbackSkeleton creepsentityhunchbackskeleton, float f)
+    protected void fattenup(HunchbackSkeletonEntity creepsentityhunchbackskeleton, float f)
     {
         GL11.glScalef(creepsentityhunchbackskeleton.modelsize, creepsentityhunchbackskeleton.modelsize, creepsentityhunchbackskeleton.modelsize);
     }
 
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityHunchbackSkeleton)entityliving, f);
+        fattenup((HunchbackSkeletonEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityHunchbackSkeleton entity)
+    protected ResourceLocation getEntityTexture(HunchbackSkeletonEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityHunchbackSkeleton) entity);
+		return getEntityTexture((HunchbackSkeletonEntity) entity);
 	}
 }

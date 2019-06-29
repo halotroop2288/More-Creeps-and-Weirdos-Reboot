@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import fr.elias.morecreeps.client.models.CREEPSModelTowel;
-import fr.elias.morecreeps.common.entity.CREEPSEntityTowel;
+import fr.elias.morecreeps.common.entity.TowelEntity;
 
 public class CREEPSRenderTowel extends RenderLiving
 {
@@ -17,13 +17,13 @@ public class CREEPSRenderTowel extends RenderLiving
         modelBipedMain = creepsmodeltowel;
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityTowel entity)
+    protected ResourceLocation getEntityTexture(TowelEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityTowel) entity);
+		return getEntityTexture((TowelEntity) entity);
 	}
 }

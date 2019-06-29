@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelCamelJockey;
-import fr.elias.morecreeps.common.entity.CREEPSEntityCamelJockey;
+import fr.elias.morecreeps.common.entity.CamelJockeyEntity;
 
 public class CREEPSRenderCamelJockey extends RenderLiving
 {
@@ -21,16 +21,16 @@ public class CREEPSRenderCamelJockey extends RenderLiving
         modelBipedMain = creepsmodelcameljockey;
     }
 
-    protected void fattenup(CREEPSEntityCamelJockey creepsentitycameljockey, float f)
+    protected void fattenup(CamelJockeyEntity creepsentitycameljockey, float f)
     {
         GL11.glScalef(creepsentitycameljockey.modelsize, creepsentitycameljockey.modelsize, creepsentitycameljockey.modelsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityCamelJockey)entityliving, f);
+        fattenup((CamelJockeyEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityCamelJockey entity) {
+    protected ResourceLocation getEntityTexture(CamelJockeyEntity entity) {
 		
 		return new ResourceLocation(entity.texture);
 	}
@@ -38,6 +38,6 @@ public class CREEPSRenderCamelJockey extends RenderLiving
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
 		
-		return getEntityTexture((CREEPSEntityCamelJockey) entity);
+		return getEntityTexture((CamelJockeyEntity) entity);
 	}
 }

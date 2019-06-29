@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelRockMonster;
-import fr.elias.morecreeps.common.entity.CREEPSEntityRockMonster;
-import fr.elias.morecreeps.common.entity.CREEPSEntityRocketGiraffe;
+import fr.elias.morecreeps.common.entity.RockMonsterEntity;
+import fr.elias.morecreeps.common.entity.RocketGiraffeEntity;
 
 public class CREEPSRenderRockMonster extends RenderLiving
 {
@@ -25,7 +25,7 @@ public class CREEPSRenderRockMonster extends RenderLiving
     /**
      * sets the scale for the slime based on getSlimeSize in EntitySlime
      */
-    protected void scaleSlime(CREEPSEntityRockMonster creepsentityrockmonster, float f)
+    protected void scaleSlime(RockMonsterEntity creepsentityrockmonster, float f)
     {
         GL11.glScalef(creepsentityrockmonster.modelsize, creepsentityrockmonster.modelsize, creepsentityrockmonster.modelsize);
     }
@@ -36,16 +36,16 @@ public class CREEPSRenderRockMonster extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        scaleSlime((CREEPSEntityRockMonster)entityliving, f);
+        scaleSlime((RockMonsterEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityRockMonster entity)
+    protected ResourceLocation getEntityTexture(RockMonsterEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityRockMonster) entity);
+		return getEntityTexture((RockMonsterEntity) entity);
 	}
 }

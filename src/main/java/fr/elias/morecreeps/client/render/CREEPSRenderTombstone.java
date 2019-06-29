@@ -12,8 +12,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelTombstone;
-import fr.elias.morecreeps.common.entity.CREEPSEntityThief;
-import fr.elias.morecreeps.common.entity.CREEPSEntityTombstone;
+import fr.elias.morecreeps.common.entity.ThiefEntity;
+import fr.elias.morecreeps.common.entity.TombstoneEntity;
 
 public class CREEPSRenderTombstone extends RenderLiving
 {
@@ -30,9 +30,9 @@ public class CREEPSRenderTombstone extends RenderLiving
         float f4 = entityliving.getDistanceToEntity(renderManager.livingPlayer);
         String s = "";
         String s1 = "";
-        String s2 = String.valueOf(((CREEPSEntityTombstone)entityliving).name);
-        String s3 = String.valueOf(((CREEPSEntityTombstone)entityliving).level);
-        String s4 = String.valueOf(((CREEPSEntityTombstone)entityliving).deathtype);
+        String s2 = String.valueOf(((TombstoneEntity)entityliving).name);
+        String s3 = String.valueOf(((TombstoneEntity)entityliving).level);
+        String s4 = String.valueOf(((TombstoneEntity)entityliving).deathtype);
         s = (new StringBuilder()).append("\247fHere lies \2476").append(s2).toString();
         s1 = (new StringBuilder()).append("\247f a level \2476").append(s3).append(" \247f").append(s4).toString();
 
@@ -87,13 +87,13 @@ public class CREEPSRenderTombstone extends RenderLiving
         doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityTombstone entity)
+    protected ResourceLocation getEntityTexture(TombstoneEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityTombstone) entity);
+		return getEntityTexture((TombstoneEntity) entity);
 	}
 }

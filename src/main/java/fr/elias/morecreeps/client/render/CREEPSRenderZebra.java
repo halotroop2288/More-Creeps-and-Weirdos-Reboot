@@ -13,8 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelZebra;
-import fr.elias.morecreeps.common.entity.CREEPSEntityTrophy;
-import fr.elias.morecreeps.common.entity.CREEPSEntityZebra;
+import fr.elias.morecreeps.common.entity.TrophyEntity;
+import fr.elias.morecreeps.common.entity.ZebraEntity;
 
 public class CREEPSRenderZebra extends RenderLiving
 {
@@ -26,7 +26,7 @@ public class CREEPSRenderZebra extends RenderLiving
         modelBipedMain = creepsmodelzebra;
     }
 
-    protected void fattenup(CREEPSEntityZebra creepsentityzebra, float f)
+    protected void fattenup(ZebraEntity creepsentityzebra, float f)
     {
         GL11.glScalef(creepsentityzebra.modelsize, creepsentityzebra.modelsize, creepsentityzebra.modelsize);
     }
@@ -37,9 +37,9 @@ public class CREEPSRenderZebra extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityZebra creepsentityzebra = (CREEPSEntityZebra)entityliving;
+        ZebraEntity creepsentityzebra = (ZebraEntity)entityliving;
         modelBipedMain.tamed = creepsentityzebra.tamed;
-        fattenup((CREEPSEntityZebra)entityliving, f);
+        fattenup((ZebraEntity)entityliving, f);
     }
 
     public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
@@ -49,9 +49,9 @@ public class CREEPSRenderZebra extends RenderLiving
         float f3 = 0.01666667F * f2;
         float f4 = entityliving.getDistanceToEntity(renderManager.livingPlayer);
         String s = "";
-        s = (new StringBuilder()).append(s).append(((CREEPSEntityZebra)entityliving).name).toString();
+        s = (new StringBuilder()).append(s).append(((ZebraEntity)entityliving).name).toString();
 
-        if (f4 < 25F && s.length() > 0 && ((CREEPSEntityZebra)entityliving).riddenByEntity == null)
+        if (f4 < 25F && s.length() > 0 && ((ZebraEntity)entityliving).riddenByEntity == null)
         {
             s = (new StringBuilder()).append("\2476").append(s).toString();
             FontRenderer fontrenderer = getFontRendererFromRenderManager();
@@ -68,7 +68,7 @@ public class CREEPSRenderZebra extends RenderLiving
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-            float f5 = (2.0F - ((CREEPSEntityZebra)entityliving).modelsize) * 80F;
+            float f5 = (2.0F - ((ZebraEntity)entityliving).modelsize) * 80F;
             int i = -100 + (int)f5;
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 //            worldRenderer.startDrawingQuads();
@@ -95,13 +95,13 @@ public class CREEPSRenderZebra extends RenderLiving
         doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityZebra entity)
+    protected ResourceLocation getEntityTexture(ZebraEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityZebra) entity);
+		return getEntityTexture((ZebraEntity) entity);
 	}
 }

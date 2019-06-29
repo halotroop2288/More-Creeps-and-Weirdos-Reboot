@@ -14,8 +14,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import fr.elias.morecreeps.common.entity.CREEPSEntityGooGoat;
-import fr.elias.morecreeps.common.entity.CREEPSEntityGuineaPig;
+import fr.elias.morecreeps.common.entity.EntityGooGoat;
+import fr.elias.morecreeps.common.entity.GuineaPigEntity;
 
 public class CREEPSRenderGuineaPig extends RenderLiving
 {
@@ -34,15 +34,15 @@ public class CREEPSRenderGuineaPig extends RenderLiving
         float f4 = entityliving.getDistanceToEntity(renderManager.livingPlayer);
         String s = "";
 
-        if (((CREEPSEntityGuineaPig)entityliving).speedboost > 0)
+        if (((GuineaPigEntity)entityliving).speedboost > 0)
         {
             s = "\2473* \247f";
         }
 
-        s = (new StringBuilder()).append(s).append(((CREEPSEntityGuineaPig)entityliving).name).toString();
-        String s1 = String.valueOf(((CREEPSEntityGuineaPig)entityliving).level);
+        s = (new StringBuilder()).append(s).append(((GuineaPigEntity)entityliving).name).toString();
+        String s1 = String.valueOf(((GuineaPigEntity)entityliving).level);
 
-        if (((CREEPSEntityGuineaPig)entityliving).getHealth() < ((CREEPSEntityGuineaPig)entityliving).getMaxHealth() / 2 && s.length() > 0)
+        if (((GuineaPigEntity)entityliving).getHealth() < ((GuineaPigEntity)entityliving).getMaxHealth() / 2 && s.length() > 0)
         {
             s = (new StringBuilder()).append(s).append(" \247c * WOUNDED *").toString();
         }
@@ -64,7 +64,7 @@ public class CREEPSRenderGuineaPig extends RenderLiving
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-            float f5 = (1.0F - ((CREEPSEntityGuineaPig)entityliving).modelsize) * 20F;
+            float f5 = (1.0F - ((GuineaPigEntity)entityliving).modelsize) * 20F;
             int i = 10 + (int)f5;
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 //            worldRenderer.startDrawingQuads();
@@ -74,8 +74,8 @@ public class CREEPSRenderGuineaPig extends RenderLiving
 //            worldRenderer.addVertex(-j - 1, 8 + i, 0.0D);
 //            worldRenderer.addVertex(j + 1, 8 + i, 0.0D);
 //            worldRenderer.addVertex(j + 1, -1 + i, 0.0D);
-            float f6 = ((CREEPSEntityGuineaPig)entityliving).getHealth();
-            float f7 = ((CREEPSEntityGuineaPig)entityliving).getMaxHealth();
+            float f6 = ((GuineaPigEntity)entityliving).getHealth();
+            float f7 = ((GuineaPigEntity)entityliving).getMaxHealth();
             float f8 = f6 / f7;
             float f9 = 50F * f8;
 //            worldRenderer.setColorRGBA_F(1.0F, 0.0F, 0.0F, 1.0F);
@@ -101,13 +101,13 @@ public class CREEPSRenderGuineaPig extends RenderLiving
         }
     }
 
-    protected void fattenup(CREEPSEntityGuineaPig creepsentityguineapig, float f)
+    protected void fattenup(GuineaPigEntity creepsentityguineapig, float f)
     {
         GL11.glScalef(creepsentityguineapig.modelsize, creepsentityguineapig.modelsize, creepsentityguineapig.modelsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityGuineaPig)entityliving, f);
+        fattenup((GuineaPigEntity)entityliving, f);
     }
     
     public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
@@ -115,13 +115,13 @@ public class CREEPSRenderGuineaPig extends RenderLiving
         doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityGuineaPig entity)
+    protected ResourceLocation getEntityTexture(GuineaPigEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityGuineaPig) entity);
+		return getEntityTexture((GuineaPigEntity) entity);
 	}
 }

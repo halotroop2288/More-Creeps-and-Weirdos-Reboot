@@ -2,12 +2,12 @@ package fr.elias.morecreeps.common.entity.ai;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
-import fr.elias.morecreeps.common.entity.CREEPSEntityBabyMummy;
+import fr.elias.morecreeps.common.entity.BabyMummyEntity;
 
 public class EntityBabyMummyAI extends EntityAIBase
 {
-	CREEPSEntityBabyMummy bmummy;
-	public EntityBabyMummyAI(CREEPSEntityBabyMummy babyMummy)
+	BabyMummyEntity bmummy;
+	public EntityBabyMummyAI(BabyMummyEntity babyMummy)
 	{
 		bmummy = babyMummy;
 	}

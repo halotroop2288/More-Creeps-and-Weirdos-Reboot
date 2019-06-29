@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelG;
-import fr.elias.morecreeps.common.entity.CREEPSEntityFloobShip;
-import fr.elias.morecreeps.common.entity.CREEPSEntityG;
+import fr.elias.morecreeps.common.entity.FloobShipEntity;
+import fr.elias.morecreeps.common.entity.LetterGEntity;
 
 public class CREEPSRenderG extends RenderLiving
 {
@@ -22,22 +22,22 @@ public class CREEPSRenderG extends RenderLiving
         modelBipedMain = creepsmodelg;
     }
 
-    protected void fattenup(CREEPSEntityG creepsentityg, float f)
+    protected void fattenup(LetterGEntity creepsentityg, float f)
     {
         GL11.glScalef(creepsentityg.modelsize, creepsentityg.modelsize, creepsentityg.modelsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityG)entityliving, f);
+        fattenup((LetterGEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityG entity)
+    protected ResourceLocation getEntityTexture(LetterGEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityG) entity);
+		return getEntityTexture((LetterGEntity) entity);
 	}
 }

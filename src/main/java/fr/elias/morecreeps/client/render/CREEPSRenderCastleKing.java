@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelCastleKing;
-import fr.elias.morecreeps.common.entity.CREEPSEntityCastleGuard;
-import fr.elias.morecreeps.common.entity.CREEPSEntityCastleKing;
+import fr.elias.morecreeps.common.entity.CastleGuardEntity;
+import fr.elias.morecreeps.common.entity.CastleKingEntity;
 
 public class CREEPSRenderCastleKing extends RenderLiving
 {
@@ -22,24 +22,24 @@ public class CREEPSRenderCastleKing extends RenderLiving
         modelcastlekingmain = creepsmodelcastleking;
     }
 
-    protected void fattenup(CREEPSEntityCastleKing creepsentitycastleking, float f)
+    protected void fattenup(CastleKingEntity creepsentitycastleking, float f)
     {
         GL11.glScalef(2.0F, 1.5F, 2.0F);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityCastleKing creepsentitycastleking = (CREEPSEntityCastleKing)entityliving;
+        CastleKingEntity creepsentitycastleking = (CastleKingEntity)entityliving;
         modelcastlekingmain.hammerswing = creepsentitycastleking.hammerswing;
-        fattenup((CREEPSEntityCastleKing)entityliving, f);
+        fattenup((CastleKingEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityCastleKing entity)
+    protected ResourceLocation getEntityTexture(CastleKingEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityCastleKing) entity);
+		return getEntityTexture((CastleKingEntity) entity);
 	}
 }

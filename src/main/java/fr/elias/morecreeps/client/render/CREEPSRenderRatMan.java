@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelRatMan;
-import fr.elias.morecreeps.common.entity.CREEPSEntityPyramidGuardian;
-import fr.elias.morecreeps.common.entity.CREEPSEntityRatMan;
+import fr.elias.morecreeps.common.entity.PyramidGuardianEntity;
+import fr.elias.morecreeps.common.entity.RatManEntity;
 
 public class CREEPSRenderRatMan extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderRatMan extends RenderLiving
         modelBipedMain = creepsmodelratman;
     }
 
-    protected void fattenup(CREEPSEntityRatMan creepsentityratman, float f)
+    protected void fattenup(RatManEntity creepsentityratman, float f)
     {
         GL11.glScalef(creepsentityratman.modelsize, creepsentityratman.modelsize, creepsentityratman.modelsize);
     }
@@ -33,18 +33,18 @@ public class CREEPSRenderRatMan extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityRatMan creepsentityratman = (CREEPSEntityRatMan)entityliving;
+        RatManEntity creepsentityratman = (RatManEntity)entityliving;
         modelBipedMain.jumper = creepsentityratman.jumper;
-        fattenup((CREEPSEntityRatMan)entityliving, f);
+        fattenup((RatManEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityRatMan entity)
+    protected ResourceLocation getEntityTexture(RatManEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityRatMan) entity);
+		return getEntityTexture((RatManEntity) entity);
 	}
 }

@@ -4,22 +4,17 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.tileentity.TileEntityMobSpawner;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
-import fr.elias.morecreeps.common.MoreCreepsAndWeirdos;
-import fr.elias.morecreeps.common.entity.CREEPSEntityCastleKing;
+import net.minecraft.world.gen.WorldGenRegion;
+import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.entity.CastleKingEntity;
 
-public class CREEPSWorldGenCastle extends WorldGenerator
+public class CREEPSWorldGenCastle extends WorldGenRegion
 {
     public static Map stringToClassMapping = EntityList.stringToClassMapping;
     public static Random rand = new Random();
@@ -62,7 +57,7 @@ public class CREEPSWorldGenCastle extends WorldGenerator
         chunky = false;
         
         //TODO get the closest player (hope it will not overload the server...) -elias
-        EntityPlayer player = world.getClosestPlayer(i, j, k, 64D); //get player far from 64 blocks
+        PlayerEntity player = world.getClosestPlayer(i, j, k, 64D); //get player far from 64 blocks
 
         if (player == null)
         {
@@ -86,42 +81,42 @@ public class CREEPSWorldGenCastle extends WorldGenerator
             Block i4 = world.getBlockState(new BlockPos(l - 4, i1 - l2, j1 + 30)).getBlock();
             Block k4 = world.getBlockState(new BlockPos(l + 30, i1 - l2, j1 + 30)).getBlock();
 
-            if (i3 != Blocks.air && i3 != Blocks.leaves && i3 != Blocks.water && i3 != Blocks.flowing_water)
+            if (i3 != Blocks.AIR && i3 != Blocks.ACACIA_LEAVES && i3 != Blocks.BIRCH_LEAVES && i3 != Blocks.DARK_OAK_LEAVES && i3 != Blocks.JUNGLE_LEAVES && i3 != Blocks.OAK_LEAVES && i3 != Blocks.SPRUCE_LEAVES && i3 != Blocks.WATER)
             {
                 k2++;
             }
 
-            if (k3 != Blocks.air && k3 != Blocks.leaves && k3 != Blocks.water && k3 != Blocks.flowing_water)
+            if (k3 != Blocks.AIR && k3 != Blocks.ACACIA_LEAVES && k3 != Blocks.BIRCH_LEAVES && k3 != Blocks.DARK_OAK_LEAVES && k3 != Blocks.JUNGLE_LEAVES && k3 != Blocks.OAK_LEAVES && k3 != Blocks.SPRUCE_LEAVES && k3 != Blocks.WATER)
             {
                 k2++;
             }
 
-            if (i4 != Blocks.air && i4 != Blocks.leaves && i4 != Blocks.water && i4 != Blocks.flowing_water)
+            if (i4 != Blocks.AIR && i4 != Blocks.ACACIA_LEAVES && i4 != Blocks.BIRCH_LEAVES && i4 != Blocks.DARK_OAK_LEAVES && i4 != Blocks.JUNGLE_LEAVES && i4 != Blocks.OAK_LEAVES && i4 != Blocks.SPRUCE_LEAVES && i4 != Blocks.WATER)
             {
                 k2++;
             }
 
-            if (k4 != Blocks.air && k4 != Blocks.leaves && k4 != Blocks.water && k4 != Blocks.flowing_water)
+            if (k4 != Blocks.AIR && k4 != Blocks.ACACIA_LEAVES && k4 != Blocks.BIRCH_LEAVES && k4 != Blocks.DARK_OAK_LEAVES && k4 != Blocks.JUNGLE_LEAVES && k4 != Blocks.OAK_LEAVES && k4 != Blocks.SPRUCE_LEAVES && k4 != Blocks.WATER)
             {
                 k2++;
             }
 
-            if (i3 == Blocks.water || i3 == Blocks.flowing_water)
+            if (i3 == Blocks.WATER)
             {
                 flag2 = true;
             }
 
-            if (k3 == Blocks.water || k3 == Blocks.flowing_water)
+            if (k3 == Blocks.WATER)
             {
                 flag2 = true;
             }
 
-            if (i4 == Blocks.water || i4 == Blocks.flowing_water)
+            if (i4 == Blocks.WATER)
             {
                 flag2 = true;
             }
 
-            if (k4 == Blocks.water || k4 == Blocks.flowing_water)
+            if (k4 == Blocks.WATER)
             {
                 flag2 = true;
             }
@@ -305,7 +300,7 @@ public class CREEPSWorldGenCastle extends WorldGenerator
             while (true);
         }
 
-        ItemStack itemstack = new ItemStack(MoreCreepsAndWeirdos.earthgem, 1);
+        ItemStack itemstack = new ItemStack(MoreCreepsReboot.earthgem, 1);
         int l7 = random.nextInt(castleHeight) + 1;
         buildTower(world, random, k1, l1, i2, l, i1, j1, true, itemstack, l7);
 
@@ -339,7 +334,7 @@ public class CREEPSWorldGenCastle extends WorldGenerator
             world.setBlockState(new BlockPos(l + k9, i1 + 9, j1 - 6), cobbler(1, random));
         }
 
-        itemstack = new ItemStack(MoreCreepsAndWeirdos.mininggem, 1);
+        itemstack = new ItemStack(MoreCreepsReboot.mininggem, 1);
         l7 = random.nextInt(castleHeight) + 1;
         buildTower(world, random, k1, l1, i2, l + 25, i1, j1, false, itemstack, l7);
 
@@ -373,7 +368,7 @@ public class CREEPSWorldGenCastle extends WorldGenerator
             world.setBlockState(new BlockPos(l + i10, i1 + 9, j1 + 30), cobbler(1, random));
         }
 
-        itemstack = new ItemStack(MoreCreepsAndWeirdos.skygem, 1);
+        itemstack = new ItemStack(MoreCreepsReboot.skygem, 1);
         l7 = random.nextInt(castleHeight) + 1;
         buildTower(world, random, k1, l1, i2, l + 25, i1, j1 + 25, false, itemstack, l7);
 
@@ -407,7 +402,7 @@ public class CREEPSWorldGenCastle extends WorldGenerator
             world.setBlockState(new BlockPos(l - 6, i1 + 9, j1 + k10), cobbler(1, random));
         }
 
-        itemstack = new ItemStack(MoreCreepsAndWeirdos.healinggem, 1);
+        itemstack = new ItemStack(MoreCreepsReboot.healinggem, 1);
         l7 = random.nextInt(castleHeight) + 1;
         buildTower(world, random, k1, l1, i2, l, i1, j1 + 25, true, itemstack, l7);
 
@@ -537,7 +532,7 @@ public class CREEPSWorldGenCastle extends WorldGenerator
         }
 
         l7 = random.nextInt(castleHeight) + 1;
-        itemstack = new ItemStack(MoreCreepsAndWeirdos.firegem, 1);
+        itemstack = new ItemStack(MoreCreepsReboot.firegem, 1);
         boolean flag5 = false;
 
         for (int l15 = 0; l15 < castleHeight * 7; l15 += 7)
@@ -565,7 +560,7 @@ public class CREEPSWorldGenCastle extends WorldGenerator
             }
         }
 
-        CREEPSEntityCastleKing creepsentitycastleking = new CREEPSEntityCastleKing(world);
+        CastleKingEntity creepsentitycastleking = new CastleKingEntity(world);
         creepsentitycastleking.setLocationAndAngles(l + 9 + 6, i1 + castleHeight * 7, (j1 + 16) - 4, world.rand.nextFloat() * 360F, 0.0F);
         creepsentitycastleking.setPosition(l + 9 + 6, i1 + castleHeight * 7, (j1 + 16) - 4);
         world.spawnEntityInWorld(creepsentitycastleking);
@@ -920,10 +915,10 @@ public class CREEPSWorldGenCastle extends WorldGenerator
                 return new ItemStack(Items.arrow, random.nextInt(30) + 10);
 
             case 5:
-                return new ItemStack(MoreCreepsAndWeirdos.money, random.nextInt(4) + 1);
+                return new ItemStack(MoreCreepsReboot.money, random.nextInt(4) + 1);
 
             case 6:
-                return new ItemStack(MoreCreepsAndWeirdos.evilegg, random.nextInt(4) + 1);
+                return new ItemStack(MoreCreepsReboot.evilegg, random.nextInt(4) + 1);
 
             case 7:
                 return new ItemStack(Items.leather, 1);
@@ -941,10 +936,10 @@ public class CREEPSWorldGenCastle extends WorldGenerator
                 return new ItemStack(Items.bow, 1);
 
             case 12:
-                return new ItemStack(MoreCreepsAndWeirdos.bandaid, random.nextInt(15) + 1);
+                return new ItemStack(MoreCreepsReboot.bandaid, random.nextInt(15) + 1);
 
             case 13:
-                return new ItemStack(MoreCreepsAndWeirdos.blorpcola, random.nextInt(10) + 5);
+                return new ItemStack(MoreCreepsReboot.blorpcola, random.nextInt(10) + 5);
 
             case 14:
                 return new ItemStack(Items.sign, 1);
@@ -968,34 +963,34 @@ public class CREEPSWorldGenCastle extends WorldGenerator
                 return new ItemStack(Items.iron_shovel, 1);
 
             case 21:
-                return new ItemStack(MoreCreepsAndWeirdos.evilegg, random.nextInt(15) + 1);
+                return new ItemStack(MoreCreepsReboot.evilegg, random.nextInt(15) + 1);
 
             case 22:
-                return new ItemStack(MoreCreepsAndWeirdos.goodonut, random.nextInt(15) + 1);
+                return new ItemStack(MoreCreepsReboot.goodonut, random.nextInt(15) + 1);
 
             case 23:
-                return new ItemStack(MoreCreepsAndWeirdos.money, random.nextInt(10) + 1);
+                return new ItemStack(MoreCreepsReboot.money, random.nextInt(10) + 1);
 
             case 24:
                 return new ItemStack(Items.water_bucket, 1);
 
             case 25:
-                return new ItemStack(MoreCreepsAndWeirdos.frisbee, 1);
+                return new ItemStack(MoreCreepsReboot.frisbee, 1);
 
             case 26:
                 return new ItemStack(Items.cake, 1);
 
             case 27:
-                return new ItemStack(MoreCreepsAndWeirdos.money, random.nextInt(10) + 5);
+                return new ItemStack(MoreCreepsReboot.money, random.nextInt(10) + 5);
 
             case 28:
                 return new ItemStack(Items.milk_bucket, 1);
 
             case 29:
-                return new ItemStack(MoreCreepsAndWeirdos.lolly, random.nextInt(4) + 1);
+                return new ItemStack(MoreCreepsReboot.lolly, random.nextInt(4) + 1);
 
             case 30:
-                return new ItemStack(MoreCreepsAndWeirdos.money, random.nextInt(24) + 1);
+                return new ItemStack(MoreCreepsReboot.money, random.nextInt(24) + 1);
 
             case 32:
                 return new ItemStack(Items.diamond, 1);
@@ -1010,10 +1005,10 @@ public class CREEPSWorldGenCastle extends WorldGenerator
                 return new ItemStack(Items.golden_boots, 1);
 
             case 36:
-                return new ItemStack(MoreCreepsAndWeirdos.shrinkray, 1);
+                return new ItemStack(MoreCreepsReboot.shrinkray, 1);
 
             case 37:
-                return new ItemStack(MoreCreepsAndWeirdos.horseheadgem, 1);
+                return new ItemStack(MoreCreepsReboot.horseheadgem, 1);
 
             case 38:
                 return new ItemStack(Items.diamond, 1);
@@ -1022,7 +1017,7 @@ public class CREEPSWorldGenCastle extends WorldGenerator
                 return new ItemStack(Items.golden_apple, 1);
 
             case 40:
-                return new ItemStack(MoreCreepsAndWeirdos.money, random.nextInt(49) + 1);
+                return new ItemStack(MoreCreepsReboot.money, random.nextInt(49) + 1);
 
             case 31:
             default:

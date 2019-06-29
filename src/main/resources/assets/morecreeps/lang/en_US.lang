@@ -1,49 +1,50 @@
-#Other
+// Other
 itemGroup.creepsTab=More Creeps And Weirdos Reboot
 
-#Items
-item.blorpCola.name=Blorp Cola
-item.bandAid.name=Band Aid
-item.gooDonut.name=Goo Donut
-item.money.name=Money
-item.raygun.name=Raygun
-item.shrinkray.name=Shrink Ray
-item.shrinkshrink.name=Shrink shrink
-item.limbs.name=Limbs
-item.babyJarEmpty.name=Baby Jar (Empty)
-item.babyJarFull.name=Baby Jar (Full)
-item.mobilephone.name=Mobile Phone
-item.growray.name=Growray
-item.frisbee.name=Frisbee
-item.rayray.name=Ray ray
-item.guineapigRadio.name=Guinea Pig Radio
-item.evilEgg.name=Evil Egg
-item.rocket.name=Rocket
-item.atomPacket.name=Atom Packet
-item.ram16k.name=Ram 16K
-item.battery.name=Battery
-item.horseHeadGem.name=Horse Head Gem
+// Items
+item.arm_sword.name=Arm Sword
 item.armyGem.name=Army Gem
-item.gun.name=Gun
+item.atomPacket.name=Atom Packet
+item.baby_jar_empty.name=Baby Jar (Empty)
+item.baby_jar_full.name=Baby Jar (Full)
+item.band_aid.name=Band Aid
+item.battery.name=Battery
+item.blorp_cola.name=Blorp Cola
 item.bullet.name=Bullet
-item.lifeGem.name=Life Gem
-item.lolly.name=Lolly
-item.armSword.name=Arm Sword
+item.caveman_club.name=Caveman Club
 item.donut.name=Donut
+item.earth_gem.name=Earth Gem
+item.evilEgg.name=Evil Egg
 item.extinguisher.name=Extinguisher
-item.zebrahide.name=Zebrahide
-item.fireGem.name=Fire Gem
-item.earthGem.name=Earth Gem
-item.miningGem.name=Mining Gem
-item.healingGem.name=Healing Gem
-item.skyGem.name=Sky Gem
-item.gemSword.name=Gem Sword
-item.moopsWorm.name=Moops Worm
-item.cavemanClub.name=Caveman Club
+item.fire_gem.name=Fire Gem
+item.frisbee.name=Frisbee
+item.gem_sword.name=Gem Sword
+item.goo_donut.name=Goo Donut
+item.grow_ray.name=Grow Ray
+item.guinea_pig_radio.name=Guinea Pig Radio
+item.gun.name=Gun
+item.healing_gem.name=Healing Gem
+item.horse_head_gem.name=Horse Head Gem
+item.life_gem.name=Life Gem
+item.limbs.name=Limbs
+item.lolly.name=Lolly
+item.mining_gem.name=Mining Gem
+item.mobile_phone.name=Mobile Phone
+item.money.name=Money
+item.moops_worm.name=Moops Worm
 item.popsicle.name=Popsicle
-item.zebraHelmet.name=Zebra Helmet
-item.zebraBody.name=Zebra Chestplate
-item.zebraLegs.name=Zebra Legs
-item.zebraBoots.name=Zebra Boots
+item.ram16k.name=Ram 16K
+item.ray_gun.name=Raygun
+item.rayray.name=Ray ray
+item.rocket.name=Rocket
+item.shrink_ray.name=Shrink Ray
+item.shrink_shrink.name=Shrink Shrink
+item.sky_gem.name=Sky Gem
+item.tombstone.name=Tombstone
+item.zebra_boots.name=Zebra Boots
+item.zebra_chestplate.name=Zebra Chestplate
+item.zebra_helmet.name=Zebra Helmet
+item.zebra_hide.name=Zebrahide
+item.zebra_leggings.name=Zebra Legs
 
-#Entity
+// Entity

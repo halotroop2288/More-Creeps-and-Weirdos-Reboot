@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelEvilCreature;
-import fr.elias.morecreeps.common.entity.CREEPSEntityDoghouse;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilCreature;
+import fr.elias.morecreeps.common.entity.DogHouseEntity;
+import fr.elias.morecreeps.common.entity.EvilCreatureEntity;
 
 public class CREEPSRenderEvilCreature extends RenderLiving
 {
@@ -29,23 +29,23 @@ public class CREEPSRenderEvilCreature extends RenderLiving
     /**
      * sets the scale for the slime based on getSlimeSize in EntitySlime
      */
-    protected void scaleSlime(CREEPSEntityEvilCreature creepsentityevilcreature, float f)
+    protected void scaleSlime(EvilCreatureEntity creepsentityevilcreature, float f)
     {
         GL11.glScalef(creepsentityevilcreature.modelsize, creepsentityevilcreature.modelsize, creepsentityevilcreature.modelsize);
     }
     
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        scaleSlime((CREEPSEntityEvilCreature)entityliving, f);
+        scaleSlime((EvilCreatureEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityEvilCreature entity)
+    protected ResourceLocation getEntityTexture(EvilCreatureEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityEvilCreature) entity);
+		return getEntityTexture((EvilCreatureEntity) entity);
 	}
 }

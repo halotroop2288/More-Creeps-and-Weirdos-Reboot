@@ -11,8 +11,8 @@ import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelGooGoat;
 import fr.elias.morecreeps.client.render.layers.LayerGooGoat;
-import fr.elias.morecreeps.common.entity.CREEPSEntityG;
-import fr.elias.morecreeps.common.entity.CREEPSEntityGooGoat;
+import fr.elias.morecreeps.common.entity.LetterGEntity;
+import fr.elias.morecreeps.common.entity.EntityGooGoat;
 
 public class CREEPSRenderGooGoat extends RenderLiving
 {
@@ -49,7 +49,7 @@ public class CREEPSRenderGooGoat extends RenderLiving
     /**
      * sets the scale for the slime based on getSlimeSize in EntitySlime
      */
-    protected void scaleSlime(CREEPSEntityGooGoat creepsentitygoogoat, float f)
+    protected void scaleSlime(EntityGooGoat creepsentitygoogoat, float f)
     {
         GL11.glEnable(GL11.GL_NORMALIZE);
         GL11.glEnable(GL11.GL_BLEND);
@@ -63,7 +63,7 @@ public class CREEPSRenderGooGoat extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        scaleSlime((CREEPSEntityGooGoat)entityliving, f);
+        scaleSlime((EntityGooGoat)entityliving, f);
     }
 
     /*protected int shouldRenderPass(EntityLiving entityliving, int i, float f)
@@ -71,13 +71,13 @@ public class CREEPSRenderGooGoat extends RenderLiving
         return func_179_a((CREEPSEntityGooGoat)entityliving, i, f);
     }*/
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityGooGoat entity)
+    protected ResourceLocation getEntityTexture(EntityGooGoat entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityGooGoat) entity);
+		return getEntityTexture((EntityGooGoat) entity);
 	}
 }

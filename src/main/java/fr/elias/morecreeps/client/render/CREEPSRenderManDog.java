@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelManDog;
-import fr.elias.morecreeps.common.entity.CREEPSEntityLolliman;
-import fr.elias.morecreeps.common.entity.CREEPSEntityManDog;
+import fr.elias.morecreeps.common.entity.LollimanEntity;
+import fr.elias.morecreeps.common.entity.ManDogEntity;
 
 public class CREEPSRenderManDog extends RenderLiving
 {
@@ -30,23 +30,23 @@ public class CREEPSRenderManDog extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        CREEPSEntityManDog creepsentitymandog = (CREEPSEntityManDog)entityliving;
+        ManDogEntity creepsentitymandog = (ManDogEntity)entityliving;
         superdog.superfly = creepsentitymandog.superfly;
-        fattenup((CREEPSEntityManDog)entityliving, f);
+        fattenup((ManDogEntity)entityliving, f);
     }
 
-    protected void fattenup(CREEPSEntityManDog creepsentitymandog, float f)
+    protected void fattenup(ManDogEntity creepsentitymandog, float f)
     {
         GL11.glScalef(creepsentitymandog.modelsize, creepsentitymandog.modelsize, creepsentitymandog.modelsize);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityManDog entity)
+    protected ResourceLocation getEntityTexture(ManDogEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityManDog) entity);
+		return getEntityTexture((ManDogEntity) entity);
 	}
 }

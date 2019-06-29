@@ -1,49 +1,49 @@
-#Other
+// Other
 itemGroup.creepsTab=More Creeps And Weirdos Unofficial
 
-#Items
-item.blorpCola.name=Blorp Cola
-item.bandAid.name=Tirita
-item.gooDonut.name=Goo Rosquilla
-item.money.name=Dinero
-item.raygun.name=Pistola de Rayos
-item.shrinkray.name=Pistola de Encoger
-item.shrinkshrink.name=Encoger encoger
-item.limbs.name=Extremidades
+// Items
+item.arm_sword.name=Espada de Brazos
+item.army_gem.name=Gema de Ejército
+item.atom_packet.name=Paquete de Átomo
 item.babyJarEmpty.name=Bote de Bebé (Vacío)
 item.babyJarFull.name=Bote de Bebé (Lleno)
-item.mobilephone.name=Móvil
-item.growray.name=Pistola de Crecer
-item.frisbee.name=Frisbee
-item.rayray.name=Rayo rayo
-item.guineapigRadio.name=Radio de Cabayo
-item.evilEgg.name=Malo Huevo
-item.rocket.name=Rocket
-item.atomPacket.name=Paquete de Átomo
-item.ram16k.name=RAM 16K
+item.bandAid.name=Tirita
 item.battery.name=Pila
-item.horseHeadGem.name=Gema de Cabeza de Caballo
-item.armyGem.name=Gema de Ejército
-item.gun.name=Arma
+item.blorpCola.name=Blorp Cola
 item.bullet.name=Bala
-item.lifeGem.name=Gema de Vida
-item.lolly.name=Piruleta
-item.armSword.name=Espada de Brazos
+item.cavemanClub.name=Club del Hombre de las Cavernas
 item.donut.name=Rosquilla
-item.extinguisher.name=Extintor
-item.zebrahide.name=Piel de Cebra
-item.fireGem.name=Gema de Fuego
 item.earthGem.name=Gema de Suelo
-item.miningGem.name=Mining Gema de Minando
+item.evilEgg.name=Malo Huevo
+item.extinguisher.name=Extintor
+item.fireGem.name=Gema de Fuego
+item.frisbee.name=Frisbee
+item.gemSword.name=Espada de Gema
+item.gooDonut.name=Goo Rosquilla
+item.growray.name=Pistola de Crecer
+item.guineapigRadio.name=Radio de Cabayo
+item.gun.name=Arma
 item.healingGem.name=Healing Gem
-item.skyGem.name=Sky Gem
-item.gemSword.name=Gem Sword
+item.horseHeadGem.name=Gema de Cabeza de Caballo
+item.lifeGem.name=Gema de Vida
+item.limbs.name=Extremidades
+item.lolly.name=Piruleta
+item.miningGem.name=Mining Gema de Minando
+item.mobilephone.name=Móvil
+item.money.name=Dinero
 item.moopsWorm.name=Moops Worm
-item.cavemanClub.name=Caveman Club
 item.popsicle.name=Popsicle
-item.zebraHelmet.name=Zebra Helmet
+item.ram16k.name=RAM 16K
+item.raygun.name=Pistola de Rayos
+item.rayray.name=Rayo Rayo
+item.rocket.name=Rocket
+item.shrinkray.name=Pistola de Encoger
+item.shrinkshrink.name=Encoger encoger
+item.skyGem.name=Gema del Cielo
 item.zebraBody.name=Zebra Chestplate
-item.zebraLegs.name=Zebra Legs
 item.zebraBoots.name=Zebra Boots
+item.zebraHelmet.name=Zebra Helmet
+item.zebraLegs.name=Zebra Legs
+item.zebrahide.name=Piel de Cebra
 
-#Entity
+// Entity

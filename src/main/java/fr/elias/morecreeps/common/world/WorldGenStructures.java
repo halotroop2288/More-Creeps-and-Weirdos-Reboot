@@ -2,16 +2,19 @@ package fr.elias.morecreeps.common.world;
 
 import java.util.Random;
 
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import fr.elias.morecreeps.client.config.CREEPSConfig;
-import fr.elias.morecreeps.common.MoreCreepsAndWeirdos;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class WorldGenStructures implements IWorldGenerator {
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
+	public void generate(Random random, int chunkX, int chunkZ, World world, ChunkGenerator chunkGenerator, AbstractChunkProvider chunkProvider)
 	{
 		generateSurface(world, world.rand, chunkX, chunkZ);
 	}
@@ -28,7 +31,7 @@ public class WorldGenStructures implements IWorldGenerator {
                 if ((new CREEPSWorldGenPyramid()).generate(world, random, k, byte0, j1))
                 {
                 	CREEPSConfig.pyramids = 0;
-                	MoreCreepsAndWeirdos.proxy.playSoundEffectAtPlayer(world, "morecreeps:pyramiddiscovered", 0.95F, 1.0F);
+                	world.playSound(null, null, SoundsHandler.PYRAMID_DISCOVERED, SoundCategory.VOICE, 0.95F, 1.0F);
                 }
             }
         }
@@ -48,7 +51,7 @@ public class WorldGenStructures implements IWorldGenerator {
                 if ((new CREEPSWorldGenCastle()).generate(world, random, l, i1, k1))
                 {
                 	CREEPSConfig.castlecount = 0;
-                	MoreCreepsAndWeirdos.proxy.playSoundEffectAtPlayer(world, "morecreeps:battlecastle", 0.95F, 1.0F);
+                	world.playSound(null, null, SoundsHandler.BATTLE_CASTLE, SoundCategory.VOICE, 0.95F, 1.0F);
                 }
             }
         }

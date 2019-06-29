@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelKid;
-import fr.elias.morecreeps.common.entity.CREEPSEntityHunchback;
-import fr.elias.morecreeps.common.entity.CREEPSEntityKid;
+import fr.elias.morecreeps.common.entity.HunchbackEntity;
+import fr.elias.morecreeps.common.entity.KidEntity;
 
 public class CREEPSRenderKid extends RenderLiving
 {
@@ -22,7 +22,7 @@ public class CREEPSRenderKid extends RenderLiving
         modelBipedMain = creepsmodelkid;
     }
 
-    protected void fattenup(CREEPSEntityKid creepsentitykid, float f)
+    protected void fattenup(KidEntity creepsentitykid, float f)
     {
         GL11.glScalef(creepsentitykid.modelsize, creepsentitykid.modelsize, creepsentitykid.modelsize);
     }
@@ -33,16 +33,16 @@ public class CREEPSRenderKid extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityKid)entityliving, f);
+        fattenup((KidEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityKid entity)
+    protected ResourceLocation getEntityTexture(KidEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityKid) entity);
+		return getEntityTexture((KidEntity) entity);
 	}
 }

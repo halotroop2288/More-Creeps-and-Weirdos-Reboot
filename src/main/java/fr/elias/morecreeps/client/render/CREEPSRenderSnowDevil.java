@@ -14,8 +14,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import fr.elias.morecreeps.common.entity.CREEPSEntitySnowDevil;
-import fr.elias.morecreeps.common.entity.CREEPSEntitySquimp;
+import fr.elias.morecreeps.common.entity.SnowDevilEntity;
+import fr.elias.morecreeps.common.entity.SquimpEntity;
 
 public class CREEPSRenderSnowDevil extends RenderLiving
 {
@@ -26,7 +26,7 @@ public class CREEPSRenderSnowDevil extends RenderLiving
         super(Minecraft.getMinecraft().getRenderManager(), modelbase, f);
     }
 
-    protected void fattenup(CREEPSEntitySnowDevil creepsentitysnowdevil, float f)
+    protected void fattenup(SnowDevilEntity creepsentitysnowdevil, float f)
     {
         GL11.glScalef(creepsentitysnowdevil.modelsize, creepsentitysnowdevil.modelsize, creepsentitysnowdevil.modelsize);
     }
@@ -37,7 +37,7 @@ public class CREEPSRenderSnowDevil extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntitySnowDevil)entityliving, f);
+        fattenup((SnowDevilEntity)entityliving, f);
     }
 
     public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
@@ -46,9 +46,9 @@ public class CREEPSRenderSnowDevil extends RenderLiving
         float f2 = 1.6F;
         float f3 = 0.01666667F * f2;
         float f4 = entityliving.getDistanceToEntity(renderManager.livingPlayer);
-        String s = ((CREEPSEntitySnowDevil)entityliving).name;
+        String s = ((SnowDevilEntity)entityliving).name;
 
-        if (((CREEPSEntitySnowDevil)entityliving).getHealth() < ((CREEPSEntitySnowDevil)entityliving).getMaxHealth() / 2 && s.length() > 0)
+        if (((SnowDevilEntity)entityliving).getHealth() < ((SnowDevilEntity)entityliving).getMaxHealth() / 2 && s.length() > 0)
         {
             s = (new StringBuilder()).append(s).append(" \2474 * WOUNDED *").toString();
         }
@@ -69,7 +69,7 @@ public class CREEPSRenderSnowDevil extends RenderLiving
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldRenderer = tessellator.getWorldRenderer();
-            float f5 = (1.0F - ((CREEPSEntitySnowDevil)entityliving).modelsize) * 55F;
+            float f5 = (1.0F - ((SnowDevilEntity)entityliving).modelsize) * 55F;
             int i = 0 + (int)f5;
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 //            worldRenderer.startDrawingQuads();
@@ -96,13 +96,13 @@ public class CREEPSRenderSnowDevil extends RenderLiving
         doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntitySnowDevil entity)
+    protected ResourceLocation getEntityTexture(SnowDevilEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntitySnowDevil) entity);
+		return getEntityTexture((SnowDevilEntity) entity);
 	}
 }

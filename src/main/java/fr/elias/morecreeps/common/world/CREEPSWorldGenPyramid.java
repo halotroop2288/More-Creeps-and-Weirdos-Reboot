@@ -3,22 +3,14 @@ package fr.elias.morecreeps.common.world;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.tileentity.TileEntityMobSpawner;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
-import fr.elias.morecreeps.common.MoreCreepsAndWeirdos;
-import fr.elias.morecreeps.common.MoreCreepsAndWeirdos;
-import fr.elias.morecreeps.common.entity.CREEPSEntityPyramidGuardian;
+import net.minecraft.world.gen.WorldGenRegion;
+import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.entity.PyramidGuardianEntity;
 
-public class CREEPSWorldGenPyramid extends WorldGenerator
+public class CREEPSWorldGenPyramid extends WorldGenRegion
 {
     public static Random rand = new Random();
     public boolean chunky;
@@ -276,27 +268,27 @@ public class CREEPSWorldGenPyramid extends WorldGenerator
 
                 if (k8 == 0)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsAndWeirdos.goodonut, rand.nextInt(15) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.goodonut, rand.nextInt(15) + 1, 0));
                 }
 
                 if (k8 == 1)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsAndWeirdos.bandaid, rand.nextInt(15) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.bandaid, rand.nextInt(15) + 1, 0));
                 }
 
                 if (k8 == 2)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsAndWeirdos.raygun, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.raygun, 1, 0));
                 }
 
                 if (k8 == 3)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsAndWeirdos.money, rand.nextInt(15) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.money, rand.nextInt(15) + 1, 0));
                 }
 
                 if (k8 == 4)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsAndWeirdos.blorpcola, rand.nextInt(10) + 5, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.blorpcola, rand.nextInt(10) + 5, 0));
                 }
 
                 if (k8 == 5)
@@ -336,7 +328,7 @@ public class CREEPSWorldGenPyramid extends WorldGenerator
 
                 if (k8 == 12)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsAndWeirdos.evilegg, rand.nextInt(15) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.evilegg, rand.nextInt(15) + 1, 0));
                 }
 
                 if (k8 == 13)
@@ -406,7 +398,7 @@ public class CREEPSWorldGenPyramid extends WorldGenerator
 
                 if (k8 == 26)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsAndWeirdos.evilegg, rand.nextInt(40) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.evilegg, rand.nextInt(40) + 1, 0));
                 }
 
                 if (k8 == 16)
@@ -415,7 +407,7 @@ public class CREEPSWorldGenPyramid extends WorldGenerator
                 }
             }
 
-            CREEPSEntityPyramidGuardian creepsentitypyramidguardian = new CREEPSEntityPyramidGuardian(world);
+            PyramidGuardianEntity creepsentitypyramidguardian = new PyramidGuardianEntity(world);
             creepsentitypyramidguardian.setLocationAndAngles((i + rows) - 2, j - 1, (k + columns) - 3, 300F, 0.0F);
             creepsentitypyramidguardian.motionX = 0.0D;
             creepsentitypyramidguardian.motionY = 0.0D;

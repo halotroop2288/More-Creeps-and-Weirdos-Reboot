@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import fr.elias.morecreeps.client.models.CREEPSModelPreacher;
-import fr.elias.morecreeps.common.entity.CREEPSEntityPreacher;
+import fr.elias.morecreeps.common.entity.PreacherEntity;
 
 public class CREEPSRenderPreacher extends RenderLiving
 {
@@ -17,14 +17,14 @@ public class CREEPSRenderPreacher extends RenderLiving
         modelBipedMain = creepsmodelpreacher;
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityPreacher entity)
+    protected ResourceLocation getEntityTexture(PreacherEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityPreacher) entity);
+		return getEntityTexture((PreacherEntity) entity);
 	}
 
 }

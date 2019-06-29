@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelCamel;
-import fr.elias.morecreeps.common.entity.CREEPSEntityCamel;
+import fr.elias.morecreeps.common.entity.CamelEntity;
 
 public class CREEPSRenderCamel extends RenderLiving
 {
@@ -26,7 +26,7 @@ public class CREEPSRenderCamel extends RenderLiving
         shadowSize = f;
     }
 
-    protected void fattenup(CREEPSEntityCamel creepsentitycamel, float f)
+    protected void fattenup(CamelEntity creepsentitycamel, float f)
     {
         GL11.glScalef(creepsentitycamel.modelsize, creepsentitycamel.modelsize, creepsentitycamel.modelsize);
     }
@@ -37,7 +37,7 @@ public class CREEPSRenderCamel extends RenderLiving
      */
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityCamel)entityliving, f);
+        fattenup((CamelEntity)entityliving, f);
     }
 
     public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
@@ -47,9 +47,9 @@ public class CREEPSRenderCamel extends RenderLiving
         float f3 = 0.01666667F * f2;
         float f4 = entityliving.getDistanceToEntity(renderManager.livingPlayer);
         String s = "";
-        s = (new StringBuilder()).append(s).append(((CREEPSEntityCamel)entityliving).name).toString();
+        s = (new StringBuilder()).append(s).append(((CamelEntity)entityliving).name).toString();
 
-        if (f4 < 25F && s.length() > 0 && ((CREEPSEntityCamel)entityliving).riddenByEntity == null)
+        if (f4 < 25F && s.length() > 0 && ((CamelEntity)entityliving).riddenByEntity == null)
         {
             s = (new StringBuilder()).append("\2476").append(s).toString();
             FontRenderer fontrenderer = getFontRendererFromRenderManager();
@@ -70,7 +70,7 @@ public class CREEPSRenderCamel extends RenderLiving
             WorldRenderer worldRenderer = tessellator.getWorldRenderer();
             
             
-            float f5 = (2.0F - ((CREEPSEntityCamel)entityliving).modelsize) * 80F;
+            float f5 = (2.0F - ((CamelEntity)entityliving).modelsize) * 80F;
             int i = -140 + (int)f5;
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             
@@ -108,13 +108,13 @@ public class CREEPSRenderCamel extends RenderLiving
         doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityCamel entity) {
+    protected ResourceLocation getEntityTexture(CamelEntity entity) {
 		return new ResourceLocation(entity.texture);
 	}
     
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
 		
-		return getEntityTexture((CREEPSEntityCamel) entity);
+		return getEntityTexture((CamelEntity) entity);
 	}
 }

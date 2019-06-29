@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import fr.elias.morecreeps.client.models.CREEPSModelSquimp;
-import fr.elias.morecreeps.common.entity.CREEPSEntitySquimp;
+import fr.elias.morecreeps.common.entity.SquimpEntity;
 
 public class CREEPSRenderSquimp extends RenderLiving
 {
@@ -14,13 +14,13 @@ public class CREEPSRenderSquimp extends RenderLiving
         super(Minecraft.getMinecraft().getRenderManager(), creepsmodelsquimp, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntitySquimp entity)
+    protected ResourceLocation getEntityTexture(SquimpEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntitySquimp) entity);
+		return getEntityTexture((SquimpEntity) entity);
 	}
 }

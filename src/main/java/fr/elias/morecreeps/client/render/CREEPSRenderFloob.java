@@ -9,8 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelFloob;
-import fr.elias.morecreeps.common.entity.CREEPSEntityEvilSnowman;
-import fr.elias.morecreeps.common.entity.CREEPSEntityFloob;
+import fr.elias.morecreeps.common.entity.EvilSnowmanEntity;
+import fr.elias.morecreeps.common.entity.FloobEntity;
 
 public class CREEPSRenderFloob extends RenderLiving
 {
@@ -22,22 +22,22 @@ public class CREEPSRenderFloob extends RenderLiving
         modelFloobMain = creepsmodelfloob;
     }
 
-    protected void fattenup(CREEPSEntityFloob creepsentityfloob, float f)
+    protected void fattenup(FloobEntity creepsentityfloob, float f)
     {
         GL11.glScalef(creepsentityfloob.modelsize, creepsentityfloob.modelsize, creepsentityfloob.modelsize);
     }
     protected void preRenderCallback(EntityLivingBase entityliving, float f)
     {
-        fattenup((CREEPSEntityFloob)entityliving, f);
+        fattenup((FloobEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityFloob entity)
+    protected ResourceLocation getEntityTexture(FloobEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityFloob) entity);
+		return getEntityTexture((FloobEntity) entity);
 	}
 }
