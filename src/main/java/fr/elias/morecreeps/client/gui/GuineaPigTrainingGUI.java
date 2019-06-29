@@ -3,6 +3,9 @@ package fr.elias.morecreeps.client.gui;
 import java.io.IOException;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,16 +19,17 @@ import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.common.entity.GuineaPigEntity;
 
-public class GuineaPigTrainingGUI extends GuiScreenEvent
+public class GuineaPigTrainingGUI extends Screen
 {
     private GuineaPigEntity guineapig;
-    private GuiTextField namescreen;
+    private TextFieldWidget namescreen;
     private boolean field_28217_m;
     private float xSize_lo;
     private float ySize_lo;
 
     public GuineaPigTrainingGUI(GuineaPigEntity creepsentityguineapig)
     {
+        super(gui);
         guineapig = creepsentityguineapig;
     }
 
@@ -37,12 +41,12 @@ public class GuineaPigTrainingGUI extends GuiScreenEvent
         Keyboard.enableRepeatEvents(true);
         buttonList.clear();
         byte byte0 = -16;
-        buttonList.add(new GuiButton(2, width / 2 - 110, height / 4 + 8 + byte0, 98, 20, "\2476<-\247f ATTACK \2476->"));
-        buttonList.add(new GuiButton(3, width / 2 + 12, height / 4 + 8 + byte0, 98, 20, "\2476>> \247f DEFENSE \2476<<"));
-        buttonList.add(new GuiButton(4, width / 2 - 110, height / 4 + 65 + byte0, 98, 20, "\2476++\247f HEALING \2476++"));
-        buttonList.add(new GuiButton(5, width / 2 + 12, height / 4 + 65 + byte0, 98, 20, "\2476((\247f SPEED \2476))"));
-        buttonList.add(new GuiButton(0, width / 2 - 100, height / 4 + 158 + byte0, 98, 20, "BACK"));
-        buttonList.add(new GuiButton(1, width / 2 + 2, height / 4 + 158 + byte0, 98, 20, "DONE"));
+        this.addButton(new Button(2, width / 2 - 110, height / 4 + 8 + byte0, 98, 20, "\2476<-\247f ATTACK \2476->"));
+        this.addButton(new Button(3, width / 2 + 12, height / 4 + 8 + byte0, 98, 20, "\2476>> \247f DEFENSE \2476<<"));
+        this.addButton(new Button(4, width / 2 - 110, height / 4 + 65 + byte0, 98, 20, "\2476++\247f HEALING \2476++"));
+        this.addButton(new Button(5, width / 2 + 12, height / 4 + 65 + byte0, 98, 20, "\2476((\247f SPEED \2476))"));
+        this.addButton(new Button(0, width / 2 - 100, height / 4 + 158 + byte0, 98, 20, "BACK"));
+        this.addButton(new Button(1, width / 2 + 2, height / 4 + 158 + byte0, 98, 20, "DONE"));
     }
 
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)

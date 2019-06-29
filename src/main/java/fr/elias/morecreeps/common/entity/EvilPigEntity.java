@@ -1,50 +1,52 @@
 package fr.elias.morecreeps.common.entity;
 
+import fr.elias.morecreeps.common.Reference;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathNavigateGround;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.EnumDifficulty;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 
-public class EvilPigEntity extends EntityMob
+public class EvilPigEntity extends MobEntity
 {
 	
     public float modelsize;
-    public String texture;
+    public ResourceLocation texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "evilpig.png");
+    public float width = getWidth();
+    public float height = getHeight();
+    public float length = getWidth();
 
     public EvilPigEntity(World world)
     {
-        super(world);
-        texture = "morecreeps:textures/entity/evilpig.png";
-        setSize(width * 2.2F, height * 1.6F);
-        isImmuneToFire = true;
+        super(null, world);
+        // setSize(width * 2.2F, height * 1.6F);
         modelsize = 1.0F;
         fallDistance = -25F;
-        ((PathNavigateGround)this.getNavigator()).setAvoidsWater(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 0.45D, true));
-        this.tasks.addTask(6, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
+        // ((PathNavigateGround)this.getNavigator()).setAvoidsWater(true);
+        // this.tasks.addTask(0, new EntityAISwimming(this));
+        // this.tasks.addTask(2, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.45D, true));
+        // this.tasks.addTask(6, new EntityAIWander(this, 1.0D));
+        // this.tasks.addTask(7, new EntityAIWatchClosest(this, PlayerEntity.class, 6.0F));
+        // this.tasks.addTask(8, new EntityAILookIdle(this));
     }
     
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(15D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.45D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(15D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
     }
 
     /*protected void attackEntity(Entity entity, float f)
@@ -65,35 +67,27 @@ public class EvilPigEntity extends EntityMob
     }*/
 
     /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
-     */
-    public boolean getCanSpawnHere()
-    {
-        return true;
-    }
-
-    /**
      * Called when the entity is attacked.
      */
     public boolean attackEntityFrom(DamageSource damagesource, int i, World world)
     {
-        Entity entity = damagesource.getEntity();
-        EntityPlayer player = (EntityPlayer) entity;
+        Entity entity = damagesource.getTrueSource();
+        PlayerEntity player = (PlayerEntity) entity;
         double d = -MathHelper.sin((player.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((player.rotationYaw * (float)Math.PI) / 180F);
-        motionX += d * 2D;
-        motionZ += d1 * 2D;
+        moveForward += d * 2D;
+        moveStrafing += d1 * 2D;
 
         if (super.attackEntityFrom(DamageSource.causeMobDamage(this), i))
         {
-            if (riddenByEntity == entity || ridingEntity == entity)
+            if (getPassengers() == entity || getRidingEntity() == entity)
             {
                 return true;
             }
 
-            if (entity != this && world.getDifficulty() != EnumDifficulty.PEACEFUL)
+            if (entity != this && world.getDifficulty() != Difficulty.PEACEFUL)
             {
-                this.setRevengeTarget((EntityLivingBase) entity);
+                this.setRevengeTarget((LivingEntity) entity);
             }
 
             return true;
@@ -107,55 +101,57 @@ public class EvilPigEntity extends EntityMob
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    public void writeAdditional(CompoundNBT nbttagcompound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(nbttagcompound);
+        nbttagcompound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    public void readAdditional(CompoundNBT nbttagcompound)
     {
-        super.readEntityFromNBT(nbttagcompound);
+        super.readAdditional(nbttagcompound);
         modelsize = nbttagcompound.getFloat("ModelSize");
     }
 
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(World world)
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+        PlayerEntity player = Minecraft.getInstance().player;
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
+            world.playSound(player, this.getPosition(), s, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    protected SoundEvent getAmbientSound()
     {
-        return "mob.pig.say";
+        return SoundEvents.ENTITY_PIG_AMBIENT;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    protected SoundEvent getHurtSound()
     {
-        return "mob.pig.say";
+        return SoundEvents.ENTITY_PIG_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "mob.pig.death";
+        return SoundEvents.ENTITY_PIG_DEATH;
     }
 }

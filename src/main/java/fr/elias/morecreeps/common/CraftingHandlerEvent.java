@@ -1,9 +1,13 @@
 package fr.elias.morecreeps.common;
 
+import fr.elias.morecreeps.common.advancements.ModAdvancementList;
 import fr.elias.morecreeps.common.entity.TrophyEntity;
-import net.minecraft.entity.player.EntityPlayer;
+import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 public class CraftingHandlerEvent
@@ -11,24 +15,24 @@ public class CraftingHandlerEvent
 	@SubscribeEvent
 	public void takenFromCrafting(PlayerEvent.ItemCraftedEvent event)
 	{
-		ItemStack itemstack = event.crafting;
-		EntityPlayer player = event.player;
-        if (itemstack.getItem() == MoreCreepsReboot.frisbee)
+		ItemStack itemstack = event.getCrafting();
+		PlayerEntity player = event.getPlayer();
+        if (itemstack.getItem() == ItemList.frisbee)
         {
-            player.addStat(MoreCreepsReboot.achievefrisbee, 1);
-            event.player.worldObj.playSoundAtEntity(player, "morecreeps:creepsounds.achievement", 1.0F, 1.0F);
+            player.addStat(ModAdvancementList.frisbee, 1);
+            event.getPlayer().world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
         }
 
-        if (itemstack.getItem() == MoreCreepsReboot.rocket)
+        if (itemstack.getItem() == ModAdvancementList.rocket)
         {
-            player.addStat(MoreCreepsReboot.achieverocket, 1);
-            event.player.worldObj.playSoundAtEntity(player, "morecreeps:creepsounds.achievement", 1.0F, 1.0F);
+            player.addStat(ModAdvancementList.rocket, 1);
+            event.getPlayer().world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
         }
 
-        if (itemstack.getItem() == MoreCreepsReboot.guineapigradio)
+        if (itemstack.getItem() == ModAdvancementList.guineapigradio)
         {
-            player.addStat(MoreCreepsReboot.achieveradio, 1);
-            event.player.worldObj.playSoundAtEntity(player, "morecreeps:creepsounds.achievement", 1.0F, 1.0F);
+            player.addStat(ModAdvancementList.radio, 1);
+            event.getPlayer().world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
         }
 	}
 	

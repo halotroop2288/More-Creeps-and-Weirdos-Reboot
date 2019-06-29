@@ -2,44 +2,49 @@ package fr.elias.morecreeps.common.entity;
 
 import java.util.List;
 
-import afu.org.checkerframework.checker.oigj.qual.World;
 import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 
 public class EvilCreatureEntity extends MobEntity
 {
     public boolean jumping;
     public float modelsize;
-    public String texture;
+    public ResourceLocation texture;
     public float height = getHeight();
     public float width = getWidth();
     public float length = getWidth();
 
     public EvilCreatureEntity(World world)
     {
-        super(world);
-        texture = Reference.MODID + Reference.TEXTURE_PATH_ENTITES+ "evilcreature.png";
-        setSize(width * 3F, height * 3F);
+        super(null, world);
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES+ "evilcreature.png");
+        // setSize(width * 3F, height * 3F);
         jumping = false;
         modelsize = 3F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(4, new EvilCreatureEntity.AIAttackEntity());
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // this.tasks.addTask(0, new EntityAISwimming(this));
+        // this.tasks.addTask(4, new EvilCreatureEntity.AIAttackEntity());
+        // this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
+        // this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+        // this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
+        // this.tasks.addTask(8, new EntityAILookIdle(this));
+        // this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+        // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
     }
 
     public void applyEntityAttributes()
@@ -71,23 +76,15 @@ public class EvilCreatureEntity extends MobEntity
     }
 
     /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
-     */
-    public boolean getCanSpawnHere()
-    {
-        return true;
-    }
-
-    /**
      * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
      */
     @SuppressWarnings("rawtypes")
-	protected void attackEntity(Entity entity, float f, World world)
+	protected void attackEntity(Entity entity, float f, World world, PlayerEntity playerentity)
     {
         if (onGround && jumping)
         {
             jumping = false;
-            world.playSound(this, "morecreeps:evilcreaturejump", 1.0F * (modelsize / 3F), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (3F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), SoundsHandler.EVIL_CREATURE_JUMP, SoundCategory.HOSTILE, 1.0F * (modelsize / 3F), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (3F - modelsize) * 2.0F);
             List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(18D, 18D, 18D));
 
             for (int i = 0; i < list.size(); i++)
@@ -125,7 +122,7 @@ public class EvilCreatureEntity extends MobEntity
         }
     }
 
-    class AIAttackEntity extends EntityAIBase
+    class AIAttackEntity extends Brain
     {
     	public EvilCreatureEntity evilcreature = EvilCreatureEntity.this;
     	public int attackTime;
@@ -134,14 +131,14 @@ public class EvilCreatureEntity extends MobEntity
 		@Override
 		public boolean shouldExecute() {
             LivingEntity entitylivingbase = this.evilcreature.getAttackTarget();
-            return entitylivingbase != null && entitylivingbase.isEntityAlive();
+            return entitylivingbase != null && entitylivingbase.isAlive();
 		}
         public void updateTask()
         {
         	--attackTime;
             LivingEntity entitylivingbase = this.evilcreature.getAttackTarget();
-            double d0 = this.evilcreature.getDistanceSqToEntity(entitylivingbase);
-        	evilcreature.attackEntity(entitylivingbase, (float)d0);
+            double d0 = this.evilcreature.getDistanceSq(entitylivingbase);
+        	evilcreature.attackEntity(entitylivingbase, (float)d0, world, null);
             this.evilcreature.getLookController().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
             /*if (d0 < 4.0D)
             {
@@ -169,47 +166,55 @@ public class EvilCreatureEntity extends MobEntity
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(World world)
+    @Override
+    public void playAmbientSound()
     {
-        SoundEvent s = getLivingSound();
+        World world = Minecraft.getInstance().world;
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (3F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (3F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected SoundEvent getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
-        return "morecreeps:evilcreature";
+        return SoundsHandler.EVIL_CREATURE;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
+    @Override
     protected SoundEvent getHurtSound()
     {
-        return "morecreeps:evilcreaturehurt";
+        return SoundsHandler.EVIL_CREATURE_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
+    @Override
     protected SoundEvent getDeathSound()
     {
-        return "morecreeps:evilcreaturedeath";
+        return SoundsHandler.EVIL_CREATURE_DEATH;
     }
 
     /**
      * Called when the mob is falling. Calculates and applies fall damage.
      */
+    @Override
     public void fall(float distance, float damageMultiplier)
     {
     }
 
+    @Override
     public float getShadowSize()
     {
         return 2.9F;

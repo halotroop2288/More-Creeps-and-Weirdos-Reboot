@@ -2,129 +2,145 @@ package fr.elias.morecreeps.common.entity;
 
 import java.util.List;
 
+import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.HandSide;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
-public class EvilLightEntity extends EntityLiving
-{
+public class EvilLightEntity extends LivingEntity {
     public int lifespan;
-    public String texture;
+    public ResourceLocation texture;
 
     public EvilLightEntity(World world)
     {
-        super(world);
-        texture = "morecreeps:textures/entity/evillight1.png";
+        super(null, world);
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + ("evillight1.png");
         lifespan = 200;
-        motionZ = rand.nextFloat() * 2.0F - 1.0F;
-        motionX = rand.nextFloat() * 2.0F - 1.0F;
+        moveForward = rand.nextFloat() * 2.0F - 1.0F;
+        moveStrafing = rand.nextFloat() * 2.0F - 1.0F;
     }
-    public void applyEntityAttributes()
-    {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(1D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.4D);
-    	this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3D);
+
+    public void applyEntityAttributes() {
+        super.applyEntityAttributes();
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3D);
+        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
+     * Called frequently so the entity can update its state every tick as required.
+     * For example, zombies and skeletons use this to react to sunlight and start to
+     * burn.
      */
-    public void onLivingUpdate(World world)
-    {
-    	float health = this.getHealth();
-        if (lifespan-- < 1 || handleWaterMovement())
-        {
+    @Override
+    public void livingTick() {
+        World world;
+        PlayerEntity playerentity;
+
+        float health = this.getHealth();
+        if (lifespan-- < 1 || handleWaterMovement()) {
             health = 0;
-            setDead();
+            setHealth(0);
         }
 
         Object obj = null;
-        List list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().addCoord(motionX, motionY, motionZ).expand(1.0D, 1.0D, 1.0D));
+        List list = world.getEntitiesWithinAABBExcludingEntity(this,
+                getBoundingBox().addCoord(moveForward, moveVertical, moveStrafing).expand(1.0D, 1.0D, 1.0D));
         double d = 0.0D;
 
-        for (int i = 0; i < list.size(); i++)
-        {
-            Entity entity = (Entity)list.get(i);
+        for (int i = 0; i < list.size(); i++) {
+            Entity entity = (Entity) list.get(i);
 
-            if (entity.canBeCollidedWith() && (entity instanceof EntityLivingBase) && !(entity instanceof EvilLightEntity) && !(entity instanceof EvilScientistEntity) && !(entity instanceof EvilChickenEntity) && !(entity instanceof EvilCreatureEntity) && !(entity instanceof EvilPigEntity))
+            if (entity.canBeCollidedWith() && (entity instanceof LivingEntity) && !(entity instanceof EvilLightEntity)
+                    && !(entity instanceof EvilScientistEntity) && !(entity instanceof EvilChickenEntity)
+                    && !(entity instanceof EvilCreatureEntity) && !(entity instanceof EvilPigEntity))
             {
                 entity.setFire(3);
                 entity.motionX = rand.nextFloat() * 0.7F;
                 entity.motionY = rand.nextFloat() * 0.4F;
                 entity.motionZ = rand.nextFloat() * 0.7F;
-                world.playSoundAtEntity(this, "morecreeps:evillight", 0.2F, 1.0F / (rand.nextFloat() * 0.1F + 0.95F));
+                world.playSound(playerentity, this.getPosition(), SoundsHandler.EVIL_LIGHT, SoundCategory.HOSTILE, 0.2F,
+                        1.0F / (rand.nextFloat() * 0.1F + 0.95F));
             }
         }
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
-    public void damageEntity(int i)
-    {
-    	float health = this.getHealth();
-        health -= i;
+    public void damageEntity(int i) {
+        this.getHealth();
     }
 
-    public void onCollideWithPlayer(EntityPlayer entityIn)
-    {
-    	entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 3);
+    public void onCollideWithPlayer(PlayerEntity entityIn) {
+        entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 3);
     }
 
-    
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeEntityToNBT(nbttagcompound);
+    @Override
+    public void writeAdditional(CompoundNBT nbttagcompound) {
+        super.writeAdditional(nbttagcompound);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readEntityFromNBT(nbttagcompound);
+    @Override
+    public void readAdditional(CompoundNBT nbttagcompound) {
+        super.readAdditional(nbttagcompound);
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
-    {
-        return "morecreeps:evillight";
+    protected SoundEvent getAmbientSound() {
+        return SoundsHandler.EVIL_LIGHT;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
-    {
-        return "morecreeps:evillight";
+    protected SoundEvent getHurtSound() {
+        return SoundsHandler.EVIL_LIGHT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
-    {
-        return "morecreeps:evillight";
+    protected SoundEvent getDeathSound() {
+        return SoundsHandler.EVIL_LIGHT;
     }
 
-    /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
-     */
-    public boolean getCanSpawnHere()
-    {
-        return true;
+    @Override
+    public Iterable<ItemStack> getArmorInventoryList() {
+        return null;
+    }
+
+    @Override
+    public ItemStack getItemStackFromSlot(EquipmentSlotType slotIn) {
+        return null;
+    }
+
+    @Override
+    public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack) {
+
+    }
+
+    @Override
+    public HandSide getPrimaryHand() {
+        return null;
     }
 }

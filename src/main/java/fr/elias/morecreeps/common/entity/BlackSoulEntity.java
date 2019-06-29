@@ -1,29 +1,26 @@
 package fr.elias.morecreeps.common.entity;
 
 import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-public class BlackSoulEntity extends EntityMob
+public class BlackSoulEntity extends MobEntity
 {
     private static final ItemStack defaultHeldItem;
     public float modelsize;
@@ -31,12 +28,12 @@ public class BlackSoulEntity extends EntityMob
 
     public BlackSoulEntity(World world)
     {
-        super(world);
-        texture = new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_BLACK_SOUL);
+        super(null, world);
+        texture = new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_BLACK_SOUL);
         modelsize = 1.0F;
         ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0D, false));
+        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, PlayerEntity.class, 1.0D, false));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
         this.tasks.addTask(8, new EntityAILookIdle(this));
@@ -45,39 +42,28 @@ public class BlackSoulEntity extends EntityMob
     public void applyEntityAttributes()
     {
     	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(50D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.33D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(7D);
-    }
-
-    /**
-     * Plays living's sound at its position
-     */
-    public void playLivingSound(World world)
-    {
-        String s = getLivingSound();
-
-        if (s != null)
-        {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
-        }
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.33D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(7D);
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void writeAdditional(CompoundNBT nbttagcompound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(nbttagcompound);
+        nbttagcompound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void readAdditional(CompoundNBT nbttagcompound)
     {
-        super.readEntityFromNBT(nbttagcompound);
+        super.readAdditional(nbttagcompound);
         modelsize = nbttagcompound.getFloat("ModelSize");
     }
 
@@ -85,65 +71,74 @@ public class BlackSoulEntity extends EntityMob
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world)
+    @Override
+    public void livingTick()
     {
         if (world.isDaytime())
         {
-            float f = getBrightness(1.0F);
+            float f = getBrightness();
 
-            if (f > 0.5F && world.canSeeSky(new BlockPos(MathHelper.floor_double(posX), MathHelper.floor_double(posY), MathHelper.floor_double(posZ))) && rand.nextFloat() * 30F < (f - 0.4F) * 2.0F)
+            if (f > 0.5F && world.canBlockSeeSky(new BlockPos(MathHelper.floor(posX),
+                    MathHelper.floor(posY), MathHelper.floor(posZ)))
+                    && rand.nextFloat() * 30F < (f - 0.4F) * 2.0F)
             {
                 setFire(20);
             }
         }
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
-        return "morecreeps:blacksoul";
+        return SoundsHandler.BLACK_SOUL;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesource)
     {
-        return "morecreeps:blacksoulhurt";
+        return SoundsHandler.BLACK_SOUL_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    @Override
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:blacksouldeath";
+        return SoundsHandler.BLACK_SOUL_DEATH;
     }
 
     /**
      * Checks if the entity's current position is a valid location to spawn this entity.
      */
-    public boolean getCanSpawnHere(World world)
+    @Override
+    public boolean canSpawn(World world, SpawnReason spawnReasonIn)
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
-        //int l = world.getFullBlockLightValue(i, j, k);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
+        // int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
         int j1 = world.countEntities(BlackSoulEntity.class);
-        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && rand.nextInt(15) == 0 && j1 < 10;
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.log && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+                && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && rand.nextInt(15) == 0
+                && j1 < 10;
     }
     
     public void knockBack(Entity entity, int i, double d, double d1)
     {
         super.knockBack(entity, i, d, d1);
-        motionX *= 0.29999999999999999D;
-        motionZ *= 0.29999999999999999D;
-        motionY += 0.02000000238418579D;
+        moveForward *= 0.29999999999999999D;
+        moveStrafing *= 0.29999999999999999D;
+        moveVertical += 0.02000000238418579D;
     }
 
     /**
@@ -163,11 +158,11 @@ public class BlackSoulEntity extends EntityMob
     	{
             if (rand.nextInt(50) == 0)
             {
-                dropItem(Items.diamond, rand.nextInt(2) + 1);
+                entityDropItem(Items.DIAMOND, rand.nextInt(2) + 1);
             }
             else
             {
-                dropItem(Items.coal, rand.nextInt(5) + 1);
+                entityDropItem(Items.COAL, rand.nextInt(5) + 1);
             }
     	}
 
@@ -176,6 +171,6 @@ public class BlackSoulEntity extends EntityMob
 
     static
     {
-        defaultHeldItem = new ItemStack(Items.coal, 1);
+        defaultHeldItem = new ItemStack(Items.COAL, 1);
     }
 }

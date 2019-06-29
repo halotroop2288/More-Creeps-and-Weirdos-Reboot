@@ -3,37 +3,34 @@ package fr.elias.morecreeps.client.gui;
 import java.io.IOException;
 import java.util.Random;
 
+import net.minecraft.client.KeyboardListener;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringTranslate;
-import net.minecraft.world.World;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.text.ITextComponent;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import afu.org.checkerframework.checker.oigj.qual.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.entity.RatManEntity;
 import fr.elias.morecreeps.common.entity.SneakySalEntity;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
-public class SneakySalGUI extends GuiScreen
-{
+public class SneakySalGUI extends Screen {
     private SneakySalEntity sneakysal;
-    private GuiTextField namescreen;
+    private TextFieldWidget namescreen;
     private boolean field_28217_m;
     private float xSize_lo;
     private float ySize_lo;
@@ -42,40 +39,40 @@ public class SneakySalGUI extends GuiScreen
     public static Random rand = new Random();
     protected int xSize;
     protected int ySize;
-    private RenderItem itemRender;
+    private ItemRenderer itemRender;
 
-    public SneakySalGUI(SneakySalEntity creepsentitysneakysal)
-    {
+    public SneakySalGUI(SneakySalEntity creepsentitysneakysal, ITextComponent title) {
+        super(title);
         sneakysal = creepsentitysneakysal;
         xSize = 512;
         ySize = 512;
-        itemRender = Minecraft.getMinecraft().getRenderItem();
+        itemRender = Minecraft.getInstance().getItemRenderer();
     }
 
     /**
      * Adds the buttons (and other controls) to the screen in question.
      */
-    public void initGui()
+    public void initGui(PlayerEntity playerentity)
     {
-        Keyboard.enableRepeatEvents(true);
+        KeyboardListener.enableRepeatEvents(true);
         buttonList.clear();
         byte byte0 = -18;
-        EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
-        World world = Minecraft.getMinecraft().theWorld;
-        world.playSoundAtEntity(entityplayersp, "morecreeps:salgreeting", 1.0F, 1.0F);
+        ClientPlayerEntity PlayerEntity = Minecraft.getInstance().player;
+        ClientWorld world = Minecraft.getInstance().world;
+        world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.SAL_GREETING, SoundCategory.NEUTRAL, 1.0F, 1.0F);
         saleprice = sneakysal.saleprice;
-        buttonList.add(new GuiButton(2, width / 2 - 170, height / 4 + 8 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[0]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[0]])).toString()));
-        buttonList.add(new GuiButton(3, width / 2 + 2, height / 4 + 8 + byte0, 155, 20, (new StringBuilder()).append("   \2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[1]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[1]])).toString()));
-        buttonList.add(new GuiButton(4, width / 2 - 170, height / 4 + 35 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[2]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[2]])).toString()));
-        buttonList.add(new GuiButton(5, width / 2 + 2, height / 4 + 35 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[3]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[3]])).toString()));
-        buttonList.add(new GuiButton(6, width / 2 - 170, height / 4 + 65 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[4]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[4]])).toString()));
-        buttonList.add(new GuiButton(7, width / 2 + 2, height / 4 + 65 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[5]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[5]])).toString()));
-        buttonList.add(new GuiButton(8, width / 2 - 170, height / 4 + 95 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[6]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[6]])).toString()));
-        buttonList.add(new GuiButton(9, width / 2 + 2, height / 4 + 95 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[7]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[7]])).toString()));
-        buttonList.add(new GuiButton(10, width / 2 - 170, height / 4 + 125 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[8]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[8]])).toString()));
-        buttonList.add(new GuiButton(11, width / 2 + 2, height / 4 + 125 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[9]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[9]])).toString()));
-        buttonList.add(new GuiButton(0, width / 2 - 100, height / 4 + 158 + byte0, 98, 20, "RIPOFF SAL"));
-        buttonList.add(new GuiButton(1, width / 2 + 2, height / 4 + 158 + byte0, 98, 20, "DONE"));
+        this.addButton(new Button(2, width / 2 - 170, height / 4 + 8 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[0]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[0]])).toString()));
+        this.addButton(new Button(3, width / 2 + 2, height / 4 + 8 + byte0, 155, 20, (new StringBuilder()).append("   \2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[1]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[1]])).toString()));
+        this.addButton(new Button(4, width / 2 - 170, height / 4 + 35 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[2]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[2]])).toString()));
+        this.addButton(new Button(5, width / 2 + 2, height / 4 + 35 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[3]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[3]])).toString()));
+        this.addButton(new Button(6, width / 2 - 170, height / 4 + 65 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[4]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[4]])).toString()));
+        this.addButton(new Button(7, width / 2 + 2, height / 4 + 65 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[5]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[5]])).toString()));
+        this.addButton(new Button(8, width / 2 - 170, height / 4 + 95 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[6]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[6]])).toString()));
+        this.addButton(new Button(9, width / 2 + 2, height / 4 + 95 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[7]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[7]])).toString()));
+        this.addButton(new Button(10, width / 2 - 170, height / 4 + 125 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[8]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[8]])).toString()));
+        this.addButton(new Button(11, width / 2 + 2, height / 4 + 125 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[9]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[9]])).toString()));
+        this.addButton(new Button(0, width / 2 - 100, height / 4 + 158 + byte0, 98, 20, "RIPOFF SAL"));
+        this.addButton(new Button(1, width / 2 + 2, height / 4 + 158 + byte0, 98, 20, "DONE"));
     }
 
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
