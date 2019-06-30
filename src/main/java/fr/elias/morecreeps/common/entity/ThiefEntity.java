@@ -9,8 +9,10 @@ import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -29,7 +32,6 @@ public class ThiefEntity extends MobEntity
 {
     private boolean foundplayer;
     private boolean stolen;
-    private PathEntity pathToEntity;
 
     /**
      * returns true if a creature has attacked recently only used for creepers and skeletons
@@ -44,6 +46,9 @@ public class ThiefEntity extends MobEntity
     public int tempDamage;
     public float modelsize;
     public String texture;
+    public float width = getWidth();
+    public float length = getWidth();
+    public float height = getHeight();
 
     public ThiefEntity(World world)
     {
@@ -54,19 +59,20 @@ public class ThiefEntity extends MobEntity
         foundplayer = false;
         tempDamage = 0;
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(2, new AIThief()); 
-        tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.35D));
-        tasks.addTask(5, new EntityAIWander(this, 0.35D));
-        tasks.addTask(6, new EntityAIWatchClosest(this, PlayerEntity.class, 16F));
-        tasks.addTask(7, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // tasks.addTask(0, new EntityAISwimming(this));
+        // tasks.addTask(2, new AIThief()); 
+        // tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.35D));
+        // tasks.addTask(5, new EntityAIWander(this, 0.35D));
+        // tasks.addTask(6, new EntityAIWatchClosest(this, PlayerEntity.class, 16F));
+        // tasks.addTask(7, new EntityAILookIdle(this));
+        // targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
     }
 
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.65D);
     	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
@@ -140,7 +146,8 @@ public class ThiefEntity extends MobEntity
     /**
      * Returns the item that this EntityLiving is holding, if any.
      */
-    public ItemStack getHeldItem()
+    @Override
+    public ItemStack heldItem()
     {
         return stolengood;
     }
@@ -149,8 +156,12 @@ public class ThiefEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void livingTick(World world, Random rand)
+    @Override
+    public void livingTick()
     {
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().world;
+        
         super.livingTick();
 
         if (handleWaterMovement())
@@ -192,7 +203,7 @@ public class ThiefEntity extends MobEntity
                 moveStrafing += goZ;
             }
 
-            moveEntityWithHeading((float)moveForward, (float)moveStrafing);
+            move(MoverType.SELF, lastPortalVec);
 
             if (prevPosY / posY == 1.0D)
             {
@@ -239,10 +250,10 @@ public class ThiefEntity extends MobEntity
         if (playerentity != null && !stolen && distance < 4F && canEntityBeSeen(playerentity) && getHealth() > 0)
         {
             ItemStack itemstack = null;
-            ItemStack aitemstack[] = playerentity.inventory.mainInventory;
+            NonNullList<ItemStack> aitemstack = playerentity.inventory.mainInventory;
             itemnumber = -1;
 
-            for (int i = 0; i < aitemstack.length; i++)
+            for (int i = 0; i < aitemstack.size(); i++)
             {
                 ItemStack itemstack1 = aitemstack[i];
 
@@ -322,20 +333,23 @@ public class ThiefEntity extends MobEntity
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(World world)
+    @Override
+    public void playAmbientSound()
     {
-        SoundEvent s = getLivingSound();
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected SoundEvent getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
         return SoundsHandler.THIEF;
     }
@@ -343,7 +357,8 @@ public class ThiefEntity extends MobEntity
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected SoundEvent getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
         return SoundsHandler.THIEF_HURT;
     }
@@ -351,6 +366,7 @@ public class ThiefEntity extends MobEntity
     /**
      * Returns the sound this mob makes on death.
      */
+    @Override
     protected SoundEvent getDeathSound()
     {
         return SoundsHandler.THIEF_DEATH;
@@ -397,17 +413,17 @@ public class ThiefEntity extends MobEntity
     {
     	if(!world.isRemote)
     	{
-            if (getHeldItem() != null)
+            if (getHeldItem(swingingHand) != null)
             {
                 if (tempDamage > 0)
                 {
-                    ItemStack itemstack = getHeldItem().copy();
+                    ItemStack itemstack = getHeldItem(swingingHand).copy();
                     entityDropItem(itemstack, 0.0F);
                     stolengood = null;
                 }
                 else
                 {
-                    entityDropItem(getHeldItem().getItem(), stolenamount);
+                    entityDropItem(getHeldItem(swingingHand).getItem(), stolenamount);
                 }
             }
     	}

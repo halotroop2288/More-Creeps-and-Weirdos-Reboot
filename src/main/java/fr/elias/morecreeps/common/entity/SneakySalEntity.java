@@ -1,38 +1,36 @@
 package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.client.gui.SneakySalGUI;
 import fr.elias.morecreeps.client.particles.CREEPSFxSmoke;
+import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.lists.ParticleList;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.entity.RockMonsterEntity.AIAttackEntity;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
-public class SneakySalEntity extends EntityMob
+public class SneakySalEntity extends MobEntity
 {
 	World world;
-	EntityPlayer entityplayer;
+	PlayerEntity playerentity;
     public int salslots[];
     public static final Item[] salitems;
     public static final int salprices[] =
@@ -46,15 +44,15 @@ public class SneakySalEntity extends EntityMob
         "RAYGUN", "POPSICLE", "EARTH GEM", "FIRE GEM", "SKY GEM"
     };
     public static final ItemStack itemstack[];
-    private boolean foundplayer;
-    private PathEntity pathToEntity;
+    // private boolean foundplayer;
+    // private PathNavigator pathToEntity;
     protected Entity playerToAttack;
 
     /**
      * returns true if a creature has attacked recently only used for creepers and skeletons
      */
     protected boolean hasAttacked;
-    private float distance;
+    // private float distance;
     public boolean tamed;
     public int basehealth;
     public int tamedfood;
@@ -62,7 +60,7 @@ public class SneakySalEntity extends EntityMob
     public double dist;
     public double prevdist;
     public int facetime;
-    public String basetexture;
+    public ResourceLocation basetexture;
     public int rockettime;
     public int rocketcount;
     public int galloptime;
@@ -78,46 +76,50 @@ public class SneakySalEntity extends EntityMob
     public int shootingdelay;
     public int itemused;
     public int itemnew;
-    public String texture;
+    public ResourceLocation texture;
     public double moveSpeed;
     public double attackStrength;
     public double health;
+    public float length = getWidth();
+    public float width = getWidth();
+    public float height = getHeight();
 
     public SneakySalEntity(World world)
     {
-        super(world);
+        super(null, world);
         salslots = new int[30];
-        basetexture = "/mob/creeps/sneakysal.png";
+        basetexture = new ResourceLocation("/mob/creeps/sneakysal.png");
         texture = basetexture;
         moveSpeed = 0.65F;
         attackStrength = 3;
         basehealth = rand.nextInt(50) + 50;
         health = basehealth;
         hasAttacked = false;
-        foundplayer = false;
-        setSize(1.5F, 4F);
+        // foundplayer = false;
+        // setSize(1.5F, 4F);
         dissedmax = rand.nextInt(4) + 1;
-        defaultHeldItem = new ItemStack(MoreCreepsReboot.gun, 1);
+        defaultHeldItem = new ItemStack(ItemList.gun, 1);
         sale = rand.nextInt(2000) + 100;
         saleprice = 0.0F;
         shooting = false;
         shootingdelay = 20;
         modelsize = 1.5F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.35D));
-        tasks.addTask(5, new EntityAIWander(this, 0.35D));
-        tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 16F));
-        tasks.addTask(7, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // tasks.addTask(0, new EntityAISwimming(this));
+        // tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.35D));
+        // tasks.addTask(5, new EntityAIWander(this, 0.35D));
+        // tasks.addTask(6, new EntityAIWatchClosest(this, PlayerEntity.class, 16F));
+        // tasks.addTask(7, new EntityAILookIdle(this));
+        // targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
     }
     
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(health);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(moveSpeed);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(attackStrength);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(moveSpeed);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackStrength);
     }
 
     
@@ -125,47 +127,50 @@ public class SneakySalEntity extends EntityMob
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void writeAdditional(CompoundNBT nbttagcompound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setInteger("Sale", sale);
-        nbttagcompound.setFloat("SalePrice", saleprice);
-        nbttagcompound.setInteger("DissedMax", dissedmax);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(nbttagcompound);
+        nbttagcompound.putInt("Sale", sale);
+        nbttagcompound.putInt("DissedMax", dissedmax);
+        nbttagcompound.putFloat("SalePrice", saleprice);
+        nbttagcompound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void readAdditional(CompoundNBT compound)
     {
-        super.readEntityFromNBT(nbttagcompound);
-        sale = nbttagcompound.getInteger("Sale");
-        saleprice = nbttagcompound.getFloat("SalePrice");
-        dissedmax = nbttagcompound.getInteger("DissedMax");
-        modelsize = nbttagcompound.getFloat("ModelSize");
+        super.readAdditional(compound);
+        sale = compound.getInt("Sale");
+        dissedmax = compound.getInt("DissedMax");
+        saleprice = compound.getFloat("SalePrice");
+        modelsize = compound.getFloat("ModelSize");
         saleprice = 0.0F;
     }
 
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate()
+    @Override
+    public void tick()
     {
         if (playerToAttack instanceof SneakySalEntity)
         {
             playerToAttack = null;
         }
 
-        super.onUpdate();
+        super.tick();
     }
 
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
-    public boolean interact(EntityPlayer entityplayer)
+    public boolean interact(PlayerEntity playerentity)
     {
-        ItemStack itemstack1 = entityplayer.inventory.getCurrentItem();
+        ItemStack itemstack1 = playerentity.inventory.getCurrentItem();
 
         if (dissedmax > 0)
         {
@@ -174,10 +179,10 @@ public class SneakySalEntity extends EntityMob
                 restockSal();
             }
 
-            if (dissedmax > 0 && !(playerToAttack instanceof EntityPlayer))
+            if (dissedmax > 0 && !(playerToAttack instanceof PlayerEntity))
             {
-                entityplayer.openGui(MoreCreepsReboot.instance, 6, world, (int)this.posX, (int)this.posY, (int)this.posZ);
-                }
+                playerentity.openGui(MoreCreepsReboot.instance, 6, world, (int)this.posX, (int)this.posY, (int)this.posZ);
+            }
         }
 
         return false;
@@ -191,39 +196,34 @@ public class SneakySalEntity extends EntityMob
     {
         if (dissedmax < 1)
         {
-            EntityPlayer entityplayer = world.getClosestPlayerToEntity(this, 16D);
+            PlayerEntity playerentity = world.getClosestPlayer(this, 16D);
 
-            if (entityplayer != null && canEntityBeSeen(entityplayer))
-            {
-                return entityplayer;
-            }
-            else
-            {
+            if (playerentity != null && canEntityBeSeen(playerentity)) {
+                return playerentity;
+            } else {
                 return null;
             }
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
     /**
-     * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
+     * Basic mob attack. Default to touch of death in EntityCreature. Overridden by
+     * each mob to define their attack.
      */
-    protected void attackEntity(Entity entity, float f)
-    {
-        if (dissedmax < 1)
-        {
+    protected void attackEntity(Entity entity, float f) {
+        if (dissedmax < 1) {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
-            motionX = (d / (double)f1) * 0.40000000000000002D * 0.20000000192092895D + motionX * 0.18000000098023225D;
-            motionZ = (d1 / (double)f1) * 0.40000000000000002D * 0.14000000192092896D + motionZ * 0.18000000098023225D;
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
+            moveForward = (float) ((d / (double) f1) * 0.40000000000000002D * 0.20000000192092895D + getMotion().x * 0.18000000098023225D);
+            moveStrafing = (float) ((d1 / (double) f1) * 0.40000000000000002D * 0.14000000192092896D + getMotion().z * 0.18000000098023225D);
 
-            if ((double)f < 2.7999999999999998D && entity.getEntityBoundingBox().maxY > this.getEntityBoundingBox().minY && entity.getEntityBoundingBox().minY < this.getEntityBoundingBox().maxY)
-            {
-                //attackTime = 10;
+            if ((double) f < 2.7999999999999998D
+                    && entity.getBoundingBox().maxY > this.getBoundingBox().minY
+                    && entity.getBoundingBox().minY < this.getBoundingBox().maxY) {
+                // attackTime = 10;
                 entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) attackStrength);
             }
 
@@ -234,12 +234,10 @@ public class SneakySalEntity extends EntityMob
     /**
      * Called when the entity is attacked.
      */
-    public boolean attackEntityFrom(DamageSource damagesource, int i)
-    {
-        Entity entity = damagesource.getEntity();
+    public boolean attackEntityFrom(DamageSource damagesource, int i) {
+        Entity entity = damagesource.getTrueSource();
 
-        if (entity instanceof EntityPlayer)
-        {
+        if (entity instanceof PlayerEntity) {
             dissedmax = 0;
         }
 
@@ -247,57 +245,51 @@ public class SneakySalEntity extends EntityMob
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
+     * Called frequently so the entity can update its state every tick as required.
+     * For example, zombies and skeletons use this to react to sunlight and start to
+     * burn.
      */
-    public void onLivingUpdate()
-    {
-        if (shootingdelay-- < 1)
-        {
+    @Override
+    public void livingTick() {
+        if (shootingdelay-- < 1) {
             shooting = false;
         }
 
-        targetedEntity = world.getClosestPlayerToEntity(this, 3D);
+        targetedEntity = world.getClosestPlayer(this, 3D);
 
-        if (targetedEntity != null && (targetedEntity instanceof EntityPlayer) && canEntityBeSeen(targetedEntity))
+        if (targetedEntity != null && (targetedEntity instanceof PlayerEntity) && canEntityBeSeen(targetedEntity))
         {
-            float f = rotationYaw;
 
-            for (int i = 0; i < 360; i++)
-            {
+            for (int i = 0; i < 360; i++) {
                 rotationYaw = i;
             }
 
-            if (rand.nextInt(4) == 0)
-            {
+            if (rand.nextInt(4) == 0) {
                 attackEntity(targetedEntity, 1.0F);
             }
         }
 
-        if (bulletTime-- < 1 && dissedmax < 1)
-        {
+        if (bulletTime-- < 1 && dissedmax < 1) {
             bulletTime = rand.nextInt(50) + 25;
             double d = 64D;
-            targetedEntity = world.getClosestPlayerToEntity(this, 30D);
+            targetedEntity = world.getClosestPlayer(this, 30D);
 
-            if (targetedEntity != null && canEntityBeSeen(targetedEntity) && (targetedEntity instanceof EntityPlayer) && !isDead && !(targetedEntity instanceof SneakySalEntity) && !(targetedEntity instanceof RatManEntity))
-            {
-                double d2 = targetedEntity.getDistanceSqToEntity(this);
+            if (targetedEntity != null && canEntityBeSeen(targetedEntity) && (targetedEntity instanceof PlayerEntity)
+                    && !dead && !(targetedEntity instanceof SneakySalEntity)
+                    && !(targetedEntity instanceof RatManEntity)) {
+                double d2 = targetedEntity.getDistanceSq(this);
 
-                if (d2 < d * d && d2 > 3D)
-                {
-                    double d4 = targetedEntity.posX - posX;
-                    double d5 = (targetedEntity.getEntityBoundingBox().minY + (double)(targetedEntity.height / 2.0F)) - (posY + (double)(height / 2.0F));
+                if (d2 < d * d && d2 > 3D) {
+                    double d4 = targetedEntity.posX - posX - (posY + (double) (height / 2.0F));
                     double d6 = targetedEntity.posZ - posZ;
-                    renderYawOffset = rotationYaw = (-(float)Math.atan2(d4, d6) * 180F) / (float)Math.PI;
-                    world.playSoundAtEntity(this, "morecreeps:bullet", 0.5F, 0.4F / (rand.nextFloat() * 0.4F + 0.8F));
+                    renderYawOffset = rotationYaw = (-(float) Math.atan2(d4, d6) * 180F) / (float) Math.PI;
+                    world.playSound(playerentity, this.getPosition(), SoundsHandler.BULLET, SoundCategory.NEUTRAL, 0.5F, 0.4F / (rand.nextFloat() * 0.4F + 0.8F));
                     shooting = true;
                     shootingdelay = 10;
-                    CREEPSEntityBullet creepsentitybullet = new CREEPSEntityBullet(world, this, 0.0F);
+                    BulletEntity creepsentitybullet = new BulletEntity(world, this, 0.0F);
 
-                    if (creepsentitybullet != null)
-                    {
-                        world.spawnEntityInWorld(creepsentitybullet);
+                    if (creepsentitybullet != null) {
+                        world.addEntity(creepsentitybullet);
                     }
                 }
             }
@@ -305,37 +297,34 @@ public class SneakySalEntity extends EntityMob
 
         sale--;
 
-        if (rand.nextInt(10) == 0)
-        {
-            double d1 = -MathHelper.sin((rotationYaw * (float)Math.PI) / 180F);
-            double d3 = MathHelper.cos((rotationYaw * (float)Math.PI) / 180F);
-            CREEPSFxSmoke creepsfxsmoke = new CREEPSFxSmoke(world, posX + d1 * 0.5D, posY + 2D, posZ + d3 * 0.5D, MoreCreepsReboot.partWhite, 0.5F, 0.5F);
-            creepsfxsmoke.renderDistanceWeight = 15D;
-            Minecraft.getMinecraft().effectRenderer.addEffect(creepsfxsmoke);
-        }
+            // Commented out until I figure out FX in this version.
+        // if (rand.nextInt(10) == 0) {
+        //     double d1 = -MathHelper.sin((rotationYaw * (float) Math.PI) / 180F);
+        //     double d3 = MathHelper.cos((rotationYaw * (float) Math.PI) / 180F);
+        //     CREEPSFxSmoke creepsfxsmoke = new CREEPSFxSmoke(world, posX + d1 * 0.5D, posY + 2D, posZ + d3 * 0.5D,
+        //             ParticleList.CREEPS_WHITE, 0.5F, 0.5F);
+        //     creepsfxsmoke.renderDistanceWeight = 15D;
+        //     Minecraft.getInstance().effectRenderer.addEffect(creepsfxsmoke);
+        // }
 
-        if (dissedmax < 1 && playerToAttack == null)
-        {
+        if (dissedmax < 1 && playerToAttack == null) {
             findPlayerToAttack();
         }
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
-    public void restockSal()
-    {
+    public void restockSal() {
         sale = rand.nextInt(2000) + 100;
         saleprice = 1.0F - (rand.nextFloat() * 0.25F - rand.nextFloat() * 0.25F);
         itemnew = rand.nextInt(salitems.length);
         itemused = 0;
 
-        for (int i = 0; i < salitems.length; i++)
-        {
+        for (int i = 0; i < salitems.length; i++) {
             salslots[i] = i;
         }
 
-        for (int j = 0; j < salitems.length; j++)
-        {
+        for (int j = 0; j < salitems.length; j++) {
             int k = rand.nextInt(salitems.length);
             int l = salslots[j];
             salslots[j] = salslots[k];
@@ -346,21 +335,20 @@ public class SneakySalEntity extends EntityMob
     /**
      * Returns the item that this EntityLiving is holding, if any.
      */
-    public ItemStack getHeldItem()
-    {
+    public ItemStack getHeldItem() {
         return defaultHeldItem;
     }
 
-    private void smoke()
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 10; j++)
-            {
+    private void smoke() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 10; j++) {
                 double d = rand.nextGaussian() * 0.059999999999999998D;
                 double d1 = rand.nextGaussian() * 0.059999999999999998D;
                 double d2 = rand.nextGaussian() * 0.059999999999999998D;
-                world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height) + (double)i, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2);
+                world.addParticle(ParticleTypes.LARGE_SMOKE,
+                        (posX + (double) (rand.nextFloat() * width * 2.0F)) - (double) width,
+                        posY + (double) (rand.nextFloat() * height) + (double) i,
+                        (posZ + (double) (rand.nextFloat() * width * 2.0F)) - (double) width, d, d1, d2);
             }
         }
     }
@@ -368,14 +356,11 @@ public class SneakySalEntity extends EntityMob
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
-    {
-        if (rand.nextInt(10) == 0)
-        {
-            return "morecreeps:giraffe";
-        }
-        else
-        {
+    @Override
+    protected SoundEvent getAmbientSound() {
+        if (rand.nextInt(10) == 0) {
+            return SoundsHandler.GIRAFFE; // Why though?
+        } else {
             return null;
         }
     }
@@ -383,31 +368,35 @@ public class SneakySalEntity extends EntityMob
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
-    {
-        return "morecreeps:salhurt";
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+        return SoundsHandler.SAL_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
-    {
-        return "morecreeps:saldead";
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundsHandler.SAL_DEATH;
     }
 
-    /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
-     */
-    public boolean getCanSpawnHere()
-    {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(this.getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
-        int l = world.getBlockLightOpacity(new BlockPos(i, j, k));
-        Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.snow && i1 != Blocks.cobblestone && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.checkBlockCollision(getEntityBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0 && l > 8;
-    }
+    // /**
+    //  * Checks if the entity's current position is a valid location to spawn this
+    //  * entity.
+    //  */
+    // @Override
+    // public boolean getCanSpawnHere() {
+    //     int i = MathHelper.floor(posX);
+    //     int j = MathHelper.floor(this.getBoundingBox().minY);
+    //     int k = MathHelper.floor(posZ);
+    //     int l = world.getLight(new BlockPos(i, j, k));
+    //     Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
+    //     return i1 != Blocks.SNOW && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+    //             && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+    //             && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k))
+    //             && rand.nextInt(15) == 0 && l > 8;
+    // }
 
     /**
      * Will return how many at most can spawn in a chunk at once.
@@ -426,7 +415,7 @@ public class SneakySalEntity extends EntityMob
 
         if (rand.nextInt(10) == 0)
         {
-            dropItem(MoreCreepsReboot.rocket, rand.nextInt(5) + 1);
+            entityDropItem(ItemList.rocket, rand.nextInt(5) + 1);
         }
 
         super.onDeath(damagesource);
@@ -434,24 +423,27 @@ public class SneakySalEntity extends EntityMob
 
     public void confetti()
     {
-        double d = -MathHelper.sin((((EntityPlayer)(entityplayer)).rotationYaw * (float)Math.PI) / 180F);
-        double d1 = MathHelper.cos((((EntityPlayer)(entityplayer)).rotationYaw * (float)Math.PI) / 180F);
+        double d = -MathHelper.sin((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
+        double d1 = MathHelper.cos((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
         TrophyEntity creepsentitytrophy = new TrophyEntity(world);
-        creepsentitytrophy.setLocationAndAngles(((EntityPlayer)(entityplayer)).posX + d * 3D, ((EntityPlayer)(entityplayer)).posY - 2D, ((EntityPlayer)(entityplayer)).posZ + d1 * 3D, ((EntityPlayer)(entityplayer)).rotationYaw, 0.0F);
-        world.spawnEntityInWorld(creepsentitytrophy);
+        creepsentitytrophy.setLocationAndAngles(((PlayerEntity)(playerentity)).posX + d * 3D, ((PlayerEntity)(playerentity)).posY - 2D, ((PlayerEntity)(playerentity)).posZ + d1 * 3D, ((PlayerEntity)(playerentity)).rotationYaw, 0.0F);
+        world.addEntity(creepsentitytrophy);
     }
 
     static
     {
         salitems = (new Item[]
                 {
-                    MoreCreepsReboot.blorpcola, MoreCreepsReboot.armygem, MoreCreepsReboot.horseheadgem, MoreCreepsReboot.bandaid, MoreCreepsReboot.shrinkray, MoreCreepsReboot.extinguisher, MoreCreepsReboot.growray, MoreCreepsReboot.frisbee, MoreCreepsReboot.lifegem, MoreCreepsReboot.gun,
-                    MoreCreepsReboot.raygun, MoreCreepsReboot.popsicle, MoreCreepsReboot.earthgem, MoreCreepsReboot.firegem, MoreCreepsReboot.skygem
-                });
+                    ItemList.blorp_cola, ItemList.army_gem, ItemList.horse_head_gem, ItemList.band_aid, ItemList.shrink_ray, ItemList.extinguisher, ItemList.grow_ray, ItemList.frisbee, ItemList.life_gem, ItemList.gun,
+                    ItemList.ray_gun, ItemList.popsicle, ItemList.earth_gem, ItemList.fire_gem, ItemList.sky_gem
+                }
+                );
         itemstack = (new ItemStack[]
                 {
-                    new ItemStack(MoreCreepsReboot.blorpcola), new ItemStack(MoreCreepsReboot.armygem), new ItemStack(MoreCreepsReboot.horseheadgem), new ItemStack(MoreCreepsReboot.bandaid), new ItemStack(MoreCreepsReboot.shrinkray), new ItemStack(MoreCreepsReboot.extinguisher), new ItemStack(MoreCreepsReboot.growray), new ItemStack(MoreCreepsReboot.frisbee), new ItemStack(MoreCreepsReboot.lifegem), new ItemStack(MoreCreepsReboot.gun),
-                    new ItemStack(MoreCreepsReboot.raygun), new ItemStack(MoreCreepsReboot.popsicle), new ItemStack(MoreCreepsReboot.earthgem), new ItemStack(MoreCreepsReboot.firegem), new ItemStack(MoreCreepsReboot.skygem)
-                });
+                    new ItemStack(ItemList.blorp_cola), new ItemStack(ItemList.army_gem), new ItemStack(ItemList.horse_head_gem), new ItemStack(ItemList.band_aid), new ItemStack(ItemList.shrink_ray),
+                    new ItemStack(ItemList.extinguisher), new ItemStack(ItemList.grow_ray), new ItemStack(ItemList.frisbee), new ItemStack(ItemList.life_gem), new ItemStack(ItemList.gun),
+                    new ItemStack(ItemList.ray_gun), new ItemStack(ItemList.popsicle), new ItemStack(ItemList.earth_gem), new ItemStack(ItemList.fire_gem), new ItemStack(ItemList.sky_gem)
+                }
+                );
     }
 }

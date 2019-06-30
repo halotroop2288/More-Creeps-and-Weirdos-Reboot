@@ -10,8 +10,9 @@ import net.minecraft.util.SoundEvent;
 
 public enum ArmourMaterialList implements IArmorMaterial
 {
-	armorZEBRA("armorZEBRA", 375, new int[] {2, 6, 4, 2}, 5, ItemList.zebra_hide, "item.armor.equip_leather", 0.0F);
-	
+	armorZEBRA("armorZEBRA", 375, new int[] {2, 6, 4, 2}, 5, ItemList.zebra_hide, "item.armor.equip_leather", 0.0F),
+	armorRAGING("armorRAGING", 375, new int[] {2, 6, 4, 2}, 5, ItemList.zebra_hide, "item.armor.equip_leather", 0.0F);
+
 	private static final int[] max_damage_array = new int[]{13, 15, 16, 11};
 	private String name, equipSound;
 	private int durability, enchantability;

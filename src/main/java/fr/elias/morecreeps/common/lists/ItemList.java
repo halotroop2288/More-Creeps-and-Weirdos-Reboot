@@ -80,6 +80,7 @@ public class ItemList
 	public static Item rocket;
 	public static Item shrink_shrink;
 	public static Item ram_16k;
+	public static Item raging_bull_hide;
 	public static Item zebra_hide;
 	
 	// Armor
@@ -87,6 +88,11 @@ public class ItemList
 	public static Item zebra_chestplate;
 	public static Item zebra_leggings;
 	public static Item zebra_boots;
+	
+	public static Item raging_helmet;
+	public static Item raging_chestplate;
+	public static Item raging_leggings;
+	public static Item raging_boots;
 	
 	// Used as icons only
 	public static Item a_hell;

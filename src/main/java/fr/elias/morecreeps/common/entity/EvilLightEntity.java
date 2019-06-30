@@ -25,14 +25,15 @@ public class EvilLightEntity extends LivingEntity {
     public EvilLightEntity(World world)
     {
         super(null, world);
-        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + ("evillight1.png");
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "evillight1.png");
         lifespan = 200;
         moveForward = rand.nextFloat() * 2.0F - 1.0F;
         moveStrafing = rand.nextFloat() * 2.0F - 1.0F;
     }
-
-    public void applyEntityAttributes() {
-        super.applyEntityAttributes();
+    
+    @Override
+    public void registerAttributes() {
+        super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1D);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3D);

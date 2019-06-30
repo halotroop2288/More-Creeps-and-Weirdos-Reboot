@@ -2,19 +2,31 @@ package fr.elias.morecreeps.common.entity;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
+@SuppressWarnings("rawtypes")
 public class TombstoneEntity extends AnimalEntity
 {
     public int interest;
-    private boolean primed;
+    // private boolean primed;
     public boolean tamed;
     public int basehealth;
     public boolean used;
@@ -45,15 +57,17 @@ public class TombstoneEntity extends AnimalEntity
     public int skillspeed;
     public String deathtype;
     public String basetexture;
-    public String texture;
+    public ResourceLocation texture;
+    public float width = getWidth();
+    public float length = getWidth();
+    public float height = getHeight();
 
     public TombstoneEntity(World world)
     {
-        super(world);
-        texture = "morecreeps:textures/entity/tombstone.png";
+        super(null, world);
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "tombstone.png");
         basetexture = "";
         interest = 0;
-        primed = false;
         tamed = false;
         basehealth = 0;
         used = false;
@@ -83,18 +97,18 @@ public class TombstoneEntity extends AnimalEntity
         deathtype = "";
     }
     
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(100D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.0D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
     }
 
 
     /**
      * This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
      */
-    public EntityAnimal createChild(AgeableEntity entityanimal, World world)
+    public AnimalEntity createChild(AgeableEntity entityanimal, World world)
     {
         return new TombstoneEntity(world);
     }
@@ -102,35 +116,38 @@ public class TombstoneEntity extends AnimalEntity
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
-    public boolean interact(PlayerEntity playerentity, World world)
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand)
     {
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().world;
         ItemStack itemstack = playerentity.inventory.getCurrentItem();
         used = false;
 
         if (itemstack == null)
         {
-            playerentity.addChatMessage(new ChatComponentText("Use a \2474LifeGem\247f on this tombstone to bring your pet back to life!"));
+            playerentity.sendMessage(new StringTextComponent("Use a " + I18n.format("item.life_gem.name") + " on this tombstone to bring your pet back to life!"));
             return false;
         }
 
-        if (itemstack != null && itemstack.getItem() != MoreCreepsReboot.lifegem)
+        if (itemstack != null && itemstack.getItem() != ItemList.life_gem)
         {
-        	playerentity.addChatMessage(new ChatComponentText("Use a \2474LifeGem\247f on this tombstone to bring your pet back to life!"));
+        	playerentity.sendMessage(new StringTextComponent("Use a " + I18n.format("item.life_gem.name") + " on this tombstone to bring your pet back to life!"));
             return false;
         }
 
-        if (itemstack != null && itemstack.getItem() == MoreCreepsReboot.lifegem)
+        if (itemstack != null && itemstack.getItem() == ItemList.life_gem)
         {
-            itemstack.stackSize--;
-            playerentity.swingItem();
+            itemstack.setCount(itemstack.getCount() - 1);
+            playerentity.swingArm(Hand.MAIN_HAND);;
 
-            if (itemstack.stackSize < 1)
+            if (itemstack.getCount() < 1)
             {
                 playerentity.inventory.setInventorySlotContents(playerentity.inventory.currentItem, null);
-                itemstack.stackSize = 0;
+                itemstack.setCount(0);
             }
 
-            smoke();
+            smoke(world);
 
             if (deathtype.equals("GuineaPig"))
             {
@@ -166,8 +183,8 @@ public class TombstoneEntity extends AnimalEntity
                     creepsentityguineapig.moveSpeed = speedboost <= 0 ? baseSpeed : baseSpeed + 0.5F;
                 }
 
-                world.spawnEntityInWorld(creepsentityguineapig);
-                setDead();
+                world.addEntity(creepsentityguineapig);
+                setHealth(0);
             }
 
             if (deathtype.equals("Hotdog"))
@@ -206,9 +223,9 @@ public class TombstoneEntity extends AnimalEntity
                 }
 
                 if(!world.isRemote)
-                world.spawnEntityInWorld(creepsentityhotdog);
+                world.addEntity(creepsentityhotdog);
                 
-                setDead();
+                setHealth(0);
             }
         }
 
@@ -224,7 +241,7 @@ public class TombstoneEntity extends AnimalEntity
                 double d = rand.nextGaussian() * 0.02D;
                 double d2 = rand.nextGaussian() * 0.02D;
                 double d4 = rand.nextGaussian() * 0.02D;
-                world.addParticle(ParticleTypes.HEART, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + 0.5D + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d2, d4, new int[0]);
+                world.addParticle(ParticleTypes.HEART, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + 0.5D + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d2, d4);
             }
 
             for (int k = 0; k < 4; k++)
@@ -234,7 +251,7 @@ public class TombstoneEntity extends AnimalEntity
                     double d1 = rand.nextGaussian() * 0.02D;
                     double d3 = rand.nextGaussian() * 0.02D;
                     double d5 = rand.nextGaussian() * 0.02D;
-                    world.addParticle(ParticleTypes.EXPLOSION, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height) + (double)k, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d1, d3, d5, new int[0]);
+                    world.addParticle(ParticleTypes.EXPLOSION, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height) + (double)k, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d1, d3, d5);
                 }
             }
         }
@@ -244,26 +261,20 @@ public class TombstoneEntity extends AnimalEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    @Override
+    public void tick()
     {
-    }
-
-    /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
-     */
-    public boolean getCanSpawnHere()
-    {
-        return true;
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
         if (rand.nextInt(10) == 0)
         {
-            return "morecreeps:tombstone";
+            return SoundsHandler.TOMBSTONE;
         }
         else
         {
@@ -274,7 +285,7 @@ public class TombstoneEntity extends AnimalEntity
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    protected SoundEvent getHurtSound()
     {
         return null;
     }
@@ -282,7 +293,7 @@ public class TombstoneEntity extends AnimalEntity
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
         return null;
     }
@@ -290,78 +301,82 @@ public class TombstoneEntity extends AnimalEntity
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void writeAdditional(CompoundNBT compound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setString("DeathType", deathtype);
-        nbttagcompound.setInteger("Interest", interest);
-        nbttagcompound.setBoolean("Tamed", tamed);
-        nbttagcompound.setString("Name", name);
-        nbttagcompound.setInteger("BaseHealth", basehealth);
-        nbttagcompound.setInteger("Level", level);
-        nbttagcompound.setString("BaseTexture", basetexture);
-        nbttagcompound.setFloat("TotalDamage", totaldamage);
-        nbttagcompound.setBoolean("heavenbuilt", heavenbuilt);
-        nbttagcompound.setBoolean("hotelbuilt", hotelbuilt);
-        nbttagcompound.setInteger("AttackStrength", attackStrength);
-        nbttagcompound.setInteger("WanderState", wanderstate);
-        nbttagcompound.setInteger("SpeedBoost", speedboost);
-        nbttagcompound.setInteger("TotalExperience", totalexperience);
-        nbttagcompound.setFloat("BaseSpeed", baseSpeed);
-        nbttagcompound.setInteger("SkillAttack", skillattack);
-        nbttagcompound.setInteger("SkillDefense", skilldefend);
-        nbttagcompound.setInteger("SkillHealing", skillhealing);
-        nbttagcompound.setInteger("SkillSpeed", skillspeed);
-        nbttagcompound.setInteger("FirePower", firepower);
-        nbttagcompound.setFloat("DogSize", dogsize);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(compound);
+        compound.putString("DeathType", deathtype);
+        compound.putInt("Interest", interest);
+        compound.putBoolean("Tamed", tamed);
+        compound.putString("Name", name);
+        compound.putInt("BaseHealth", basehealth);
+        compound.putInt("Level", level);
+        compound.putString("BaseTexture", basetexture);
+        compound.putFloat("TotalDamage", totaldamage);
+        compound.putBoolean("heavenbuilt", heavenbuilt);
+        compound.putBoolean("hotelbuilt", hotelbuilt);
+        compound.putInt("AttackStrength", attackStrength);
+        compound.putInt("WanderState", wanderstate);
+        compound.putInt("SpeedBoost", speedboost);
+        compound.putInt("TotalExperience", totalexperience);
+        compound.putFloat("BaseSpeed", baseSpeed);
+        compound.putInt("SkillAttack", skillattack);
+        compound.putInt("SkillDefense", skilldefend);
+        compound.putInt("SkillHealing", skillhealing);
+        compound.putInt("SkillSpeed", skillspeed);
+        compound.putInt("FirePower", firepower);
+        compound.putFloat("DogSize", dogsize);
+        compound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void readAdditional(CompoundNBT compound)
     {
-        super.readEntityFromNBT(nbttagcompound);
-        deathtype = nbttagcompound.getString("DeathType");
-        interest = nbttagcompound.getInteger("Interest");
-        tamed = nbttagcompound.getBoolean("Tamed");
-        name = nbttagcompound.getString("Name");
-        basetexture = nbttagcompound.getString("BaseTexture");
-        basehealth = nbttagcompound.getInteger("BaseHealth");
-        level = nbttagcompound.getInteger("Level");
-        totaldamage = nbttagcompound.getFloat("TotalDamage");
-        heavenbuilt = nbttagcompound.getBoolean("heavenbuilt");
-        hotelbuilt = nbttagcompound.getBoolean("hotelbuilt");
-        attackStrength = nbttagcompound.getInteger("AttackStrength");
-        wanderstate = nbttagcompound.getInteger("WanderState");
-        speedboost = nbttagcompound.getInteger("SpeedBoost");
-        totalexperience = nbttagcompound.getInteger("TotalExperience");
-        baseSpeed = nbttagcompound.getFloat("BaseSpeed");
-        skillattack = nbttagcompound.getInteger("SkillAttack");
-        skilldefend = nbttagcompound.getInteger("SkillDefense");
-        skillhealing = nbttagcompound.getInteger("SkillHealing");
-        skillspeed = nbttagcompound.getInteger("SkillSpeed");
-        firepower = nbttagcompound.getInteger("FirePower");
-        dogsize = nbttagcompound.getFloat("DogSize");
-        modelsize = nbttagcompound.getFloat("ModelSize");
+        super.readAdditional(compound);
+        deathtype = compound.getString("DeathType");
+        interest = compound.getInt("Interest");
+        tamed = compound.getBoolean("Tamed");
+        name = compound.getString("Name");
+        basetexture = compound.getString("BaseTexture");
+        basehealth = compound.getInt("BaseHealth");
+        level = compound.getInt("Level");
+        totaldamage = compound.getFloat("TotalDamage");
+        heavenbuilt = compound.getBoolean("heavenbuilt");
+        hotelbuilt = compound.getBoolean("hotelbuilt");
+        attackStrength = compound.getInt("AttackStrength");
+        wanderstate = compound.getInt("WanderState");
+        speedboost = compound.getInt("SpeedBoost");
+        totalexperience = compound.getInt("TotalExperience");
+        baseSpeed = compound.getFloat("BaseSpeed");
+        skillattack = compound.getInt("SkillAttack");
+        skilldefend = compound.getInt("SkillDefense");
+        skillhealing = compound.getInt("SkillHealing");
+        skillspeed = compound.getInt("SkillSpeed");
+        firepower = compound.getInt("FirePower");
+        dogsize = compound.getFloat("DogSize");
+        modelsize = compound.getFloat("ModelSize");
     }
 
     public void onDeath(Entity entity)
     {
     }
 
-    /**
-     * Determines if an entity can be despawned, used on idle far away entities
-     */
-    protected boolean canDespawn()
+   /**
+    * Makes the entity despawn if requirements are reached
+    */
+    @Override
+    protected void checkDespawn()
     {
-        return false;
+        // Simply blanking this *should* prevent despawning...
     }
 
     /**
      * Checks if this entity is inside of an opaque block
      */
+    @Override
     public boolean isEntityInsideOpaqueBlock()
     {
         return false;
@@ -370,8 +385,15 @@ public class TombstoneEntity extends AnimalEntity
     /**
      * Will return how many at most can spawn in a chunk at once.
      */
+    @Override
     public int getMaxSpawnedInChunk()
     {
         return 1;
     }
+
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable) {
+        return null;
+    }
 }
+// ZERO ERRORS! YAY!!!!

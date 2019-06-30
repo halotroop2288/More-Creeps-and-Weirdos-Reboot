@@ -3,47 +3,42 @@ package fr.elias.morecreeps.common.entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import fr.elias.morecreeps.client.gui.CREEPSGUISnowdevilname;
+import net.minecraft.world.Explosion.Mode;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.advancements.ModAdvancementList;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
-public class SnowDevilEntity extends EntityMob
+public class SnowDevilEntity extends MobEntity
 {
-	EntityPlayer entityplayer;
-	EntityPlayerMP playermp;
+	PlayerEntity playerentity;
+	ServerPlayerEntity playermp;
 	World world;
     public boolean rideable;
     public int interest;
-    private boolean primed;
+    // private boolean primed;
     public boolean tamed;
     public int basehealth;
-    private float distance;
+    // private float distance;
     public int armor;
     public String basetexture;
     public boolean used;
@@ -52,6 +47,12 @@ public class SnowDevilEntity extends EntityMob
     public double moveSpeed;
     public double attackStrength;
     public double health;
+    public float height = getHeight();
+    public float width = getWidth();
+    public float length = getWidth();
+    public double motionX = getMotion().x;
+    public double motionY = getMotion().y;
+    public double motionZ = getMotion().z;
     static final String Names[] =
     {
         "Satan", "The Butcher", "Killer", "Tad", "Death Spanker", "Death Toll", "Bruiser", "Bones", "The Devil", "Little Devil",
@@ -70,8 +71,8 @@ public class SnowDevilEntity extends EntityMob
 
     public SnowDevilEntity(World world)
     {
-        super(world);
-        primed = false;
+        super(null, world);
+        // primed = false;
         basetexture = snowTextures[rand.nextInt(snowTextures.length)];
         texture = basetexture;
         setSize(width * 1.6F, height * 1.6F);
@@ -85,21 +86,22 @@ public class SnowDevilEntity extends EntityMob
         tamed = false;
         name = "";
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.35D));
-        tasks.addTask(5, new EntityAIWander(this, 0.35D));
-        tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 16F));
-        tasks.addTask(7, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // tasks.addTask(0, new EntityAISwimming(this));
+        // tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.35D));
+        // tasks.addTask(5, new EntityAIWander(this, 0.35D));
+        // tasks.addTask(6, new EntityAIWatchClosest(this, PlayerEntity.class, 16F));
+        // tasks.addTask(7, new EntityAILookIdle(this));
+        // targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
     }
     
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(health);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(moveSpeed);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(attackStrength);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(moveSpeed);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackStrength);
     }
 
     /**
@@ -108,24 +110,24 @@ public class SnowDevilEntity extends EntityMob
      */
     protected Entity findPlayerToAttack()
     {
-        EntityPlayer entityplayer = world.getClosestPlayerToEntity(this, 15D);
+        PlayerEntity playerentity = world.getClosestPlayer(this, 15D);
 
-        if (entityplayer != null)
+        if (playerentity != null)
         {
             if (!tamed)
             {
-                return entityplayer;
+                return playerentity;
             }
 
             if (rand.nextInt(10) == 0)
             {
-                return entityplayer;
+                return playerentity;
             }
         }
 
         if (rand.nextInt(6) == 0)
         {
-            EntityLiving entityliving = getClosestTarget(this, 10D);
+            LivingEntity entityliving = getClosestTarget(this, 10D);
             return entityliving;
         }
         else
@@ -134,24 +136,22 @@ public class SnowDevilEntity extends EntityMob
         }
     }
 
-    public EntityLiving getClosestTarget(Entity entity, double d)
+    @SuppressWarnings("rawtypes")
+    public LivingEntity getClosestTarget(Entity entity, double d)
     {
-        List list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(20D, 20D, 20D));
+        List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(20D, 20D, 20D));
 
-        for (int i = 0; i < list.size(); i++)
-        {
-            Entity entity1 = (Entity)list.get(i);
+        for (int i = 0; i < list.size(); i++) {
+            Entity entity1 = (Entity) list.get(i);
 
-            if (!(entity1 instanceof EntityCreature))
-            {
+            if (!(entity1 instanceof CreatureEntity)) {
                 continue;
             }
 
-            EntityCreature entitycreature = (EntityCreature)entity1;
+            CreatureEntity creatureentity = (CreatureEntity) entity1;
 
-            if (entitycreature.getAttackTarget() instanceof EntityPlayer)
-            {
-                return entitycreature;
+            if (creatureentity.getAttackTarget() instanceof PlayerEntity) {
+                return creatureentity;
             }
         }
 
@@ -159,35 +159,27 @@ public class SnowDevilEntity extends EntityMob
     }
 
     /**
-     * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
+     * Basic mob attack. Default to touch of death in CreatureEntity. Overridden by
+     * each mob to define their attack.
      */
-    protected void attackEntity(Entity entity, float f)
-    {
-        if (onGround && !tamed)
-        {
+    protected void attackEntity(Entity entity, float f) {
+        if (onGround && !tamed) {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
-            motionX = (d / (double)f1) * 0.5D * 0.80000001192092896D + motionX * 0.20000000298023224D;
-            motionZ = (d1 / (double)f1) * 0.5D * 0.80000001192092896D + motionZ * 0.20000000298023224D;
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
+            motionX = (d / (double) f1) * 0.5D * 0.80000001192092896D + motionX * 0.20000000298023224D;
+            motionZ = (d1 / (double) f1) * 0.5D * 0.80000001192092896D + motionZ * 0.20000000298023224D;
             motionY = 0.40000000596046448D;
-        }
-        else if (tamed)
-        {
+        } else if (tamed) {
             super.attackEntityAsMob(entity);
         }
 
-        if ((getAttackTarget() instanceof EntityPlayer) && tamed)
-        {
+        if ((getAttackTarget() instanceof PlayerEntity) && tamed) {
             this.setAttackTarget(null);
             super.attackEntityAsMob(entity);
-        }
-        else if ((getAttackTarget() instanceof SnowDevilEntity) && tamed)
-        {
-        	this.setAttackTarget(null);
-        }
-        else
-        {
+        } else if ((getAttackTarget() instanceof SnowDevilEntity) && tamed) {
+            this.setAttackTarget(null);
+        } else {
             super.attackEntityAsMob(entity);
         }
     }
@@ -195,100 +187,92 @@ public class SnowDevilEntity extends EntityMob
     /**
      * Called when the entity is attacked.
      */
-    public boolean attackEntityFrom(DamageSource damagesource, int i)
-    {
-        Entity entity = damagesource.getEntity();
+    public boolean attackEntityFrom(DamageSource damagesource, int i) {
+        Entity entity = damagesource.getTrueSource();
 
-        if (super.attackEntityFrom(DamageSource.causeMobDamage(this), i))
-        {
-            if (riddenByEntity == entity || ridingEntity == entity)
-            {
+        if (super.attackEntityFrom(DamageSource.causeMobDamage(this), i)) {
+            if (getPassengers() == entity || getRidingEntity() == entity) {
                 return true;
             }
 
-            if (entity != this)
-            {
-                this.setAttackTarget((EntityLivingBase) entity);
+            if (entity != this) {
+                this.setAttackTarget((LivingEntity) entity);
             }
 
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
-     */
-    public void onLivingUpdate()
-    {
-        super.onLivingUpdate();
-    }
-
-    /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    public void writeAdditonal(CompoundNBT nbttagcompound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setInteger("Interest", interest);
-        nbttagcompound.setBoolean("Tamed", tamed);
-        nbttagcompound.setString("Name", name);
-        nbttagcompound.setInteger("BaseHealth", basehealth);
-        nbttagcompound.setString("BaseTexture", basetexture);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(nbttagcompound);
+        nbttagcompound.putInt("Interest", interest);
+        nbttagcompound.putInt("BaseHealth", basehealth);
+        nbttagcompound.putBoolean("Tamed", tamed);
+        nbttagcompound.putString("Name", name);
+        nbttagcompound.putString("BaseTexture", basetexture);
+        nbttagcompound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void readAdditional(CompoundNBT nbttagcompound) // This shit is so repetetive. I wish I had a script to replace all of this for me. It could definitely work.
     {
-        super.readEntityFromNBT(nbttagcompound);
-        interest = nbttagcompound.getInteger("Interest");
+        super.readAdditional(nbttagcompound);
+        interest = nbttagcompound.getInt("Interest");
+        basehealth = nbttagcompound.getInt("BaseHealth");
         tamed = nbttagcompound.getBoolean("Tamed");
         name = nbttagcompound.getString("Name");
         basetexture = nbttagcompound.getString("BaseTexture");
-        basehealth = nbttagcompound.getInteger("BaseHealth");
         modelsize = nbttagcompound.getFloat("ModelSize");
         texture = basetexture;
     }
 
-    private void explode()
-    {
-        float f = 2.0F;
-        world.createExplosion(null, posX, posY, posZ, f, true);
-    }
+    // Never used ?
+    // private void explode()
+    // {
+    //     float f = 2.0F;
+    //     world.createExplosion(null, posX, posY, posZ, f, true, Mode.NONE);
+    // }
 
     private void smoke()
     {
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 10; j++)
-            {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 10; j++) {
                 double d = rand.nextGaussian() * 0.02D;
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d2 = rand.nextGaussian() * 0.02D;
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height) + (double)i, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2);
+                world.addParticle(ParticleTypes.EXPLOSION,
+                        (posX + (double) (rand.nextFloat() * width * 2.0F)) - (double) width,
+                        posY + (double) (rand.nextFloat() * height) + (double) i,
+                        (posZ + (double) (rand.nextFloat() * width * 2.0F)) - (double) width, d, d1, d2);
             }
         }
     }
 
     /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
+     * Checks if the entity's current position is a valid location to spawn this
+     * entity.
      */
     public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(this.getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
-        int l = world.getBlockLightOpacity(new BlockPos(i, j, k));
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(this.getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
+        int l = world.getLight(new BlockPos(i, j, k));
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
         Block j1 = world.getBlockState(new BlockPos(i, j, k)).getBlock();
-        return (i1 == Blocks.snow || j1 == Blocks.snow) && i1 != Blocks.cobblestone && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.checkBlockCollision(getEntityBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0 && l > 6;
+        return (i1 == Blocks.SNOW || j1 == Blocks.SNOW) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_PLANKS
+                && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+                && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k))
+                && rand.nextInt(5) == 0 && l > 6;
     }
 
     /**
@@ -302,14 +286,14 @@ public class SnowDevilEntity extends EntityMob
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
-    public boolean interact(EntityPlayer entityplayer)
+    public boolean interact(PlayerEntity playerentity)
     {
-        ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+        ItemStack itemstack = playerentity.inventory.getCurrentItem();
         used = false;
 
-        if (tamed && entityplayer.isSneaking())
+        if (tamed && playerentity.isSneaking())
         {
-        	entityplayer.openGui(MoreCreepsReboot.instance, 7, world, (int)this.posX, (int)this.posY, (int)this.posZ);
+        	playerentity.openGui(MoreCreepsReboot.instance, 7, world, (int)this.posX, (int)this.posY, (int)this.posZ);
         }
 
         if (itemstack != null)
@@ -369,22 +353,22 @@ public class SnowDevilEntity extends EntityMob
                 }
             }
 
-            if (itemstack.getItem() == Items.snowball)
+            if (itemstack.getItem() == Items.SNOWBALL)
             {
             	if (!world.isRemote){
-            		if (!playermp.getStatFile().hasAchievementUnlocked(MoreCreepsReboot.achievesnowdevil))
+            		if (!playermp.getStatFile().hasAchievementUnlocked(ModAdvancementList.snowdevil))
                 	{
-                    	world.playSoundAtEntity(entityplayer, "morecreeps:achievement", 1.0F, 1.0F);
-                    	playermp.addStat(MoreCreepsReboot.achievesnowdevil, 1);
+                    	world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
+                    	playermp.addStat(ModAdvancementList.snowdevil, 1);
                     	confetti();
                 	}
             	}
             	
             	if(world.isRemote){
-            		if (!Minecraft.getMinecraft().thePlayer.getStatFileWriter().hasAchievementUnlocked(MoreCreepsReboot.achievesnowdevil))
+            		if (!Minecraft.getInstance().player.getStatFileWriter().hasAchievementUnlocked(ModAdvancementList.snowdevil))
                 	{
-                    	world.playSoundAtEntity(entityplayer, "morecreeps:achievement", 1.0F, 1.0F);
-                    	entityplayer.addStat(MoreCreepsReboot.achievesnowdevil, 1);
+                    	world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
+                    	playerentity.addStat(ModAdvancementList.snowdevil, 1);
                     	confetti();
                 	}
             	}
@@ -402,7 +386,7 @@ public class SnowDevilEntity extends EntityMob
                     name = Names[rand.nextInt(Names.length)];
                 }
 
-                world.playSoundAtEntity(this, "morecreeps:snowdeviltamed", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                world.playSound(playerentity, this.getPosition(), SoundsHandler.SNOW_DEVIL_TAMED, SoundCategory.MASTER, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
             }
 
             if (health > basehealth)
@@ -412,13 +396,13 @@ public class SnowDevilEntity extends EntityMob
 
             if (used)
             {
-                if (itemstack.stackSize - 1 == 0)
+                if (itemstack.getCount() - 1 == 0)
                 {
-                    entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, null);
+                    playerentity.inventory.setInventorySlotContents(playerentity.inventory.currentItem, null);
                 }
                 else
                 {
-                    itemstack.stackSize--;
+                    itemstack.setCount(itemstack.getCount() - 1);
                 }
             }
 
@@ -433,38 +417,40 @@ public class SnowDevilEntity extends EntityMob
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound()
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.NEUTRAL, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    protected SoundEvent getAmbientSound()
     {
-        return "morecreeps:snowdevil";
+        return SoundsHandler.SNOW_DEVIL;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
-        return "morecreeps:snowdevilhurt";
+        return SoundsHandler.SNOW_DEVIL_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:snowdevildeath";
+        return SoundsHandler.SNOW_DEVIL_DEATH;
     }
 
     /**
@@ -481,12 +467,12 @@ public class SnowDevilEntity extends EntityMob
 
         if (rand.nextInt(10) == 0)
         {
-            dropItem(Item.getItemFromBlock(Blocks.ice), rand.nextInt(3) + 1);
-            dropItem(Item.getItemFromBlock(Blocks.snow), rand.nextInt(10) + 1);
+            entityDropItem(Blocks.ICE, rand.nextInt(3) + 1);
+            entityDropItem(Blocks.SNOW, rand.nextInt(10) + 1);
         }
         else
         {
-        	dropItem(Item.getItemFromBlock(Blocks.snow), rand.nextInt(5) + 2);
+        	entityDropItem(Blocks.SNOW, rand.nextInt(5) + 2);
         }
     }
 
@@ -497,23 +483,23 @@ public class SnowDevilEntity extends EntityMob
     {
         if (tamed && health > 0)
         {
-            isDead = false;
+            dead = false;
             deathTime = 0;
             return;
         }
         else
         {
-            super.setDead();
+            super.setHealth(0);
             return;
         }
     }
 
     public void confetti()
     {
-        double d = -MathHelper.sin((((EntityPlayer)(entityplayer)).rotationYaw * (float)Math.PI) / 180F);
-        double d1 = MathHelper.cos((((EntityPlayer)(entityplayer)).rotationYaw * (float)Math.PI) / 180F);
+        double d = -MathHelper.sin((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
+        double d1 = MathHelper.cos((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
         TrophyEntity creepsentitytrophy = new TrophyEntity(world);
-        creepsentitytrophy.setLocationAndAngles(((EntityPlayer)(entityplayer)).posX + d * 3D, ((EntityPlayer)(entityplayer)).posY - 2D, ((EntityPlayer)(entityplayer)).posZ + d1 * 3D, ((EntityPlayer)(entityplayer)).rotationYaw, 0.0F);
-        world.spawnEntityInWorld(creepsentitytrophy);
+        creepsentitytrophy.setLocationAndAngles(((PlayerEntity)(playerentity)).posX + d * 3D, ((PlayerEntity)(playerentity)).posY - 2D, ((PlayerEntity)(playerentity)).posZ + d1 * 3D, ((PlayerEntity)(playerentity)).rotationYaw, 0.0F);
+        world.addEntity(creepsentitytrophy);
     }
 }

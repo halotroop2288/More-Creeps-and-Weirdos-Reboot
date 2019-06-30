@@ -3,15 +3,21 @@ package fr.elias.morecreeps.common.entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.client.config.CREEPSConfig;
 import fr.elias.morecreeps.client.particles.CREEPSFxBlood;
@@ -25,6 +31,9 @@ public class BulletEntity extends Entity
     protected int hitY;
     protected int hitZ;
     protected Block blockHit;
+    public double motionX = getMotion().x;
+    public double motionY = getMotion().y;
+    public double motionZ = getMotion().z;
 
     /** Light value one block more in z axis */
     protected boolean aoLightValueZPos;
@@ -49,11 +58,11 @@ public class BulletEntity extends Entity
 
     public BulletEntity(World world)
     {
-        super(world);
+        super(null, world);
         hitX = -1;
         hitY = -1;
         hitZ = -1;
-        blockHit = Blocks.air;
+        blockHit = Blocks.AIR;
         aoLightValueZPos = false;
         aoLightValueScratchXYNN = 0;
         setSize(0.0325F, 0.01125F);
@@ -67,7 +76,7 @@ public class BulletEntity extends Entity
         aoLightValueScratchXYZNNN = true;
     }
 
-    public BulletEntity(World world, EntityLivingBase entityliving, float f)
+    public BulletEntity(World world, LivingEntity entityliving, float f)
     {
         this(world);
         shootingEntity = entityliving;
@@ -77,7 +86,7 @@ public class BulletEntity extends Entity
         posY -= 0.10000000149011612D;
         posZ -= MathHelper.sin((rotationYaw / 180F) * (float)Math.PI) * 0.16F;
 
-        if (entityliving instanceof EntityPlayer)
+        if (entityliving instanceof PlayerEntity)
         {
             posY -= 0.40000000596046448D;
         }
@@ -87,28 +96,28 @@ public class BulletEntity extends Entity
         motionZ = MathHelper.cos((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI);
         motionY = -MathHelper.sin((rotationPitch / 180F) * (float)Math.PI);
 
-        if (entityliving instanceof CREEPSEntityArmyGuy)
+        if (entityliving instanceof ArmyGuyEntity)
         {
             damage = 1;
         }
 
-        if ((entityliving instanceof CREEPSEntityArmyGuy) && ((CREEPSEntityArmyGuy)entityliving).loyal)
+        if ((entityliving instanceof ArmyGuyEntity) && ((ArmyGuyEntity)entityliving).loyal)
         {
             damage = 5;
         }
 
-        if (entityliving instanceof CREEPSEntitySneakySal)
+        if (entityliving instanceof SneakySalEntity)
         {
-            EntityPlayer entityplayer = world.getClosestPlayerToEntity(this, 25D);
+            PlayerEntity playerentity = world.getClosestPlayer(this, 25D);
 
-            if (entityplayer != null)
+            if (playerentity != null)
             {
                 posY -= 1.7999999523162842D;
-                double d = (entityplayer.rotationPitch / 180F) * (float)Math.PI;
-                double d1 = entityplayer.posY - posY;
+                double d = (playerentity.rotationPitch / 180F) * (float)Math.PI;
+                double d1 = playerentity.posY - posY;
                 motionY += d1 / 20D;
 
-                if (entityliving instanceof CREEPSEntitySneakySal)
+                if (entityliving instanceof SneakySalEntity)
                 {
                     motionY += 0.076999999582767487D;
                 }
@@ -117,7 +126,7 @@ public class BulletEntity extends Entity
 
         float f1 = 1.0F;
 
-        if (entityliving instanceof EntityPlayer)
+        if (entityliving instanceof PlayerEntity)
         {
             playerFire = true;
             damage = 6;
@@ -143,7 +152,7 @@ public class BulletEntity extends Entity
     /**
      * Called by a player entity when they collide with an entity
      */
-    public void onCollideWithPlayer(EntityPlayer entityplayer)
+    public void onCollideWithPlayer(PlayerEntity playerentity)
     {
     }
 
@@ -153,7 +162,7 @@ public class BulletEntity extends Entity
 
     public void func_22374_a(double d, double d1, double d2, float f, float f1)
     {
-        float f2 = MathHelper.sqrt_double(d * d + d1 * d1 + d2 * d2);
+        float f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
         d /= f2;
         d1 /= f2;
         d2 /= f2;
@@ -166,7 +175,7 @@ public class BulletEntity extends Entity
         motionX = d;
         motionY = d1;
         motionZ = d2;
-        float f3 = MathHelper.sqrt_double(d * d + d2 * d2);
+        float f3 = MathHelper.sqrt(d * d + d2 * d2);
         prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
         prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / Math.PI);
         aoLightValueScratchXYZNNP = 0;
@@ -176,6 +185,7 @@ public class BulletEntity extends Entity
      * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
      * length * 64 * renderDistanceWeight Args: distance
      */
+    @Override
     public boolean isInRangeToRenderDist(double d)
     {
         return true;
@@ -184,9 +194,10 @@ public class BulletEntity extends Entity
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate()
+    @Override
+    public void tick()
     {
-        super.onUpdate();
+        super.tick();
 
         if (aoLightValueScratchXYNN == 100)
         {
@@ -195,7 +206,7 @@ public class BulletEntity extends Entity
 
         if (prevRotationPitch == 0.0F && prevRotationYaw == 0.0F)
         {
-            float f = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+            float f = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
             prevRotationYaw = rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
             prevRotationPitch = rotationPitch = (float)((Math.atan2(motionY, f) * 180D) / Math.PI);
         }
@@ -230,15 +241,15 @@ public class BulletEntity extends Entity
             aoLightValueScratchXYNN++;
         }
 
-        Vec3d vec3d = new Vec3(posX, posY, posZ);
-        Vec3d vec3d1 = new Vec3(posX + motionX, posY + motionY, posZ + motionZ);
+        Vec3d vec3d = new Vec3d(posX, posY, posZ);
+        Vec3d vec3d1 = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
         RayTraceResult movingobjectposition = world.rayTraceBlocks(vec3d, vec3d1);
         vec3d = new Vec3d(posX, posY, posZ);
         vec3d1 = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
 
         if (movingobjectposition != null)
         {
-            vec3d1 = new Vec3(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+            vec3d1 = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
         }
 
         Entity entity = null;
@@ -269,7 +280,7 @@ public class BulletEntity extends Entity
                 continue;
             }
 
-            double d1 = vec3d.distanceTo(movingobjectposition1.hitVec);
+            double d1 = vec3d.distanceTo(movingobjectposition1.getHitVec());
 
             if (d1 < d || d == 0.0D)
             {
@@ -287,34 +298,34 @@ public class BulletEntity extends Entity
         {
             if (movingobjectposition.entityHit != null)
             {
-                if (movingobjectposition.entityHit instanceof EntityPlayer)
+                if (movingobjectposition.entityHit instanceof PlayerEntity)
                 {
                     int k = damage;
 
-                    if (world.getDifficulty() == EnumDifficulty.PEACEFUL)
+                    if (world.getDifficulty() == Difficulty.PEACEFUL)
                     {
                         k = 0;
                     }
 
-                    if (world.getDifficulty() == EnumDifficulty.EASY)
+                    if (world.getDifficulty() == Difficulty.EASY)
                     {
                         k = k / 3 + 1;
                     }
 
-                    if (world.getDifficulty() == EnumDifficulty.HARD)
+                    if (world.getDifficulty() == Difficulty.HARD)
                     {
                         k = (k * 3) / 2;
                     }
                 }
 
-                if ((movingobjectposition.entityHit instanceof EntityLiving) && playerFire || !(movingobjectposition.entityHit instanceof CREEPSEntityFloob) || playerFire)
+                if ((movingobjectposition.entityHit instanceof EntityLiving) && playerFire || !(movingobjectposition.entityHit instanceof FloobEntity) || playerFire)
                 {
-                    if (!(movingobjectposition.entityHit instanceof CREEPSEntityRobotTodd) && !(movingobjectposition.entityHit instanceof CREEPSEntityRobotTed) && CREEPSConfig.Blood)
+                    if (!(movingobjectposition.entityHit instanceof RobotToddEntity) && !(movingobjectposition.entityHit instanceof RobotTedEntity) && CREEPSConfig.Blood)
                     {
                         blood();
                     }
 
-                    if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, shootingEntity), damage));
+                    if (movingobjectposition.subHit.attackEntityFrom(DamageSource.causeThrownDamage(this, shootingEntity), damage));
 
                     setDead();
                 }
@@ -332,16 +343,16 @@ public class BulletEntity extends Entity
                 motionX = (float)(movingobjectposition.hitVec.xCoord - posX);
                 motionY = (float)(movingobjectposition.hitVec.yCoord - posY);
                 motionZ = (float)(movingobjectposition.hitVec.zCoord - posZ);
-                float f1 = MathHelper.sqrt_double(motionX * motionX + motionY * motionY + motionZ * motionZ);
+                float f1 = MathHelper.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
                 posX -= (motionX / (double)f1) * 0.05000000074505806D;
                 posY -= (motionY / (double)f1) * 0.05000000074505806D;
                 posZ -= (motionZ / (double)f1) * 0.05000000074505806D;
                 aoLightValueZPos = true;
                 setDead();
 
-                if (blockHit == Blocks.ice)
+                if (blockHit == Blocks.ICE)
                 {
-                    world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.water.getDefaultState());
+                    world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.WATER.getDefaultState());
                 }
 
                 if (CREEPSConfig.rayGunFire && blockHit == Blocks.glass)
@@ -360,7 +371,7 @@ public class BulletEntity extends Entity
         posX += motionX=;
         posY += motionY;
         posZ += motionZ;
-        float f2 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+        float f2 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
         rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
 
         for (rotationPitch = (float)((Math.atan2(motionY, f2) * 180D) / Math.PI); rotationPitch - prevRotationPitch < -180F; prevRotationPitch -= 360F) { }
@@ -381,7 +392,7 @@ public class BulletEntity extends Entity
             for (int l = 0; l < 4; l++)
             {
                 float f7 = 0.25F;
-                world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, posX - motionX * (double)f7, posY - motionY * (double)f7, posZ - motionZ * (double)f7, motionX, motionY, motionZ);
+                world.addParticle(ParticleTypes.BUBBLE, posX - motionX * (double)f7, posY - motionY * (double)f7, posZ - motionZ * (double)f7, motionX, motionY, motionZ);
             }
 
             f3 = 0.8F;
@@ -443,26 +454,23 @@ public class BulletEntity extends Entity
     public void setDead()
     {
         blast();
-        super.setDead();
+        super.remove();
         shootingEntity = null;
     }
 
 	@Override
 	protected void registerData() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected void readAdditional(CompoundNBT compound) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected void writeAdditional(CompoundNBT compound) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
