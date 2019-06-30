@@ -1,13 +1,13 @@
 package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.lists.ItemList;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
@@ -16,44 +16,30 @@ public class TrophyEntity extends CreatureEntity
     public int partytime;
     public int trophylifespan;
     public float spin;
-    public String texture;
+    public ResourceLocation texture;
     
     public TrophyEntity(World world)
     {
-        super(null, world); // TODO EntityType??
-        texture = "morecreeps:textures/entity/trophy.png";
+        super(null, world);
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "trophy.png");
         partytime = rand.nextInt(30) + 40;
         trophylifespan = 80;
-        setSize(1.0F, 2.5F);
+        // setSize(1.0F, 2.5F);
     }
-    
-    public void applyEntityAttributes()
+
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0D);
     }
 
     /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeEntityToNBT(nbttagcompound);
-    }
-
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readEntityFromNBT(nbttagcompound);
-    }
-
-    /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate(World world)
+    @Override
+    public void tick()
     {
         if (partytime-- > 1)
         {
@@ -62,10 +48,10 @@ public class TrophyEntity extends CreatureEntity
 
         if (trophylifespan-- < 0)
         {
-            setDead();
+            setHealth(0);
         }
 
-        super.onUpdate();
+        super.tick();
     }
 
     /**
@@ -82,15 +68,6 @@ public class TrophyEntity extends CreatureEntity
     public boolean getCanSpawnHere()
     {
         return true;
-    }
-
-    /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
-     */
-    public void onLivingUpdate()
-    {
-        super.onLivingUpdate();
     }
 
     /**
@@ -127,6 +104,6 @@ public class TrophyEntity extends CreatureEntity
             entityDropItem(ItemList.money, 1);
         }
 
-        super.setDead();
+        super.setHealth(0);
     }
 }

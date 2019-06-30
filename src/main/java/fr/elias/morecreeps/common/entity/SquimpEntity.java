@@ -7,10 +7,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
@@ -62,24 +60,6 @@ public class SquimpEntity extends WaterMobEntity
     	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(moveSpeed);
-    }
-
-    /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
-    @Override
-    public void writeAdditional(CompoundNBT compound)
-    {
-        super.writeAdditional(compound);
-    }
-
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
-    @Override
-    public void readAdditional(CompoundNBT compound)
-    {
-        super.readAdditional(compound);
     }
 
     /**

@@ -2,6 +2,7 @@ package fr.elias.morecreeps.common.entity;
 
 import java.util.List;
 
+import net.minecraft.advancements.AdvancementList;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.stats.ServerStatisticsManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +34,7 @@ import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 public class SnowDevilEntity extends MobEntity
 {
 	PlayerEntity playerentity;
-	ServerPlayerEntity playermp;
+	ServerPlayerEntity serverplayer;
 	World world;
     public boolean rideable;
     public int interest;
@@ -40,7 +43,7 @@ public class SnowDevilEntity extends MobEntity
     public int basehealth;
     // private float distance;
     public int armor;
-    public String basetexture;
+    public ResourceLocation basetexture;
     public boolean used;
     public float modelsize;
     public String name;
@@ -62,12 +65,12 @@ public class SnowDevilEntity extends MobEntity
         "Vaporizer", "Wasteland", "Demolition Duo", "Two Knocks", "Double Trouble", "Thing One & Thing Two", "Wipeout", "Devil Duo", "Two Shot", "Misunderstood",
         "Twice As Nice"
     };
-    static final String snowTextures[] =
+    static final ResourceLocation snowTextures[] =
     {
-        "/mob/creeps/snowdevil1.png", "/mob/creeps/snowdevil2.png"
+        new ResourceLocation("/mob/creeps/snowdevil1.png"), new ResourceLocation("/mob/creeps/snowdevil2.png")
     };
     
-    public String texture;
+    public ResourceLocation texture;
 
     public SnowDevilEntity(World world)
     {
@@ -75,7 +78,7 @@ public class SnowDevilEntity extends MobEntity
         // primed = false;
         basetexture = snowTextures[rand.nextInt(snowTextures.length)];
         texture = basetexture;
-        setSize(width * 1.6F, height * 1.6F);
+        // setSize(width * 1.6F, height * 1.6F);
         height = 2.0F;
         width = 2.0F;
         moveSpeed = 0.6F;
@@ -208,30 +211,30 @@ public class SnowDevilEntity extends MobEntity
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeAdditonal(CompoundNBT nbttagcompound)
+    public void writeAdditonal(CompoundNBT compound)
     {
-        super.writeAdditional(nbttagcompound);
-        nbttagcompound.putInt("Interest", interest);
-        nbttagcompound.putInt("BaseHealth", basehealth);
-        nbttagcompound.putBoolean("Tamed", tamed);
-        nbttagcompound.putString("Name", name);
-        nbttagcompound.putString("BaseTexture", basetexture);
-        nbttagcompound.putFloat("ModelSize", modelsize);
+        super.writeAdditional(compound);
+        compound.putInt("Interest", interest);
+        compound.putInt("BaseHealth", basehealth);
+        compound.putBoolean("Tamed", tamed);
+        compound.putString("Name", name);
+        // compound.putString("BaseTexture", basetexture);
+        compound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
     @Override
-    public void readAdditional(CompoundNBT nbttagcompound) // This shit is so repetetive. I wish I had a script to replace all of this for me. It could definitely work.
+    public void readAdditional(CompoundNBT compound) // This shit is so repetetive. I wish I had a script to replace all of this for me. It could definitely work.
     {
-        super.readAdditional(nbttagcompound);
-        interest = nbttagcompound.getInt("Interest");
-        basehealth = nbttagcompound.getInt("BaseHealth");
-        tamed = nbttagcompound.getBoolean("Tamed");
-        name = nbttagcompound.getString("Name");
-        basetexture = nbttagcompound.getString("BaseTexture");
-        modelsize = nbttagcompound.getFloat("ModelSize");
+        super.readAdditional(compound);
+        interest = compound.getInt("Interest");
+        basehealth = compound.getInt("BaseHealth");
+        tamed = compound.getBoolean("Tamed");
+        name = compound.getString("Name");
+        // basetexture = compound.getString("BaseTexture");
+        modelsize = compound.getFloat("ModelSize");
         texture = basetexture;
     }
 
@@ -288,6 +291,7 @@ public class SnowDevilEntity extends MobEntity
      */
     public boolean interact(PlayerEntity playerentity)
     {
+        ServerStatisticsManager stats;
         ItemStack itemstack = playerentity.inventory.getCurrentItem();
         used = false;
 
@@ -298,7 +302,7 @@ public class SnowDevilEntity extends MobEntity
 
         if (itemstack != null)
         {
-            if (tamed && texture.length() == 2222)
+            // if (tamed && texture.length() == 2222)
             {
                 armor = Item.getIdFromItem(itemstack.getItem());
                 smoke();
@@ -309,9 +313,9 @@ public class SnowDevilEntity extends MobEntity
                     basehealth += 5;
                     attackStrength++;
                     health = basehealth;
-                    String s = basetexture.substring(0, 18);
-                    s = (new StringBuilder()).append(s).append("L.png").toString();
-                    texture = s;
+                    // String s = basetexture.substring(0, 18);
+                    // s = (new StringBuilder()).append(s).append("L.png").toString();
+                    // texture = s;
                     smoke();
                 }
 
@@ -321,9 +325,9 @@ public class SnowDevilEntity extends MobEntity
                     basehealth += 10;
                     attackStrength += 2;
                     health = basehealth;
-                    String s1 = basetexture.substring(0, 18);
-                    s1 = (new StringBuilder()).append(s1).append("G.png").toString();
-                    texture = s1;
+                    // String s1 = basetexture.substring(0, 18);
+                    // s1 = (new StringBuilder()).append(s1).append("G.png").toString();
+                    // texture = s1;
                     smoke();
                 }
 
@@ -333,9 +337,9 @@ public class SnowDevilEntity extends MobEntity
                     basehealth += 20;
                     health = basehealth;
                     attackStrength += 4;
-                    String s2 = basetexture.substring(0, 18);
-                    s2 = (new StringBuilder()).append(s2).append("I.png").toString();
-                    texture = s2;
+                    // String s2 = basetexture.substring(0, 18);
+                    // s2 = (new StringBuilder()).append(s2).append("I.png").toString();
+                    // texture = s2;
                     smoke();
                 }
 
@@ -346,29 +350,20 @@ public class SnowDevilEntity extends MobEntity
                     basehealth += 30;
                     health = basehealth;
                     attackStrength += 10;
-                    String s3 = basetexture.substring(0, 18);
-                    s3 = (new StringBuilder()).append(s3).append("D.png").toString();
-                    texture = s3;
+                    // String s3 = basetexture.substring(0, 18);
+                    // s3 = (new StringBuilder()).append(s3).append("D.png").toString();
+                    // texture = s3;
                     smoke();
                 }
             }
 
             if (itemstack.getItem() == Items.SNOWBALL)
-            {
-            	if (!world.isRemote){
-            		if (!playermp.getStatFile().hasAchievementUnlocked(ModAdvancementList.snowdevil))
-                	{
-                    	world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
-                    	playermp.addStat(ModAdvancementList.snowdevil, 1);
-                    	confetti();
-                	}
-            	}
             	
             	if(world.isRemote){
-            		if (!Minecraft.getInstance().player.getStatFileWriter().hasAchievementUnlocked(ModAdvancementList.snowdevil))
+            		if (Minecraft.getInstance().player.getStats().getValue(ModAdvancementList.snowdevil) >= 1)
                 	{
                     	world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
-                    	playerentity.addStat(ModAdvancementList.snowdevil, 1);
+                    	stats.setValue(playerentity, ModAdvancementList.snowdevil, 1); // This is my first time writing this "correctly" and I won't know if it works until I solve *every other problem* with this code. FML
                     	confetti();
                 	}
             	}
@@ -431,6 +426,7 @@ public class SnowDevilEntity extends MobEntity
     /**
      * Returns the sound this mob makes while it's alive.
      */
+    @Override
     protected SoundEvent getAmbientSound()
     {
         return SoundsHandler.SNOW_DEVIL;
@@ -456,6 +452,7 @@ public class SnowDevilEntity extends MobEntity
     /**
      * Called when the mob's health reaches 0.
      */
+    @Override
     public void onDeath(DamageSource damagesource)
     {
         if (tamed && health > 0)
@@ -474,6 +471,12 @@ public class SnowDevilEntity extends MobEntity
         {
         	entityDropItem(Blocks.SNOW, rand.nextInt(5) + 2);
         }
+    }
+
+    @Override
+    public void onKillCommand()
+    {
+        this.setDead();
     }
 
     /**
