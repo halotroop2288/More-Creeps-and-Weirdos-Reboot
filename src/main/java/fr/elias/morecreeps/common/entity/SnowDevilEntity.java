@@ -2,7 +2,6 @@ package fr.elias.morecreeps.common.entity;
 
 import java.util.List;
 
-import net.minecraft.advancements.AdvancementList;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -15,20 +14,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.stats.ServerStatisticsManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.Explosion.Mode;
-import fr.elias.morecreeps.common.MoreCreepsReboot;
-import fr.elias.morecreeps.common.advancements.ModAdvancementList;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class SnowDevilEntity extends MobEntity
@@ -273,7 +268,7 @@ public class SnowDevilEntity extends MobEntity
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
         Block j1 = world.getBlockState(new BlockPos(i, j, k)).getBlock();
         return (i1 == Blocks.SNOW || j1 == Blocks.SNOW) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_PLANKS
-                && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+                // && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
                 && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k))
                 && rand.nextInt(5) == 0 && l > 6;
     }
@@ -289,16 +284,18 @@ public class SnowDevilEntity extends MobEntity
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
-    public boolean interact(PlayerEntity playerentity)
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand)
     {
-        ServerStatisticsManager stats;
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        // ServerStatisticsManager stats;
         ItemStack itemstack = playerentity.inventory.getCurrentItem();
         used = false;
 
-        if (tamed && playerentity.isSneaking())
-        {
-        	playerentity.openGui(MoreCreepsReboot.instance, 7, world, (int)this.posX, (int)this.posY, (int)this.posZ);
-        }
+        // if (tamed && playerentity.isSneaking())
+        // {
+        // 	playerentity.openGui(MoreCreepsReboot.instance, 7, world, (int)this.posX, (int)this.posY, (int)this.posZ);
+        // }
 
         if (itemstack != null)
         {
@@ -357,16 +354,16 @@ public class SnowDevilEntity extends MobEntity
                 }
             }
 
-            if (itemstack.getItem() == Items.SNOWBALL)
+            // if (itemstack.getItem() == Items.SNOWBALL)
             	
-            	if(world.isRemote){
-            		if (Minecraft.getInstance().player.getStats().getValue(ModAdvancementList.snowdevil) >= 1)
-                	{
-                    	world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
-                    	stats.setValue(playerentity, ModAdvancementList.snowdevil, 1); // This is my first time writing this "correctly" and I won't know if it works until I solve *every other problem* with this code. FML
-                    	confetti();
-                	}
-            	}
+            // 	if(world.isRemote){
+            // 		if (// Advancement "snowdevil" is unlocked)
+            //     	{
+            //         	world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
+            //         	// Unlock the advancement "snowdevil"
+            //         	confetti();
+            //     	}
+            // 	}
                 
 
                 used = true;
@@ -402,11 +399,6 @@ public class SnowDevilEntity extends MobEntity
             }
 
             return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     /**

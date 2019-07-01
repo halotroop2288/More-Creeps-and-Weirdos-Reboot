@@ -3,34 +3,20 @@ package fr.elias.morecreeps.common.entity;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIBreakDoor;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.EnumDifficulty;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 
-public class RobotTedEntity extends EntityMob
+public class RobotTedEntity extends MobEntity
 {
     public static Random rand = new Random();
     protected double attackRange;
@@ -39,104 +25,112 @@ public class RobotTedEntity extends EntityMob
     public float robotsize;
     public int floattimer;
     public int floatdir;
-    private PathEntity pathToEntity;
     protected Entity playerToAttack;
     protected boolean hasAttacked;
     public float modelspeed;
     public double floatcycle;
     public double floatmaxcycle;
+    public double motionX = getMotion().x;
+    public double motionY = getMotion().y;
+    public double motionZ = getMotion().z;
+    public float width = getWidth();
+    public float length = getWidth();
+    public float height = getHeight();
 
     public String texture;
     
     public RobotTedEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/robotted.png";
         angerLevel = 0;
         attackRange = 16D;
         jumping = false;
         robotsize = 2.5F;
-        setSize(width * (robotsize * 0.8F), height * (robotsize * 0.8F));
+        // setSize(width * (robotsize * 0.8F), height * (robotsize * 0.8F));
         modelspeed = 0.61F;
         floattimer = 0;
         floatdir = 1;
         floatcycle = 0.0D;
         floatmaxcycle = 0.10499999672174454D;
         
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(1, new EntityAIBreakDoor(this));
-        
-        tasks.addTask(2, new AIAttackEntity()); 
-        
-        tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.061D));
-        tasks.addTask(5, new EntityAIWander(this, 0.25D));
-        tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8F));
-        tasks.addTask(6, new EntityAIWatchClosest(this, RobotToddEntity.class, 8F));
-        tasks.addTask(7, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-        targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, RobotToddEntity.class, true));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // tasks.addTask(0, new EntityAISwimming(this));
+        // tasks.addTask(1, new EntityAIBreakDoor(this));
+        // tasks.addTask(2, new AIAttackEntity()); 
+        // tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.061D));
+        // tasks.addTask(5, new EntityAIWander(this, 0.25D));
+        // tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8F));
+        // tasks.addTask(6, new EntityAIWatchClosest(this, RobotToddEntity.class, 8F));
+        // tasks.addTask(7, new EntityAILookIdle(this));
+        // targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        // targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        // targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, RobotToddEntity.class, true));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(45D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.061D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(45D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.061D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
     }
 
-    public float getEyeHeight()
-    {
+    public float getEyeHeight() {
         return 2.0F;
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setFloat("RobotSize", robotsize);
+    public void writeAdditional(CompoundNBT compound) {
+        super.writeAdditional(compound);
+        compound.putFloat("RobotSize", robotsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readEntityFromNBT(nbttagcompound);
-        robotsize = nbttagcompound.getFloat("RobotSize");
+    public void readAdditional(CompoundNBT compound) {
+        super.readAdditional(compound);
+        robotsize = compound.getFloat("RobotSize");
     }
 
     /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
+     * Checks if the entity's current position is a valid location to spawn this
+     * entity.
      */
-    public boolean getCanSpawnHere(World world)
+    public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
-        int l = world.getBlockLightOpacity(getPosition());
+        World world = Minecraft.getInstance().world;
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
+        int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 8;
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.log && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB
+                && i1 != Blocks.planks && i1 != Blocks.wool
+                // && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+                && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 8;
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
+     * Called frequently so the entity can update its state every tick as required.
+     * For example, zombies and skeletons use this to react to sunlight and start to
+     * burn.
      */
-    public void onLivingUpdate(World world)
+    @Override
+    public void livingTick()
     {
-        super.onLivingUpdate();
+        World world = Minecraft.getInstance().world;
+        super.livingTick();
 
         if (modelspeed < 0.05F)
         {
             modelspeed = 0.05F;
         }
 
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(modelspeed);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(modelspeed);
         isJumping = false;
 
         if(world.isRemote)
@@ -148,7 +142,7 @@ public class RobotTedEntity extends EntityMob
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate()
+    public void tick()
     {
         if (isEntityInsideOpaqueBlock())
         {
@@ -178,7 +172,7 @@ public class RobotTedEntity extends EntityMob
             }
         }
 
-        super.onUpdate();
+        super.tick();
     }
 
     /**
@@ -186,9 +180,9 @@ public class RobotTedEntity extends EntityMob
      */
     protected void attackEntity(Entity entity, float f)
     {
-        if (entity instanceof EntityPlayer)
+        if (entity instanceof PlayerEntity)
         {
-            double d = getDistanceToEntity(entity);
+            double d = getDistance(entity);
 
             if (posY > entity.posY && d < 6D)
             {

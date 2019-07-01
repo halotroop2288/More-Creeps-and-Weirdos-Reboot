@@ -1,22 +1,27 @@
 package fr.elias.morecreeps.common.world;
 
-import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.WorldGenRegion;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.entity.CastleKingEntity;
+import fr.elias.morecreeps.common.lists.ItemList;
 
-public class CREEPSWorldGenCastle extends WorldGenRegion
-{
-    public static Map stringToClassMapping = EntityList.stringToClassMapping;
+public class CREEPSWorldGenCastle extends WorldGenRegion {
+    // public static Map stringToClassMapping = EntityList.stringToClassMapping;
     public static Random rand = new Random();
     public int floor;
     private int topFloor;
@@ -24,13 +29,13 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
     private boolean alternate;
     public boolean chunky;
 
-    public CREEPSWorldGenCastle()
+    public CREEPSWorldGenCastle(World world, ChunkPrimer chunkPrimers)
     {
+        super(null, null);
     }
 
-    public static boolean blockExists(World parWorld, int x, int y, int z) 
-    {
-    	IBlockState state = parWorld.getBlockState(new BlockPos(x, y, z));
+    public static boolean blockExists(World parWorld, int x, int y, int z) {
+        BlockState state = parWorld.getBlockState(new BlockPos(x, y, z));
     	if (state != null)
     	return true;
     	else
@@ -56,8 +61,9 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
         int j2 = 0;
         chunky = false;
         
-        //TODO get the closest player (hope it will not overload the server...) -elias
-        PlayerEntity player = world.getClosestPlayer(i, j, k, 64D); //get player far from 64 blocks
+        // TODO get the closest player (hope it will not overload the server...) -elias
+        // Done. That wasn't so hard... -halo
+        PlayerEntity player = world.getClosestPlayer(i, j, k, 64D, false); // get player far from 64 blocks
 
         if (player == null)
         {
@@ -152,7 +158,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
                 {
                     Block l4 = world.getBlockState(new BlockPos(i + l3, i1 + j3, k + j4)).getBlock();
                     //TODO check if "2" blocks is a good idea
-                    if (l4 != Blocks.air && l4 != Blocks.leaves && l4 != Blocks.leaves2 && l4 != Blocks.log && l4 != Blocks.log2)
+                    if (l4 != Blocks.AIR && l4 != Blocks.OAK_LEAVES && l4 != Blocks.JUNGLE_LEAVES && l4 != Blocks.OAK_LOG && l4 != Blocks.JUNGLE_LOG)
                     {
                         j2++;
                     }
@@ -203,9 +209,9 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
             {
                 for (int j8 = -12; j8 < 38; j8++)
                 {
-                    if (world.getBlockState(new BlockPos(l + l6, i1 - l5, j1 + j8)).getBlock() == Blocks.air)
+                    if (world.getBlockState(new BlockPos(l + l6, i1 - l5, j1 + j8)).getBlock() == Blocks.AIR)
                     {
-                        world.setBlockState(new BlockPos(l + l6, i1 - l5, j1 + j8), Blocks.stone.getDefaultState());
+                        world.setBlockState(new BlockPos(l + l6, i1 - l5, j1 + j8), Blocks.STONE.getDefaultState());
                     }
                 }
             }
@@ -215,7 +221,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
         {
             for (int i7 = -10; i7 < 36; i7++)
             {
-                world.setBlockState(new BlockPos(l + i6, i1 - 1, j1 + i7), Blocks.water.getDefaultState());
+                world.setBlockState(new BlockPos(l + i6, i1 - 1, j1 + i7), Blocks.WATER.getDefaultState());
             }
         }
 
@@ -227,21 +233,20 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
             {
                 for (int k8 = -4; k8 < 30; k8++)
                 {
-                    if ((world.getBlockState(new BlockPos(l + j7, i1 + 6 + j6, j1 + k8)) == Blocks.air || world.getBlockState(new BlockPos(l + j7, i1 + 6 + j6, j1 + k8)).getBlock() == Blocks.water) && rand.nextInt(50) != 0)
+                    if ((world.getBlockState(new BlockPos(l + j7, i1 + 6 + j6, j1 + k8)) == Blocks.AIR.getDefaultState() || world.getBlockState(new BlockPos(l + j7, i1 + 6 + j6, j1 + k8)).getBlock() == Blocks.WATER) && rand.nextInt(50) != 0)
                     {
-                        world.setBlockState(new BlockPos(l + j7, i1 + 6 + j6, j1 + k8), Blocks.double_stone_slab.getDefaultState());
+                        world.setBlockState(new BlockPos(l + j7, i1 + 6 + j6, j1 + k8), Blocks.STONE_SLAB.getDefaultState());
                     }
 
-                    if (world.getBlockState(new BlockPos(l + j7, i1 + 7 + j6, j1 + k8)).getBlock() != Blocks.air || random.nextInt(25) != 0 || j6 >= (castleHeight - 1) * 7 - 7)
+                    if (world.getBlockState(new BlockPos(l + j7, i1 + 7 + j6, j1 + k8)).getBlock() != Blocks.AIR || random.nextInt(25) != 0 || j6 >= (castleHeight - 1) * 7 - 7)
                     {
                         continue;
                     }
 
-                    world.setBlockState(new BlockPos(l + j7, i1 + 7 + j6, j1 + k8), Blocks.web.getDefaultState());
+                    world.setBlockState(new BlockPos(l + j7, i1 + 7 + j6, j1 + k8), Blocks.COBWEB.getDefaultState());
 
-                    if (rand.nextInt(10) == 0)
-                    {
-                        world.setBlockState(new BlockPos(l + j7, i1 + 8 + j6, j1 + k8), Blocks.web.getDefaultState());
+                    if (rand.nextInt(10) == 0) {
+                        world.setBlockState(new BlockPos(l + j7, i1 + 8 + j6, j1 + k8), Blocks.COBWEB.getDefaultState());
                     }
                 }
             }
@@ -258,49 +263,42 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
                 int l8 = rand.nextInt(20) - 10;
                 int l12 = rand.nextInt(20) - 10;
 
-                if (world.getBlockState(new BlockPos(l + 10 + l8, i1 + 7 + j6, j1 + 5 + l12)).getBlock() == Blocks.air)
+                if (world.getBlockState(new BlockPos(l + 10 + l8, i1 + 7 + j6, j1 + 5 + l12)).getBlock() == Blocks.AIR)
                 {
-                    world.setBlockState(new BlockPos(l + 10 + l8, i1 + 7 + j6, j1 + 5 + l12), Blocks.mob_spawner.getDefaultState());
-                    TileEntityMobSpawner tileentitymobspawner = (TileEntityMobSpawner)world.getTileEntity(new BlockPos(l + 10 + l8, i1 + 7 + j6, j1 + 5 + l12));
-                    tileentitymobspawner.getSpawnerBaseLogic().setEntityName(populateSpawner(random));
+                    world.setBlockState(new BlockPos(l + 10 + l8, i1 + 7 + j6, j1 + 5 + l12), Blocks.SPAWNER.getDefaultState());
+                    MobSpawnerTileEntity tileentitymobspawner = (MobSpawnerTileEntity) world.getTileEntity(new BlockPos(l + 10 + l8, i1 + 7 + j6, j1 + 5 + l12));
                     k7++;
                 }
-            }
-            while (true);
+            } while (true);
 
-            if (j6 != (castleHeight - 1) * 7 - 7)
-            {
+            if (j6 != (castleHeight - 1) * 7 - 7) {
                 continue;
             }
 
             k7 = 0;
 
-            do
-            {
+            do {
                 int i9;
                 int i13;
 
-                do
-                {
-                    if (k7 >= 2)
-                    {
+                do {
+                    if (k7 >= 2) {
                         continue label1;
                     }
 
                     i9 = rand.nextInt(20) - 10;
                     i13 = rand.nextInt(20) - 10;
-                }
-                while (world.getBlockState(new BlockPos(l + 10 + i9, i1 + 7 + j6, j1 + 5 + i13)) != Blocks.air);
+                } while (world.getBlockState(new BlockPos(l + 10 + i9, i1 + 7 + j6, j1 + 5 + i13)) != Blocks.AIR.getDefaultState());
 
-                world.setBlockState(new BlockPos(l + 10 + i9, i1 + 7 + j6, j1 + 5 + i13), Blocks.mob_spawner.getDefaultState());
-                TileEntityMobSpawner tileentitymobspawner1 = (TileEntityMobSpawner)world.getTileEntity(new BlockPos(l + 10 + i9, i1 + 7 + j6, j1 + 5 + i13));
-                tileentitymobspawner1.getSpawnerBaseLogic().setEntityName("CastleGuard");
+                world.setBlockState(new BlockPos(l + 10 + i9, i1 + 7 + j6, j1 + 5 + i13),
+                        Blocks.SPAWNER.getDefaultState());
+                MobSpawnerTileEntity tileentitymobspawner1 = (MobSpawnerTileEntity)world.getTileEntity(new BlockPos(l + 10 + i9, i1 + 7 + j6, j1 + 5 + i13));
                 k7++;
             }
             while (true);
         }
 
-        ItemStack itemstack = new ItemStack(MoreCreepsReboot.earthgem, 1);
+        ItemStack itemstack = new ItemStack(ItemList.earth_gem, 1);
         int l7 = random.nextInt(castleHeight) + 1;
         buildTower(world, random, k1, l1, i2, l, i1, j1, true, itemstack, l7);
 
@@ -334,7 +332,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
             world.setBlockState(new BlockPos(l + k9, i1 + 9, j1 - 6), cobbler(1, random));
         }
 
-        itemstack = new ItemStack(MoreCreepsReboot.mininggem, 1);
+        itemstack = new ItemStack(ItemList.mining_gem, 1);
         l7 = random.nextInt(castleHeight) + 1;
         buildTower(world, random, k1, l1, i2, l + 25, i1, j1, false, itemstack, l7);
 
@@ -368,7 +366,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
             world.setBlockState(new BlockPos(l + i10, i1 + 9, j1 + 30), cobbler(1, random));
         }
 
-        itemstack = new ItemStack(MoreCreepsReboot.skygem, 1);
+        itemstack = new ItemStack(ItemList.sky_gem, 1);
         l7 = random.nextInt(castleHeight) + 1;
         buildTower(world, random, k1, l1, i2, l + 25, i1, j1 + 25, false, itemstack, l7);
 
@@ -402,7 +400,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
             world.setBlockState(new BlockPos(l - 6, i1 + 9, j1 + k10), cobbler(1, random));
         }
 
-        itemstack = new ItemStack(MoreCreepsReboot.healinggem, 1);
+        itemstack = new ItemStack(ItemList.healing_gem, 1);
         l7 = random.nextInt(castleHeight) + 1;
         buildTower(world, random, k1, l1, i2, l, i1, j1 + 25, true, itemstack, l7);
 
@@ -440,108 +438,115 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
         {
             for (int j14 = 6; j14 < 20; j14 += 3)
             {
-                world.setBlockState(new BlockPos(l + j14, i1 + 4 + j11, j1 - 4), Blocks.torch.getDefaultState());
-                world.setBlockState(new BlockPos(l + j14, i1 + 4 + j11, j1 + 28), Blocks.torch.getDefaultState());
+                world.setBlockState(new BlockPos(l + j14, i1 + 4 + j11, j1 - 4), Blocks.TORCH.getDefaultState());
+                world.setBlockState(new BlockPos(l + j14, i1 + 4 + j11, j1 + 28), Blocks.TORCH.getDefaultState());
 
-                if (j14 > 6 && j14 < 17)
-                {
-                    world.setBlockState(new BlockPos(l - 4, i1 + 4 + j11, j1 + j14), Blocks.torch.getDefaultState());
-                    world.setBlockState(new BlockPos(l + 28, i1 + 4 + j11, j1 + j14), Blocks.torch.getDefaultState());
+                if (j14 > 6 && j14 < 17) {
+                    world.setBlockState(new BlockPos(l - 4, i1 + 4 + j11, j1 + j14), Blocks.TORCH.getDefaultState());
+                    world.setBlockState(new BlockPos(l + 28, i1 + 4 + j11, j1 + j14), Blocks.TORCH.getDefaultState());
                 }
             }
         }
 
-        for (int k11 = 11; k11 < 15; k11++)
-        {
-            for (int k14 = 0; k14 < 4; k14++)
-            {
+        for (int k11 = 11; k11 < 15; k11++) {
+            for (int k14 = 0; k14 < 4; k14++) {
                 world.setBlockToAir(new BlockPos(l + k11, i1 + k14, j1 - 5));
                 world.setBlockToAir(new BlockPos(l + k11, i1 + k14, j1 + 29));
             }
         }
 
-        for (int l11 = 11; l11 < 15; l11++)
-        {
-            for (int l14 = 0; l14 < 6; l14++)
-            {
-                for (int i17 = 0; i17 < 4; i17++)
-                {
-                    world.setBlockState(new BlockPos(l + l11, i1 - 1, j1 - 6 - l14), Blocks.planks.getDefaultState());
-                    world.setBlockState(new BlockPos(l + l11, i1 - 1, j1 + 30 + l14), Blocks.planks.getDefaultState());
+        for (int l11 = 11; l11 < 15; l11++) {
+            for (int l14 = 0; l14 < 6; l14++) {
+                for (int i17 = 0; i17 < 4; i17++) {
+                    world.setBlockState(new BlockPos(l + l11, i1 - 1, j1 - 6 - l14),
+                            Blocks.OAK_PLANKS.getDefaultState());
+                    world.setBlockState(new BlockPos(l + l11, i1 - 1, j1 + 30 + l14),
+                            Blocks.OAK_PLANKS.getDefaultState());
                 }
             }
         }
 
-        world.setBlockState(new BlockPos(l + 9, i1 + 5, j1 + 30), Blocks.torch.getDefaultState());
-        world.setBlockState(new BlockPos(l + 16, i1 + 5, j1 + 30), Blocks.torch.getDefaultState());
-        world.setBlockState(new BlockPos(l + 9, i1 + 5, j1 - 6), Blocks.torch.getDefaultState());
-        world.setBlockState(new BlockPos(l + 16, i1 + 5, j1 - 6), Blocks.torch.getDefaultState());
+        world.setBlockState(new BlockPos(l + 9, i1 + 5, j1 + 30), Blocks.TORCH.getDefaultState());
+        world.setBlockState(new BlockPos(l + 16, i1 + 5, j1 + 30), Blocks.TORCH.getDefaultState());
+        world.setBlockState(new BlockPos(l + 9, i1 + 5, j1 - 6), Blocks.TORCH.getDefaultState());
+        world.setBlockState(new BlockPos(l + 16, i1 + 5, j1 - 6), Blocks.TORCH.getDefaultState());
 
-        for (int i12 = 0; i12 < castleHeight * 7; i12 += 7)
-        {
-            for (int i15 = 0; i15 < 2; i15++)
-            {
-                world.setBlockState(new BlockPos(l + 17, i1 + i12, j1 + -1 + i15), Blocks.stone_stairs.getDefaultState());
-                world.setBlockState(new BlockPos(l + 5, i1 + i12, j1 + -1 + i15), Blocks.stone_stairs.getDefaultState());
-                world.setBlockState(new BlockPos(l + 17, i1 + i12, j1 + 24 + i15), Blocks.stone_stairs.getDefaultState());
-                world.setBlockState(new BlockPos(l + 5, i1 + i12, j1 + 24 + i15), Blocks.stone_stairs.getDefaultState());
-                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + -1 + i15), Blocks.stone_stairs.getDefaultState());
-                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + -1 + i15), Blocks.stone_stairs.getDefaultState());
-                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + 24 + i15), Blocks.stone_stairs.getDefaultState());
-                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + 24 + i15), Blocks.stone_stairs.getDefaultState());
-                //old method: world.setBlockMetadataWithNotify(x, y, z, block id, meta id (if needed, used for wool color etc.));
-                //world.setBlockMetadataWithNotify(l + 19, i1 + i12, j1 + -1 + i15, 1);
-                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + -1 + i15), Blocks.stone.getDefaultState());
-                //world.setBlockMetadataWithNotify(l + 7, i1 + i12, j1 + -1 + i15, 1);
-                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + -1 + i15), Blocks.stone.getDefaultState());
-                //world.setBlockMetadataWithNotify(l + 19, i1 + i12, j1 + 24 + i15, 1);
-                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + 24 + i15), Blocks.stone.getDefaultState());
-                //world.setBlockMetadataWithNotify(l + 7, i1 + i12, j1 + 24 + i15, 1);
-                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + 24 + i15), Blocks.stone.getDefaultState());
-                //fixed :)
-                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + -1 + i15), Blocks.stone_stairs.getDefaultState(), 1);
-                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + -1 + i15), Blocks.stone_stairs.getDefaultState(), 1);
-                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + 24 + i15), Blocks.stone_stairs.getDefaultState(), 1);
-                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + 24 + i15), Blocks.stone_stairs.getDefaultState(), 1);
-                //TODO check if it works
+        for (int i12 = 0; i12 < castleHeight * 7; i12 += 7) {
+            for (int i15 = 0; i15 < 2; i15++) {
+                world.setBlockState(new BlockPos(l + 17, i1 + i12, j1 + -1 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState());
+                world.setBlockState(new BlockPos(l + 5, i1 + i12, j1 + -1 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState());
+                world.setBlockState(new BlockPos(l + 17, i1 + i12, j1 + 24 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState());
+                world.setBlockState(new BlockPos(l + 5, i1 + i12, j1 + 24 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState());
+                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + -1 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState());
+                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + -1 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState());
+                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + 24 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState());
+                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + 24 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState());
+                // old method: world.setBlockMetadataWithNotify(x, y, z, block id, meta id (if
+                // needed, used for wool color etc.));
+                // world.setBlockMetadataWithNotify(l + 19, i1 + i12, j1 + -1 + i15, 1);
+                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + -1 + i15), Blocks.STONE.getDefaultState());
+                // world.setBlockMetadataWithNotify(l + 7, i1 + i12, j1 + -1 + i15, 1);
+                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + -1 + i15), Blocks.STONE.getDefaultState());
+                // world.setBlockMetadataWithNotify(l + 19, i1 + i12, j1 + 24 + i15, 1);
+                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + 24 + i15), Blocks.STONE.getDefaultState());
+                // world.setBlockMetadataWithNotify(l + 7, i1 + i12, j1 + 24 + i15, 1);
+                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + 24 + i15), Blocks.STONE.getDefaultState());
+                // fixed :)
+                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + -1 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState(), 1);
+                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + -1 + i15), Blocks.STONE_STAIRS.getDefaultState(),
+                        1);
+                world.setBlockState(new BlockPos(l + 19, i1 + i12, j1 + 24 + i15),
+                        Blocks.STONE_STAIRS.getDefaultState(), 1);
+                world.setBlockState(new BlockPos(l + 7, i1 + i12, j1 + 24 + i15), Blocks.STONE_STAIRS.getDefaultState(),
+                        1);
+                // TODO check if it works
             }
         }
 
-        for (int j12 = 0; j12 < castleHeight * 7; j12 += 7)
-        {
-            for (int j15 = 0; j15 < 7; j15++)
-            {
-                for (int j17 = 0; j17 < 9; j17++)
-                {
-                    world.setBlockState(new BlockPos(l + 9 + j15, i1 + j12, (j1 + 16) - j17), Blocks.stone_slab.getDefaultState());
+        for (int j12 = 0; j12 < castleHeight * 7; j12 += 7) {
+            for (int j15 = 0; j15 < 7; j15++) {
+                for (int j17 = 0; j17 < 9; j17++) {
+                    world.setBlockState(new BlockPos(l + 9 + j15, i1 + j12, (j1 + 16) - j17),
+                            Blocks.STONE_SLAB.getDefaultState());
                 }
             }
         }
 
-        for (int k12 = 0; k12 < castleHeight * 7; k12 += 7)
-        {
-            for (int k15 = 0; k15 < 9; k15 += 3)
-            {
-                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12, j1 + 16), Blocks.double_stone_slab.getDefaultState());
-                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12 + 1, j1 + 16), Blocks.double_stone_slab.getDefaultState());
-                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12 + 2, j1 + 16), Blocks.torch.getDefaultState());
-                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12, j1 + 8), Blocks.double_stone_slab.getDefaultState());
-                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12 + 1, j1 + 8), Blocks.double_stone_slab.getDefaultState());
-                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12 + 2, j1 + 8), Blocks.torch.getDefaultState());
+        for (int k12 = 0; k12 < castleHeight * 7; k12 += 7) {
+            for (int k15 = 0; k15 < 9; k15 += 3) {
+                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12, j1 + 16),
+                        Blocks.SMOOTH_STONE_SLAB.getDefaultState());
+                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12 + 1, j1 + 16),
+                        Blocks.SMOOTH_STONE_SLAB.getDefaultState());
+                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12 + 2, j1 + 16), Blocks.TORCH.getDefaultState());
+                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12, j1 + 8),
+                        Blocks.SMOOTH_STONE_SLAB.getDefaultState());
+                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12 + 1, j1 + 8),
+                        Blocks.SMOOTH_STONE_SLAB.getDefaultState());
+                world.setBlockState(new BlockPos(l + 9 + k15, i1 + k12 + 2, j1 + 8), Blocks.TORCH.getDefaultState());
             }
         }
 
         l7 = random.nextInt(castleHeight) + 1;
-        itemstack = new ItemStack(MoreCreepsReboot.firegem, 1);
+        itemstack = new ItemStack(ItemList.fire_gem, 1);
         boolean flag5 = false;
 
         for (int l15 = 0; l15 < castleHeight * 7; l15 += 7)
         {
-            world.setBlockState(new BlockPos(l + 9 + 3, i1 + l15, (j1 + 16) - 3), Blocks.double_stone_slab.getDefaultState());
-            world.setBlockState(new BlockPos(l + 9 + 3, i1 + l15, (j1 + 16) - 4), Blocks.double_stone_slab.getDefaultState());
-            world.setBlockState(new BlockPos(l + 9 + 3, i1 + l15 + 1, (j1 + 16) - 4), Blocks.chest.getDefaultState());
-            world.setBlockState(new BlockPos(l + 9 + 3, i1 + l15 + 1, (j1 + 16) - 3), Blocks.chest.getDefaultState());
-            TileEntityChest tileentitychest = (TileEntityChest)world.getTileEntity(new BlockPos(l + 9 + 3, i1 + l15 + 1, (j1 + 16) - 3));
+            world.setBlockState(new BlockPos(l + 9 + 3, i1 + l15, (j1 + 16) - 3), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
+            world.setBlockState(new BlockPos(l + 9 + 3, i1 + l15, (j1 + 16) - 4), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
+            world.setBlockState(new BlockPos(l + 9 + 3, i1 + l15 + 1, (j1 + 16) - 4), Blocks.CHEST.getDefaultState());
+            world.setBlockState(new BlockPos(l + 9 + 3, i1 + l15 + 1, (j1 + 16) - 3), Blocks.CHEST.getDefaultState());
+            ChestTileEntity tileentitychest = (ChestTileEntity)world.getTileEntity(new BlockPos(l + 9 + 3, i1 + l15 + 1, (j1 + 16) - 3));
 
             for (int k17 = 0; k17 < random.nextInt(20); k17++)
             {
@@ -563,7 +568,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
         CastleKingEntity creepsentitycastleking = new CastleKingEntity(world);
         creepsentitycastleking.setLocationAndAngles(l + 9 + 6, i1 + castleHeight * 7, (j1 + 16) - 4, world.rand.nextFloat() * 360F, 0.0F);
         creepsentitycastleking.setPosition(l + 9 + 6, i1 + castleHeight * 7, (j1 + 16) - 4);
-        world.spawnEntityInWorld(creepsentitycastleking);
+        world.addEntity(creepsentitycastleking);
         return true;
     }
 
@@ -624,11 +629,11 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
                             {
                                 if (j3 == (k2 + 1) % 7 - 3)
                                 {
-                                    world.setBlockState(new BlockPos(k4, i5, j5), Blocks.stone_stairs.getDefaultState());
+                                    world.setBlockState(new BlockPos(k4, i5, j5), Blocks.STONE_STAIRS.getDefaultState());
 
                                     if (k2 == 5)
                                     {
-                                        world.setBlockState(new BlockPos(k4 - 7, i5, j5), Blocks.double_stone_slab.getDefaultState());
+                                        world.setBlockState(new BlockPos(k4 - 7, i5, j5), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
                                     }
 
                                     if (k2 == 6 && topFloor == 1)
@@ -656,7 +661,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
                             {
                                 if (k2 == 5 && (j3 == 3 || j3 == -4))
                                 {
-                                    world.setBlockState(new BlockPos(k4, i5, j5), Blocks.double_stone_slab.getDefaultState());
+                                    world.setBlockState(new BlockPos(k4, i5, j5), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
                                 }
                                 else
                                 {
@@ -686,11 +691,11 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
 
                             if (k2 == 5)
                             {
-                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.double_stone_slab.getDefaultState());
+                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
                                 continue;
                             }
 
-                            if (world.getBlockState(new BlockPos(k4, i5, j5)).getBlock() != Blocks.chest)
+                            if (world.getBlockState(new BlockPos(k4, i5, j5)).getBlock() != Blocks.CHEST)
                             {
                                 world.setBlockToAir(new BlockPos(k4, i5, j5));
                             }
@@ -710,7 +715,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
 
                                 if (j3 == -7 && flag || j3 == 6 && !flag)
                                 {
-                                    world.setBlockState(new BlockPos(k4, i5, j5), Blocks.glass.getDefaultState());
+                                    world.setBlockState(new BlockPos(k4, i5, j5), Blocks.GLASS.getDefaultState());
                                 }
 
                                 continue;
@@ -723,7 +728,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
 
                             if (k2 == 5)
                             {
-                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.double_stone_slab.getDefaultState());
+                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
                             }
                             else
                             {
@@ -748,7 +753,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
 
                             if (k2 == 5)
                             {
-                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.double_stone_slab.getDefaultState());
+                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
                             }
                             else
                             {
@@ -773,7 +778,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
 
                             if (k2 == 5)
                             {
-                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.double_stone_slab.getDefaultState());
+                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
                             }
                             else
                             {
@@ -816,20 +821,18 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
             {
                 if (rand.nextInt(5) == 0)
                 {
-                    world.setBlockState(new BlockPos(l + 2, l1 + 6, j1 + 2), Blocks.mob_spawner.getDefaultState());
-                    TileEntityMobSpawner tileentitymobspawner = (TileEntityMobSpawner)world.getTileEntity(new BlockPos(l + 2, l1 + 6, j1 + 2));
-                    tileentitymobspawner.getSpawnerBaseLogic().setEntityName(populateSpawner(random));
+                    world.setBlockState(new BlockPos(l + 2, l1 + 6, j1 + 2), Blocks.SPAWNER.getDefaultState());
+                    MobSpawnerTileEntity tileentitymobspawner = (MobSpawnerTileEntity)world.getTileEntity(new BlockPos(l + 2, l1 + 6, j1 + 2));
                 }
 
-                world.setBlockState(new BlockPos(l - 3, l1 + 6, j1 + 2), Blocks.mob_spawner.getDefaultState());
-                TileEntityMobSpawner tileentitymobspawner1 = (TileEntityMobSpawner)world.getTileEntity(new BlockPos(l - 3, l1 + 6, j1 + 2));
-                tileentitymobspawner1.getSpawnerBaseLogic().setEntityName(populateSpawner(random));
+                world.setBlockState(new BlockPos(l - 3, l1 + 6, j1 + 2), Blocks.SPAWNER.getDefaultState());
+                MobSpawnerTileEntity tileentitymobspawner1 = (MobSpawnerTileEntity)world.getTileEntity(new BlockPos(l - 3, l1 + 6, j1 + 2));
             }
 
             if (topFloor != 1)
             {
-                world.setBlockState(new BlockPos(l, l1 + 6, j1 - 3), Blocks.double_stone_slab.getDefaultState());
-                world.setBlockState(new BlockPos(l - 1, l1 + 6, j1 - 3), Blocks.double_stone_slab.getDefaultState());
+                world.setBlockState(new BlockPos(l, l1 + 6, j1 - 3), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
+                world.setBlockState(new BlockPos(l - 1, l1 + 6, j1 - 3), Blocks.SMOOTH_STONE_SLAB.getDefaultState());
             }
 
             if (l1 + 56 >= 120 && floor == 1)
@@ -841,8 +844,8 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
             {
                 for (int l2 = 0; l2 < 2; l2++)
                 {
-                    world.setBlockState(new BlockPos(l - l2, l1 + 7, j1 - 3), Blocks.chest.getDefaultState());
-                    TileEntityChest tileentitychest = (TileEntityChest)world.getTileEntity(new BlockPos(l - l2, l1 + 7, j1 - 3));
+                    world.setBlockState(new BlockPos(l - l2, l1 + 7, j1 - 3), Blocks.CHEST.getDefaultState());
+                    ChestTileEntity tileentitychest = (ChestTileEntity)world.getTileEntity(new BlockPos(l - l2, l1 + 7, j1 - 3));
 
                     for (int i4 = 0; i4 < 1 + l2 + i2; i4++)
                     {
@@ -862,10 +865,10 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
                 }
             }
 
-            world.setBlockState(new BlockPos(l + 3, l1, j1 - 6), Blocks.torch.getDefaultState());
-            world.setBlockState(new BlockPos(l - 4, l1, j1 - 6), Blocks.torch.getDefaultState());
-            world.setBlockState(new BlockPos(l + 1, l1, j1 - 4), Blocks.torch.getDefaultState());
-            world.setBlockState(new BlockPos(l - 2, l1, j1 - 4), Blocks.torch.getDefaultState());
+            world.setBlockState(new BlockPos(l + 3, l1, j1 - 6), Blocks.TORCH.getDefaultState());
+            world.setBlockState(new BlockPos(l - 4, l1, j1 - 6), Blocks.TORCH.getDefaultState());
+            world.setBlockState(new BlockPos(l + 1, l1, j1 - 4), Blocks.TORCH.getDefaultState());
+            world.setBlockState(new BlockPos(l - 2, l1, j1 - 4), Blocks.TORCH.getDefaultState());
 
             for (int i3 = 0; i3 < (floor * 4 + i2) - 8 && topFloor != 1; i3++)
             {
@@ -881,7 +884,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
                 k3 += l;
                 l4 += j1;
 
-                if (world.getBlockState(new BlockPos(k3, j4, l4)).getBlock() == Blocks.double_stone_slab.getDefaultState() && world.getBlockState(new BlockPos(k3, j4 + 1, l4)).getBlock() != Blocks.mob_spawner)
+                if (world.getBlockState(new BlockPos(k3, j4, l4)).getBlock() == Blocks.STONE_SLAB && world.getBlockState(new BlockPos(k3, j4 + 1, l4)).getBlock() != Blocks.SPAWNER)
                 {
                     world.setBlockToAir(new BlockPos(k3, j4, l4));
                 }
@@ -903,136 +906,126 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
         switch (j)
         {
             case 1:
-                return new ItemStack(Items.wheat, random.nextInt(12) + 3);
+                return new ItemStack(Items.WHEAT, random.nextInt(12) + 3);
 
             case 2:
-                return new ItemStack(Items.reeds, random.nextInt(6) + 6);
+                return new ItemStack(Items.SUGAR_CANE, random.nextInt(6) + 6);
 
             case 3:
-                return new ItemStack(Items.cookie, random.nextInt(6) + 6);
+                return new ItemStack(Items.COOKIE, random.nextInt(6) + 6);
 
             case 4:
-                return new ItemStack(Items.arrow, random.nextInt(30) + 10);
+                return new ItemStack(Items.ARROW, random.nextInt(30) + 10);
 
             case 5:
-                return new ItemStack(MoreCreepsReboot.money, random.nextInt(4) + 1);
+                return new ItemStack(ItemList.money, random.nextInt(4) + 1);
 
             case 6:
-                return new ItemStack(MoreCreepsReboot.evilegg, random.nextInt(4) + 1);
+                return new ItemStack(ItemList.evil_egg, random.nextInt(4) + 1);
 
             case 7:
-                return new ItemStack(Items.leather, 1);
+                return new ItemStack(Items.LEATHER, 1);
 
             case 8:
-                return new ItemStack(Items.paper, 1);
+                return new ItemStack(Items.PAPER, 1);
 
             case 9:
-                return new ItemStack(Items.apple, 1);
+                return new ItemStack(Items.APPLE, 1);
 
             case 10:
-                return new ItemStack(Items.wooden_axe, 1);
+                return new ItemStack(Items.WOODEN_AXE, 1);
 
             case 11:
-                return new ItemStack(Items.bow, 1);
+                return new ItemStack(Items.BOW, 1);
 
             case 12:
-                return new ItemStack(MoreCreepsReboot.bandaid, random.nextInt(15) + 1);
+                return new ItemStack(ItemList.band_aid, random.nextInt(15) + 1);
 
             case 13:
-                return new ItemStack(MoreCreepsReboot.blorpcola, random.nextInt(10) + 5);
+                return new ItemStack(ItemList.blorp_cola, random.nextInt(10) + 5);
 
             case 14:
-                return new ItemStack(Items.sign, 1);
+                return new ItemStack(Items.OAK_SIGN, 1);
 
             case 15:
-                return new ItemStack(Items.wheat, random.nextInt(10) + 5);
+                return new ItemStack(Items.WHEAT, random.nextInt(10) + 5);
 
             case 16:
-                return new ItemStack(Items.bread, 1);
+                return new ItemStack(Items.BREAD, 1);
 
             case 17:
-                return new ItemStack(Items.iron_pickaxe, 1);
+                return new ItemStack(Items.IRON_PICKAXE, 1);
 
             case 18:
-                return new ItemStack(Items.iron_axe, 1);
+                return new ItemStack(Items.IRON_AXE, 1);
 
             case 19:
-                return new ItemStack(Items.bucket, 1);
+                return new ItemStack(Items.BUCKET, 1);
 
             case 20:
-                return new ItemStack(Items.iron_shovel, 1);
+                return new ItemStack(Items.IRON_SHOVEL, 1);
 
             case 21:
-                return new ItemStack(MoreCreepsReboot.evilegg, random.nextInt(15) + 1);
+                return new ItemStack(ItemList.evil_egg, random.nextInt(15) + 1);
 
             case 22:
-                return new ItemStack(MoreCreepsReboot.goodonut, random.nextInt(15) + 1);
+                return new ItemStack(ItemList.goo_donut, random.nextInt(15) + 1);
 
             case 23:
-                return new ItemStack(MoreCreepsReboot.money, random.nextInt(10) + 1);
+                return new ItemStack(ItemList.money, random.nextInt(10) + 1);
 
             case 24:
-                return new ItemStack(Items.water_bucket, 1);
+                return new ItemStack(Items.WATER_BUCKET, 1);
 
             case 25:
-                return new ItemStack(MoreCreepsReboot.frisbee, 1);
+                return new ItemStack(ItemList.frisbee, 1);
 
             case 26:
-                return new ItemStack(Items.cake, 1);
+                return new ItemStack(Items.CAKE, 1);
 
             case 27:
-                return new ItemStack(MoreCreepsReboot.money, random.nextInt(10) + 5);
+                return new ItemStack(ItemList.money, random.nextInt(10) + 5);
 
             case 28:
-                return new ItemStack(Items.milk_bucket, 1);
+                return new ItemStack(Items.MILK_BUCKET, 1);
 
             case 29:
-                return new ItemStack(MoreCreepsReboot.lolly, random.nextInt(4) + 1);
+                return new ItemStack(ItemList.lolly, random.nextInt(4) + 1);
 
             case 30:
-                return new ItemStack(MoreCreepsReboot.money, random.nextInt(24) + 1);
+                return new ItemStack(ItemList.money, random.nextInt(24) + 1);
 
             case 32:
-                return new ItemStack(Items.diamond, 1);
+                return new ItemStack(Items.DIAMOND, 1);
 
             case 33:
-                return new ItemStack(Items.golden_helmet, 1);
+                return new ItemStack(Items.GOLDEN_HELMET, 1);
 
             case 34:
-                return new ItemStack(Items.diamond_helmet, 1);
+                return new ItemStack(Items.DIAMOND_HELMET, 1);
 
             case 35:
-                return new ItemStack(Items.golden_boots, 1);
+                return new ItemStack(Items.GOLDEN_BOOTS, 1);
 
             case 36:
-                return new ItemStack(MoreCreepsReboot.shrinkray, 1);
+                return new ItemStack(ItemList.shrink_ray, 1);
 
             case 37:
-                return new ItemStack(MoreCreepsReboot.horseheadgem, 1);
+                return new ItemStack(ItemList.horse_head_gem, 1);
 
             case 38:
-                return new ItemStack(Items.diamond, 1);
+                return new ItemStack(Items.DIAMOND, 1);
 
             case 39:
-                return new ItemStack(Items.golden_apple, 1);
+                return new ItemStack(Items.GOLDEN_APPLE, 1);
 
             case 40:
-                return new ItemStack(MoreCreepsReboot.money, random.nextInt(49) + 1);
+                return new ItemStack(ItemList.money, random.nextInt(49) + 1);
 
             case 31:
             default:
                 return null;
         }
-    }
-
-    public static boolean mobExists(String s)
-    {
-        return stringToClassMapping.get(s) != null;
-    }
-
-    private String populateSpawner2(Random random)
-    {
-        return "";
     }
 
     private String populateSpawner(Random random)
@@ -1152,27 +1145,27 @@ public class CREEPSWorldGenCastle extends WorldGenRegion
         }
     }
 
-    private IBlockState cobbler(int i, Random random)
+    private BlockState cobbler(int i, Random random)
     {
         if (i == 0)
         {
-            return Blocks.cobblestone.getDefaultState();
+            return Blocks.COBBLESTONE.getDefaultState();
         }
 
         if (i == 1)
         {
             if (random.nextInt(3) == 0)
             {
-                return Blocks.cobblestone.getDefaultState();
+                return Blocks.COBBLESTONE.getDefaultState();
             }
             else
             {
-                return Blocks.mossy_cobblestone.getDefaultState();
+                return Blocks.MOSSY_COBBLESTONE.getDefaultState();
             }
         }
         else
         {
-            return Blocks.cobblestone.getDefaultState();
+            return Blocks.COBBLESTONE.getDefaultState();
         }
     }
 

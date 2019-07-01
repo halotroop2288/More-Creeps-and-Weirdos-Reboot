@@ -1,37 +1,21 @@
 package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.lists.ItemList;
 
-public class FloobEntity extends EntityMob
+public class FloobEntity extends MobEntity
 {
     private boolean foundplayer;
     private boolean stolen;
-    private PathEntity pathToEntity;
     protected Entity playerToAttack;
 
     /**
@@ -51,48 +35,50 @@ public class FloobEntity extends EntityMob
 
     public FloobEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/floob.png";
         stolen = false;
         hasAttacked = false;
         foundplayer = false;
-        heldObj = new ItemStack(MoreCreepsReboot.raygun, 1);
+        heldObj = new ItemStack(ItemList.ray_gun, 1);
         rayTime = rand.nextInt(50) + 50;
-        isImmuneToFire = true;
+        // isImmuneToFire = true;
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // this.tasks.addTask(0, new EntityAISwimming(this));
+        // this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
+        // this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+        // this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        // this.tasks.addTask(8, new EntityAILookIdle(this));
+        // this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+        // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
     }
-    protected void applyEntityAttributes()
+    protected void registerAttributes()
     {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5D);
-        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+        super.registerAttributes();
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void writeAdditional(CompoundNBT compound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(compound);
+        compound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void readAdditional(CompoundNBT compound)
     {
-        super.readEntityFromNBT(nbttagcompound);
-        modelsize = nbttagcompound.getFloat("ModelSize");
+        super.readAdditional(compound);
+        modelsize = compound.getFloat("ModelSize");
     }
 
     /**
@@ -108,7 +94,7 @@ public class FloobEntity extends EntityMob
 
         targetedEntity = world.getClosestPlayer(this, 3D);
 
-        if (targetedEntity != null && (targetedEntity instanceof EntityPlayer) && canEntityBeSeen(targetedEntity))
+        if (targetedEntity != null && (targetedEntity instanceof PlayerEntity) && canEntityBeSeen(targetedEntity))
         {
             float f = rotationYaw;
 

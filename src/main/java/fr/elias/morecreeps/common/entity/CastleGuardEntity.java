@@ -1,20 +1,15 @@
 package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 
-public class CastleGuardEntity extends EntityMob
+public class CastleGuardEntity extends MobEntity
 {
     private int angerLevel;
-    private int randomSoundDelay;
     public String basetexture;
     public int attackdamage;
     public boolean isSwinging;
@@ -31,7 +26,7 @@ public class CastleGuardEntity extends EntityMob
 
     public CastleGuardEntity(World world)
     {
-        super(world);
+        super(null, world);
         angerLevel = 0;
         randomSoundDelay = 0;
         basetexture = guardTextures[rand.nextInt(guardTextures.length)];
@@ -42,18 +37,18 @@ public class CastleGuardEntity extends EntityMob
         attackdamage = 1;
     }
     
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.35D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
     }
 
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate()
+    public void tick()
     {
         if (hammerswing < 0.0F)
         {
@@ -64,7 +59,7 @@ public class CastleGuardEntity extends EntityMob
             hammerswing = 0.0F;
         }
 
-        super.onUpdate();
+        super.tick();
     }
 
     /**

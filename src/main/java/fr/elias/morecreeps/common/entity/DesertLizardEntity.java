@@ -1,25 +1,19 @@
 package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-public class DesertLizardEntity extends EntityMob
+public class DesertLizardEntity extends MobEntity
 {
     public int fireballTime;
     private Entity targetedEntity;
@@ -31,36 +25,36 @@ public class DesertLizardEntity extends EntityMob
     public String texture;
     public DesertLizardEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = lizardTextures[rand.nextInt(lizardTextures.length)];
         setSize(2.0F, 1.5F);
         fireballTime = rand.nextInt(300) + 250;
         modelsize = 1.0F;
-        this.targetTasks.addTask(0, new DesertLizardEntity.AIAttackEntity());
+        // this.targetTasks.addTask(0, new DesertLizardEntity.AIAttackEntity());
     }
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.55D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.55D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    public void writeAdditional(CompoundNBT nbttagcompound)
     {
-        super.writeEntityToNBT(nbttagcompound);
+        super.writeAdditional(nbttagcompound);
         nbttagcompound.setFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    public void readAdditional(CompoundNBT nbttagcompound)
     {
-        super.readEntityFromNBT(nbttagcompound);
+        super.readAdditional(nbttagcompound);
         modelsize = nbttagcompound.getFloat("ModelSize");
     }
 
@@ -69,44 +63,48 @@ public class DesertLizardEntity extends EntityMob
      */
     public boolean getCanSpawnHere(World world)
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.sand || i1 == Blocks.gravel) && i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0; //&& l > 10;
+        return (i1 == Blocks.sand || i1 == Blocks.gravel) && i1 != Blocks.cobblestone && i1 != Blocks.log
+                && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool
+                && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+                && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0; // && l > 10;
     }
 
     /**
      * Will return how many at most can spawn in a chunk at once.
      */
-    public int getMaxSpawnedInChunk()
-    {
+    public int getMaxSpawnedInChunk() {
         return 3;
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
+     * Called frequently so the entity can update its state every tick as required.
+     * For example, zombies and skeletons use this to react to sunlight and start to
+     * burn.
      */
-    public void onLivingUpdate(World world)
+    @Override
+    public void livingTick()
     {
-        if (fireballTime-- < 1)
-        {
+        World world = Minecraft.getInstance().world;
+        PlayerEntity player = Minecraft.getInstance().world;
+        if (fireballTime-- < 1) {
             fireballTime = rand.nextInt(300) + 250;
             double d = 64D;
-            targetedEntity = world.getClosestPlayerToEntity(this, 30D);
+            targetedEntity = world.getClosestPlayer(this, 30D);
 
-            if (targetedEntity != null && canEntityBeSeen(targetedEntity) && (targetedEntity instanceof PlayerEntity))
-            {
-                double d1 = targetedEntity.getDistanceSqToEntity(this);
+            if (targetedEntity != null && canEntityBeSeen(targetedEntity) && (targetedEntity instanceof PlayerEntity)) {
+                double d1 = targetedEntity.getDistanceSq(this);
 
-                if (d1 < d * d && d1 > 10D)
-                {
+                if (d1 < d * d && d1 > 10D) {
                     double d2 = targetedEntity.posX - posX;
-                    double d3 = (targetedEntity.getEntityBoundingBox().minY + (double)(targetedEntity.height / 2.0F)) - (posY + (double)(height / 2.0F));
+                    double d3 = (targetedEntity.getBoundingBox().minY + (double) (targetedEntity.height / 2.0F))
+                            - (posY + (double) (height / 2.0F));
                     double d4 = (targetedEntity.posZ - posZ) + 0.5D;
                     renderYawOffset = rotationYaw = (-(float)Math.atan2(d2, d4) * 180F) / (float)Math.PI;
-                    world.playSoundAtEntity(this, "morecreeps:desertlizardfireball", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(this, "morecreeps:desertlizardfireball", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                     DesertLizardFireballEntity creepsentitydesertlizardfireball = new DesertLizardFireballEntity(world, this, d2, d3, d4);
                     double d5 = 4D;
                     Vec3 vec3d = getLook(1.0F);

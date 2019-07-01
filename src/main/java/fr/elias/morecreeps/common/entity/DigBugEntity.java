@@ -4,25 +4,15 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 
-public class DigBugEntity extends EntityMob
+public class DigBugEntity extends MobEntity
 {
     private static final Item dropItems[];
     protected double attackRange;
@@ -46,7 +36,7 @@ public class DigBugEntity extends EntityMob
 
     public DigBugEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/digbug0.png";
         angerLevel = 0;
         attackRange = 16D;

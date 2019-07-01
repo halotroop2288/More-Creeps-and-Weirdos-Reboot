@@ -1,35 +1,22 @@
 package fr.elias.morecreeps.common.entity;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import java.util.Random;
 
-public class EvilScientistEntity extends EntityMob
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraft.world.Explosion.Mode;
+
+public class EvilScientistEntity extends MobEntity
 {
     //public int basehealth;
     public int weapon;
@@ -52,6 +39,7 @@ public class EvilScientistEntity extends EntityMob
     public boolean towerBuilt;
     public float modelsize;
     public String texture;
+    private Random rand;
 
     public EvilScientistEntity(World world)
     {
@@ -65,35 +53,34 @@ public class EvilScientistEntity extends EntityMob
         trulyevil = false;
         towerBuilt = false;
         numexperiments = rand.nextInt(3) + 1;
-        isImmuneToFire = true;
+        // isImmuneToFire = true;
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(4, new EvilScientistEntity.AITargetingSystem());
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // this.tasks.addTask(0, new EntityAISwimming(this));
+        // this.tasks.addTask(4, new EvilScientistEntity.AITargetingSystem());
+        // this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
+        // this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+        // this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        // this.tasks.addTask(8, new EntityAILookIdle(this));
+        // this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
         if(trulyevil)
         {
             this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
         }
     }
     
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.45D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
+        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
-    {
+    public void writeEntityToNBT(NBTTagCompound nbttagcompound) {
         super.writeEntityToNBT(nbttagcompound);
         nbttagcompound.setInteger("ExperimentTimer", experimenttimer);
         nbttagcompound.setBoolean("ExperimentStart", experimentstart);
@@ -112,8 +99,7 @@ public class EvilScientistEntity extends EntityMob
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
-    {
+    public void readEntityFromNBT(NBTTagCompound nbttagcompound) {
         super.readEntityFromNBT(nbttagcompound);
         experimenttimer = nbttagcompound.getInteger("ExperimentTimer");
         experimentstart = nbttagcompound.getBoolean("ExperimentStart");
@@ -128,155 +114,137 @@ public class EvilScientistEntity extends EntityMob
         towerBuilt = nbttagcompound.getBoolean("TowerBuilt");
         modelsize = nbttagcompound.getFloat("ModelSize");
 
-        if (trulyevil)
-        {
+        if (trulyevil) {
             texture = "morecreeps:textures/entity/evilscientistblown.png";
         }
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
+     * Called frequently so the entity can update its state every tick as required.
+     * For example, zombies and skeletons use this to react to sunlight and start to
+     * burn.
      */
-    public void onLivingUpdate(World world)
-    {
-    	if(trulyevil)
-    	{
-    		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.75D);
-    	}else{
-    		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.45D);
-    	}
+    public void onLivingUpdate(World world) {
+        if (trulyevil) {
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.75D);
+        } else {
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
+        }
         fallDistance = 0.0F;
 
-        if (stage == 3 && posY + 3D < (double)(towerY + towerHeight))
-        {
+        if (stage == 3 && posY + 3D < (double) (towerY + towerHeight)) {
             stage = 2;
         }
 
-        if (stage == 0)
-        {
-            if (experimenttimer > 0 && !experimentstart)
-            {
+        if (stage == 0) {
+            if (experimenttimer > 0 && !experimentstart) {
                 experimenttimer--;
             }
 
-            if (experimenttimer == 0)
-            {
+            if (experimenttimer == 0) {
                 experimentstart = true;
                 stage = 1;
                 experimenttimer = rand.nextInt(5000) + 100;
             }
         }
 
-        if (stage == 1 && onGround && experimentstart && posY > 63D)
-        {
-            towerX = MathHelper.floor_double(posX) + 2;
-            towerY = MathHelper.floor_double(posY);
-            towerZ = MathHelper.floor_double(posZ) + 2;
+        if (stage == 1 && onGround && experimentstart && posY > 63D) {
+            towerX = MathHelper.floor(posX) + 2;
+            towerY = MathHelper.floor(posY);
+            towerZ = MathHelper.floor(posZ) + 2;
             towerHeight = rand.nextInt(20) + 10;
-            area = Blocks.air;
+            area = Blocks.AIR;
 
-            /*for (int i = 0; i < towerHeight; i++)
-            {
-                for (int i2 = 0; i2 < 3; i2++)
-                {
-                    for (int l3 = 0; l3 < 3; l3++)
-                    {
-                        area += world.getBlockState(new BlockPos(towerX + l3, towerY + i, towerZ + i2 + 1)).getBlock();
-                        area += world.getBlockState(new BlockPos(towerX + i2 + 1, towerY + i, towerZ + l3)).getBlock();
-                    }
-                }
-            }*/
+            /*
+             * for (int i = 0; i < towerHeight; i++) { for (int i2 = 0; i2 < 3; i2++) { for
+             * (int l3 = 0; l3 < 3; l3++) { area += world.getBlockState(new BlockPos(towerX
+             * + l3, towerY + i, towerZ + i2 + 1)).getBlock(); area +=
+             * world.getBlockState(new BlockPos(towerX + i2 + 1, towerY + i, towerZ +
+             * l3)).getBlock(); } } }
+             */
 
-            for (int i = 0; i < towerHeight; i++)
-            {
-                for (int i2 = 0; i2 < 3; i2++)
-                {
-                    for (int l3 = 0; l3 < 3; l3++)
-                    {
+            for (int i = 0; i < towerHeight; i++) {
+                for (int i2 = 0; i2 < 3; i2++) {
+                    for (int l3 = 0; l3 < 3; l3++) {
                         area = world.getBlockState(new BlockPos(towerX + l3, towerY + i, towerZ + i2 + 1)).getBlock();
                         area = world.getBlockState(new BlockPos(towerX + i2 + 1, towerY + i, towerZ + l3)).getBlock();
                     }
                 }
             }
-            
-            if (posY > 63D && area == Blocks.air && world.getBlockState(new BlockPos(towerX + 2, towerY - 1, towerZ + 2)).getBlock() != Blocks.air && world.getBlockState(new BlockPos(towerX + 2, towerY - 1, towerZ + 2)).getBlock() != Blocks.water && world.getBlockState(new BlockPos(towerX + 2, towerY - 1, towerZ + 2)).getBlock() != Blocks.flowing_water)
-            {
+
+            if (posY > 63D && area == Blocks.AIR
+                    && world.getBlockState(new BlockPos(towerX + 2, towerY - 1, towerZ + 2)).getBlock() != Blocks.AIR
+                    && world.getBlockState(new BlockPos(towerX + 2, towerY - 1, towerZ + 2))
+                            .getBlock() != Blocks.WATER) {
                 towerBuilt = true;
 
-                for (int j = 0; j < towerHeight; j++)
-                {
-                    for (int j2 = 0; j2 < 3; j2++)
-                    {
-                        for (int i4 = 0; i4 < 3; i4++)
-                        {
-                        	//previously called "byte byte0"
-                            Block byte0 = Blocks.cobblestone;
+                for (int j = 0; j < towerHeight; j++) {
+                    for (int j2 = 0; j2 < 3; j2++) {
+                        for (int i4 = 0; i4 < 3; i4++) {
+                            // previously called "byte byte0"
+                            Block byte0 = Blocks.COBBLESTONE;
 
-                            if (rand.nextInt(5) == 0)
-                            {
-                                byte0 = Blocks.mossy_cobblestone;
+                            if (rand.nextInt(5) == 0) {
+                                byte0 = Blocks.MOSSY_COBBLESTONE;
                             }
 
-                            world.setBlockState(new BlockPos(towerX + i4, towerY + j, towerZ + j2 + 1), byte0.getDefaultState());
-                            byte0 = Blocks.cobblestone;
+                            world.setBlockState(new BlockPos(towerX + i4, towerY + j, towerZ + j2 + 1),
+                                    byte0.getDefaultState());
+                            byte0 = Blocks.COBBLESTONE;
 
-                            if (rand.nextInt(5) == 0)
-                            {
-                                byte0 = Blocks.mossy_cobblestone;
+                            if (rand.nextInt(5) == 0) {
+                                byte0 = Blocks.MOSSY_COBBLESTONE;
                             }
 
-                            world.setBlockState(new BlockPos(towerX + j2 + 1, towerY + j, towerZ + i4), byte0.getDefaultState());
+                            world.setBlockState(new BlockPos(towerX + j2 + 1, towerY + j, towerZ + i4),
+                                    byte0.getDefaultState());
                         }
                     }
                 }
 
-                world.setBlockState(new BlockPos(towerX + 2, towerY + towerHeight, towerZ + 2), Blocks.crafting_table.getDefaultState());
+                world.setBlockState(new BlockPos(towerX + 2, towerY + towerHeight, towerZ + 2),
+                        Blocks.CRAFTING_TABLE.getDefaultState());
 
-                for (int k = 0; k < towerHeight; k++)
-                {
-                    world.setBlockState(new BlockPos(towerX, towerY + k, towerZ), Blocks.ladder.getDefaultState());
-                    //TODO : Fix this !
-                    /*Blocks.ladder.onBlockPlaced(world, new BlockPos(towerX, towerY + k, towerZ), 65);
-                    onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)*/
-                    Blocks.ladder.onBlockPlaced(world, new BlockPos(towerX, towerY + k, towerZ), EnumFacing.EAST, 0, 0, 0, 0, this);
+                for (int k = 0; k < towerHeight; k++) {
+                    world.setBlockState(new BlockPos(towerX, towerY + k, towerZ), Blocks.LADDER.getDefaultState());
+                    // TODO : Fix this !
+                    /*
+                     * Blocks.ladder.onBlockPlaced(world, new BlockPos(towerX, towerY + k, towerZ),
+                     * 65); onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                     */
+                    Blocks.ladder.onBlockPlaced(world, new BlockPos(towerX, towerY + k, towerZ), EnumFacing.EAST, 0, 0,
+                            0, 0, this);
 
                 }
 
                 stage = 2;
-            }
-            else
-            {
+            } else {
                 stage = 0;
                 experimenttimer = rand.nextInt(100) + 50;
                 experimentstart = false;
             }
         }
 
-        if (stage == 2)
-        {
-            if (posX < (double)towerX)
-            {
+        if (stage == 2) {
+            if (posX < (double) towerX) {
                 motionX = 0.20000000298023224D;
             }
 
-            if (posZ < (double)towerZ)
-            {
+            if (posZ < (double) towerZ) {
                 motionZ = 0.20000000298023224D;
             }
 
-            if (Math.abs(posX - (double)towerX) < 0.40000000596046448D && Math.abs(posZ - (double)towerZ) < 0.40000000596046448D)
-            {
+            if (Math.abs(posX - (double) towerX) < 0.40000000596046448D
+                    && Math.abs(posZ - (double) towerZ) < 0.40000000596046448D) {
                 motionX = 0.0D;
                 motionZ = 0.0D;
                 motionY = 0.30000001192092896D;
                 int l = MathHelper.floor_double(posX);
-                int k2 = MathHelper.floor_double(getEntityBoundingBox().minY);
+                int k2 = MathHelper.floor_double(getBoundingBox().minY);
                 int j4 = MathHelper.floor_double(posZ);
                 world.setBlockToAir(new BlockPos(l, k2 + 2, j4));
 
-                if (posY > (double)(towerY + towerHeight))
-                {
+                if (posY > (double) (towerY + towerHeight)) {
                     motionY = 0.0D;
                     posZ++;
                     posX++;
@@ -287,8 +255,7 @@ public class EvilScientistEntity extends EntityMob
             }
         }
 
-        if (stage == 3)
-        {
+        if (stage == 3) {
             posY = towerY + towerHeight;
             posX = towerX + 2;
             posZ = towerZ + 2;
@@ -296,90 +263,93 @@ public class EvilScientistEntity extends EntityMob
             motionX = 0.0D;
             motionY = 0.0D;
             motionZ = 0.0D;
-            this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.0D);
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
 
-            if (experimenttimer > 0)
-            {
+            if (experimenttimer > 0) {
                 experimenttimer--;
             }
 
-            if (rand.nextInt(200) == 0)
-            {
-                int i1 = MathHelper.floor_double(posX);
-                int l2 = MathHelper.floor_double(getEntityBoundingBox().minY);
-                int k4 = MathHelper.floor_double(posZ);
+            if (rand.nextInt(200) == 0) {
+                int i1 = MathHelper.floor(posX);
+                int l2 = MathHelper.floor(getBoundingBox().minY);
+                int k4 = MathHelper.floor(posZ);
                 world.addWeatherEffect(new EntityLightningBolt(world, i1, l2 + 3, k4));
             }
 
-            if (rand.nextInt(150) == 0 && !water)
-            {
-                world.setBlockState(new BlockPos(towerX + 2, towerY + towerHeight, towerZ + 1), Blocks.flowing_water.getDefaultState());
-                world.setBlockState(new BlockPos(towerX + 3, towerY + towerHeight, towerZ + 2), Blocks.flowing_water.getDefaultState());
-                world.setBlockState(new BlockPos(towerX + 1, towerY + towerHeight, towerZ + 2), Blocks.flowing_water.getDefaultState());
-                world.setBlockState(new BlockPos(towerX + 2, towerY + towerHeight, towerZ + 3), Blocks.flowing_water.getDefaultState());
+            if (rand.nextInt(150) == 0 && !water) {
+                world.setBlockState(new BlockPos(towerX + 2, towerY + towerHeight, towerZ + 1),
+                        Blocks.flowing_water.getDefaultState());
+                world.setBlockState(new BlockPos(towerX + 3, towerY + towerHeight, towerZ + 2),
+                        Blocks.flowing_water.getDefaultState());
+                world.setBlockState(new BlockPos(towerX + 1, towerY + towerHeight, towerZ + 2),
+                        Blocks.flowing_water.getDefaultState());
+                world.setBlockState(new BlockPos(towerX + 2, towerY + towerHeight, towerZ + 3),
+                        Blocks.flowing_water.getDefaultState());
                 water = true;
             }
 
-            if (rand.nextInt(8) == 0)
-            {
+            if (rand.nextInt(8) == 0) {
                 EvilLightEntity creepsentityevillight = new EvilLightEntity(world);
                 creepsentityevillight.setLocationAndAngles(towerX, towerY + towerHeight, towerZ, rotationYaw, 0.0F);
                 creepsentityevillight.motionX = rand.nextFloat() * 2.0F - 1.0F;
                 creepsentityevillight.motionZ = rand.nextFloat() * 2.0F - 1.0F;
-                if(!world.isRemote)
-                world.spawnEntityInWorld(creepsentityevillight);
+                if (!world.isRemote)
+                    world.spawnEntityInWorld(creepsentityevillight);
             }
 
-            if (rand.nextInt(10) == 0)
-            {
-                for (int j1 = 0; j1 < 4; j1++)
-                {
-                    for (int i3 = 0; i3 < 10; i3++)
-                    {
+            if (rand.nextInt(10) == 0) {
+                for (int j1 = 0; j1 < 4; j1++) {
+                    for (int i3 = 0; i3 < 10; i3++) {
                         double d = rand.nextGaussian() * 0.02D;
                         double d2 = rand.nextGaussian() * 0.02D;
                         double d4 = rand.nextGaussian() * 0.02D;
-                        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, ((double)(2.0F + (float)towerX) + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, (double)(1.0F + (float)towerY + (float)towerHeight) + (double)(rand.nextFloat() * height) + 2D, (2D + ((double)towerZ + (double)(rand.nextFloat() * width * 2.0F))) - (double)width, d, d2, d4);
+                        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE,
+                                ((double) (2.0F + (float) towerX) + (double) (rand.nextFloat() * width * 2.0F))
+                                        - (double) width,
+                                (double) (1.0F + (float) towerY + (float) towerHeight)
+                                        + (double) (rand.nextFloat() * height) + 2D,
+                                (2D + ((double) towerZ + (double) (rand.nextFloat() * width * 2.0F))) - (double) width,
+                                d, d2, d4);
                     }
                 }
             }
 
-            if (!experimentstart)
-            {
-                for (int k1 = 0; k1 < 4; k1++)
-                {
-                    for (int j3 = 0; j3 < 10; j3++)
-                    {
+            if (!experimentstart) {
+                for (int k1 = 0; k1 < 4; k1++) {
+                    for (int j3 = 0; j3 < 10; j3++) {
                         double d1 = rand.nextGaussian() * 0.02D;
                         double d3 = rand.nextGaussian() * 0.02D;
                         double d5 = rand.nextGaussian() * 0.02D;
-                        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, ((double)towerX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, (double)(towerY + towerHeight) + (double)(rand.nextFloat() * height) + 2D, ((double)towerZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d1, d3, d5);
+                        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE,
+                                ((double) towerX + (double) (rand.nextFloat() * width * 2.0F)) - (double) width,
+                                (double) (towerY + towerHeight) + (double) (rand.nextFloat() * height) + 2D,
+                                ((double) towerZ + (double) (rand.nextFloat() * width * 2.0F)) - (double) width, d1, d3,
+                                d5);
                     }
                 }
 
                 EvilLightEntity creepsentityevillight1 = new EvilLightEntity(world);
-                creepsentityevillight1.setLocationAndAngles(towerX, towerY + towerHeight + 10, towerZ, rotationYaw, 0.0F);
-                world.spawnEntityInWorld(creepsentityevillight1);
+                creepsentityevillight1.setLocationAndAngles(towerX, towerY + towerHeight + 10, towerZ, rotationYaw,
+                        0.0F);
+                world.addEntity(creepsentityevillight1);
                 experimentstart = true;
             }
 
-            if (experimenttimer == 0)
-            {
-                world.createExplosion(null, towerX + 2, towerY + towerHeight + 4, towerZ + 2, 2.0F, true);
+            if (experimenttimer == 0) {
+                world.createExplosion(null, towerX + 2, towerY + towerHeight + 4, towerZ + 2, 2.0F, true, Mode.NONE);
                 experimentstart = false;
                 stage = 4;
             }
         }
 
-        if (stage == 4)
-        {
-            int l1 = MathHelper.floor_double(posX);
-            int k3 = MathHelper.floor_double(getEntityBoundingBox().minY);
-            int l4 = MathHelper.floor_double(posZ);
+        if (stage == 4) {
+            int l1 = MathHelper.floor(posX);
+            int k3 = MathHelper.floor(getBoundingBox().minY);
+            int l4 = MathHelper.floor(posZ);
 
             for (int i5 = 0; i5 < rand.nextInt(5) + 1; i5++)
             {
-                world.addWeatherEffect(new EntityLightningBolt(world, (l1 + rand.nextInt(4)) - 2, k3 + 6, (l4 + rand.nextInt(4)) - 2));
+                world.addWeatherEffect(new LightningBoltEntity(world, (l1 + rand.nextInt(4)) - 2, k3 + 6, (l4 + rand.nextInt(4)) - 2));
             }
 
             world.playSoundAtEntity(this, "morecreeps:evilexperiment", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);

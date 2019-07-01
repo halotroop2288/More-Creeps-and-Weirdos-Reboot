@@ -6,6 +6,10 @@ bin
 .classpath
 .project
 
+# Visual Studio
+.vs
+.vscode
+
 # idea
 out
 *.ipr
@@ -16,6 +20,8 @@ out
 # gradle
 build
 .gradle
+build.bat
+gradle setup.bat
 
 # other
 eclipse

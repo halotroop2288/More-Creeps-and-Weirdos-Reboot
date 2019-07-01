@@ -3,30 +3,17 @@ package fr.elias.morecreeps.common.entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-public class InvisibleManEntity extends EntityMob
+public class InvisibleManEntity extends MobEntity
 {
     private static final ItemStack defaultHeldItem;
     private static final Item dropItems[];
@@ -38,41 +25,43 @@ public class InvisibleManEntity extends EntityMob
 
     public InvisibleManEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/invisibleman.png";
         angerLevel = 0;
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new InvisibleManEntity.AIAttackEntity());
-        this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(4, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-        if(angerLevel > 0)
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // this.tasks.addTask(0, new EntityAISwimming(this));
+        // this.tasks.addTask(1, new InvisibleManEntity.AIAttackEntity());
+        // this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 0.5D));
+        // this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
+        // this.tasks.addTask(4, new EntityAILookIdle(this));
+        // this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+        // if(angerLevel > 0)
+        // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
     }
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2D);
     }
 
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate(World world)
+    public void tick()
     {
-        if ((getAttackTarget() instanceof EntityPlayer) && angerLevel == 0)
-        {
+        World world = Minecraft.getInstance().world;
+        if ((getAttackTarget() instanceof PlayerEntity) && angerLevel == 0) {
             texture = "morecreeps:textures/entity/invisiblemanmad.png";
             angerLevel = rand.nextInt(15) + 5;
         }
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(getAttackTarget() != null ? 0.75D : 0.5D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+                .setBaseValue(getAttackTarget() != null ? 0.75D : 0.5D);
 
-        super.onUpdate();
+        super.tick();
 
         if (rand.nextInt(30) == 0 && angerLevel > 0)
         {
@@ -80,7 +69,7 @@ public class InvisibleManEntity extends EntityMob
 
             if (angerLevel == 0)
             {
-                world.playSoundAtEntity(this, "morecreeps:invisiblemanforgetit", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                world.playSound(this, "morecreeps:invisiblemanforgetit", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 this.setAttackTarget(null);
                 texture = "morecreeps:textures/entity/invisibleman.png";
             }

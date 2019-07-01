@@ -1,8 +1,5 @@
 package fr.elias.morecreeps.common.entity;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -11,20 +8,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import fr.elias.morecreeps.client.gui.SneakySalGUI;
-import fr.elias.morecreeps.client.particles.CREEPSFxSmoke;
 import fr.elias.morecreeps.common.lists.ItemList;
-import fr.elias.morecreeps.common.lists.ParticleList;
-import fr.elias.morecreeps.common.MoreCreepsReboot;
-import fr.elias.morecreeps.common.entity.RockMonsterEntity.AIAttackEntity;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class SneakySalEntity extends MobEntity
@@ -170,7 +160,7 @@ public class SneakySalEntity extends MobEntity
      */
     public boolean interact(PlayerEntity playerentity)
     {
-        ItemStack itemstack1 = playerentity.inventory.getCurrentItem();
+        // ItemStack helditem = playerentity.inventory.getCurrentItem();
 
         if (dissedmax > 0)
         {
@@ -181,7 +171,7 @@ public class SneakySalEntity extends MobEntity
 
             if (dissedmax > 0 && !(playerToAttack instanceof PlayerEntity))
             {
-                playerentity.openGui(MoreCreepsReboot.instance, 6, world, (int)this.posX, (int)this.posY, (int)this.posZ);
+                // playerentity.openGui(MoreCreepsReboot.instance, 6, world, (int)this.posX, (int)this.posY, (int)this.posZ);
             }
         }
 

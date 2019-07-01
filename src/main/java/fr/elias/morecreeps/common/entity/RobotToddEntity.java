@@ -3,34 +3,22 @@ package fr.elias.morecreeps.common.entity;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIBreakDoor;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 
-public class RobotToddEntity extends EntityMob
+public class RobotToddEntity extends MobEntity
 {
     public static Random rand = new Random();
     protected double attackRange;
-    private int angerLevel;
     public boolean jumping;
     public float robotsize;
     public int texswitch;
@@ -38,83 +26,85 @@ public class RobotToddEntity extends EntityMob
     public float modelspeed;
     public String texture;
 
-    public RobotToddEntity(World world)
-    {
-        super(world);
+    public RobotToddEntity(World world) {
+        super(null, world);
         texnumber = 0;
         texture = "morecreeps:textures/entity/robottodd1.png";
-        angerLevel = 0;
         attackRange = 16D;
         jumping = false;
         robotsize = 2.5F;
         //yOffset *= 1.5F;
         setSize(1.5F, 2.5F);
         modelspeed = 0.4F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(1, new EntityAIBreakDoor(this));
-        
-        tasks.addTask(2, new AIAttackEntity()); 
-        
-        tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.061D));
-        tasks.addTask(5, new EntityAIWander(this, 0.25D));
-        tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8F));
-        tasks.addTask(6, new EntityAIWatchClosest(this, RobotTedEntity.class, 8F));
-        tasks.addTask(7, new EntityAILookIdle(this));
-        targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-        targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, RobotTedEntity.class, true));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // tasks.addTask(0, new EntityAISwimming(this));
+        // tasks.addTask(1, new EntityAIBreakDoor(this));
+        // // tasks.addTask(2, new AIAttackEntity()); 
+        // tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.061D));
+        // tasks.addTask(5, new EntityAIWander(this, 0.25D));
+        // tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8F));
+        // tasks.addTask(6, new EntityAIWatchClosest(this, RobotTedEntity.class, 8F));
+        // tasks.addTask(7, new EntityAILookIdle(this));
+        // targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        // targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        // targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, RobotTedEntity.class, true));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(45D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.4D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(45D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2D);
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setFloat("RobotSize", robotsize);
-        nbttagcompound.setFloat("ModelSpeed", modelspeed);
+    @Override
+    public void writeAdditional(CompoundNBT compound) {
+        super.writeAdditional(compound);
+        compound.setFloat("RobotSize", robotsize);
+        compound.setFloat("ModelSpeed", modelspeed);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readEntityFromNBT(nbttagcompound);
-        robotsize = nbttagcompound.getFloat("RobotSize");
-        modelspeed = nbttagcompound.getFloat("ModelSpeed");
+    @Override
+    public void readAdditional(CompoundNBT compound) {
+        super.readAdditional(compound);
+        robotsize = compound.getFloat("RobotSize");
+        modelspeed = compound.getFloat("ModelSpeed");
     }
 
     /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
+     * Checks if the entity's current position is a valid location to spawn this
+     * entity.
      */
-    public boolean getCanSpawnHere(World world)
+    public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
-        int l = world.getBlockLightOpacity(getPosition());
+        World world = Minecraft.getInstance().world;
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
+        int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 8;
+        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab
+                && i1 != Blocks.planks && i1 != Blocks.wool
+                && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+                && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 8;
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
+     * Called frequently so the entity can update its state every tick as required.
+     * For example, zombies and skeletons use this to react to sunlight and start to
+     * burn.
      */
-    public void onLivingUpdate()
-    {
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(modelspeed);
-        super.onLivingUpdate();
+    @Override
+    public void livingTick() {
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(modelspeed);
+        super.livingTick();
 
         if (texswitch++ > 40)
         {
@@ -142,7 +132,7 @@ public class RobotToddEntity extends EntityMob
         {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
             motionX = (d / (double)f1) * 0.5D * 0.40000000192092894D + motionX * 0.20000000098023224D;
             motionZ = (d1 / (double)f1) * 0.5D * 0.30000000192092896D + motionZ * 0.20000000098023224D;
             motionY = 0.35000000196046449D;
@@ -245,4 +235,7 @@ public class RobotToddEntity extends EntityMob
     	}
         super.onDeath(damagesource);
     }
+
+	public void setHealth(int i) {
+	}
 }

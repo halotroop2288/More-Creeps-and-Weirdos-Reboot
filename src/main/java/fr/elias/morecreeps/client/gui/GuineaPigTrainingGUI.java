@@ -54,7 +54,7 @@ public class GuineaPigTrainingGUI extends Screen
         char c = '\260';
         char c1 = '\246';
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
+        minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
         int j = (width - c) / 2;
         int k = (height - c1) / 2;
         drawTexturedModalRect(j, k, 0, 0, (int)xSize_lo, (int)ySize_lo);

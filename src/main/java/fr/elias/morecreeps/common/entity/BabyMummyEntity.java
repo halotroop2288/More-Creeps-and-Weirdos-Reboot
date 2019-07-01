@@ -2,62 +2,50 @@ package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.entity.ai.EntityBabyMummyAI;
 
-public class BabyMummyEntity extends EntityMob
+public class BabyMummyEntity extends MobEntity
 {
     public ResourceLocation basetexture;
     public float babysize;
     static final ResourceLocation mummyTextures[] =
     {
-        new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_MUMMY1), 
-        new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_MUMMY2), 
-        new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_MUMMY3)
+        new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_MUMMY1), 
+        new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_MUMMY2), 
+        new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_MUMMY3)
     };
     public ResourceLocation texture;
     public int attackTime;
     public BabyMummyEntity(World world)
     {
-        super(world);
+        super(null, world);
         basetexture = mummyTextures[rand.nextInt(mummyTextures.length)];
         texture = basetexture;
         babysize = rand.nextFloat() * 0.45F + 0.25F;
         setSize(0.6F, 0.6F);
         attackTime = 20;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityBabyMummyAI(this));
-        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0D, false));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // this.tasks.addTask(0, new EntityAISwimming(this));
+        // this.tasks.addTask(1, new EntityBabyMummyAI(this));
+        // this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0D, false));
+        // this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
+        // this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+        // this.tasks.addTask(8, new EntityAILookIdle(this));
+        // this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(15D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.35D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(15D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
     }
 
     /**

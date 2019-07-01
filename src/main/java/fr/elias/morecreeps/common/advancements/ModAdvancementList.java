@@ -24,7 +24,7 @@ public class ModAdvancementList extends AdvancementList
     public static ResourceLocation gookill = new ResourceLocation(Reference.MODID + "advancements/gookill");
     public static ResourceLocation gookill10 = new ResourceLocation(Reference.MODID + "advancements/gookill10");
     public static ResourceLocation gookill25 = new ResourceLocation(Reference.MODID + "advancements/gookill25");
-    public static Advancement snowdevil = new ResourceLocation(Reference.MODID + "advancements/snowdevil");
+    public static ResourceLocation snowdevil = new ResourceLocation(Reference.MODID + "advancements/snowdevil");
     public static ResourceLocation hunchback;
     public static ResourceLocation rockmonster;
     public static ResourceLocation bumflower;
