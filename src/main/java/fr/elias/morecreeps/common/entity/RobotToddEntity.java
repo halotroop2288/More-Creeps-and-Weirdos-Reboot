@@ -6,17 +6,25 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.brain.Brain;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
-public class RobotToddEntity extends MobEntity
-{
+public class RobotToddEntity extends MobEntity {
     public static Random rand = new Random();
     protected double attackRange;
     public boolean jumping;
@@ -24,12 +32,12 @@ public class RobotToddEntity extends MobEntity
     public int texswitch;
     public int texnumber;
     public float modelspeed;
-    public String texture;
+    public ResourceLocation texture;
 
     public RobotToddEntity(World world) {
         super(null, world);
         texnumber = 0;
-        texture = "morecreeps:textures/entity/robottodd1.png";
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "robottodd1.png");
         attackRange = 16D;
         jumping = false;
         robotsize = 2.5F;
@@ -90,9 +98,9 @@ public class RobotToddEntity extends MobEntity
         int k = MathHelper.floor(posZ);
         int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab
-                && i1 != Blocks.planks && i1 != Blocks.wool
-                && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB
+                && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+                // && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
                 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 8;
     }
 
@@ -102,7 +110,8 @@ public class RobotToddEntity extends MobEntity
      * burn.
      */
     @Override
-    public void livingTick() {
+    public void livingTick()
+    {
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(modelspeed);
         super.livingTick();
 
@@ -115,12 +124,12 @@ public class RobotToddEntity extends MobEntity
 
             if (texnumber == 0)
             {
-                texture = "morecreeps:textures/entity/robottodd1.png";
+                texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "robottodd1.png");
             }
 
             if (texnumber == 1)
             {
-                texture = "morecreeps:textures/entity/robottodd2.png";
+                texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "robottodd2.png");
             }
         }
     }
@@ -133,30 +142,29 @@ public class RobotToddEntity extends MobEntity
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
             float f1 = MathHelper.sqrt(d * d + d1 * d1);
-            motionX = (d / (double)f1) * 0.5D * 0.40000000192092894D + motionX * 0.20000000098023224D;
-            motionZ = (d1 / (double)f1) * 0.5D * 0.30000000192092896D + motionZ * 0.20000000098023224D;
-            motionY = 0.35000000196046449D;
+            setMotion(((double)f1) * 0.5D * 0.40000000192092894D + getMotion().x * 0.20000000098023224D, 0.35000000196046449D, (d1 / (double)f1) * 0.5D * 0.30000000192092896D + getMotion().z * 0.20000000098023224D);
             jumping = true;
         }
     }
 
     //to make attackEntity works in 1.8
-    public class AIAttackEntity extends EntityAIBase {
+    public class AIAttackEntity extends Brain {
 
     	public RobotToddEntity robot = RobotToddEntity.this;
     	public int attackTime;
     	public AIAttackEntity() {}
     	
-		@Override
-		public boolean shouldExecute() {
-            EntityLivingBase entitylivingbase = this.robot.getAttackTarget();
-            return entitylivingbase != null && entitylivingbase.isEntityAlive();
-		}
+		// @Override
+        // public boolean shouldExecute()
+        // {
+        //     LivingEntity entitylivingbase = this.robot.getAttackTarget();
+        //     return entitylivingbase != null && entitylivingbase.isAlive();
+		// }
         public void updateTask()
         {
         	--attackTime;
-            EntityLivingBase entitylivingbase = this.robot.getAttackTarget();
-            double d0 = this.robot.getDistanceSqToEntity(entitylivingbase);
+            LivingEntity entitylivingbase = this.robot.getAttackTarget();
+            double d0 = this.robot.getDistanceSq(entitylivingbase);
 
             if (d0 < 4.0D)
             {
@@ -172,11 +180,11 @@ public class RobotToddEntity extends MobEntity
             {
                 // ATTACK ENTITY JUST CALLED HERE :D
             	robot.attackEntity(entitylivingbase, (float)d0);
-                this.robot.getLookHelper().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
+                this.robot.getLookController().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
             }
             else
             {
-                this.robot.getNavigator().clearPathEntity();
+                this.robot.getNavigator().clearPath();
                 this.robot.getMoveHelper().setMoveTo(entitylivingbase.posX, entitylivingbase.posY, entitylivingbase.posZ, 0.5D);
             }
         }
@@ -190,38 +198,42 @@ public class RobotToddEntity extends MobEntity
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(World world)
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().world;
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (2.5F - robotsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (2.5F - robotsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
-        return "morecreeps:toddinsult";
+        return SoundsHandler.TODD_INSULT;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    protected SoundEvent getHurtSound()
     {
-        return "morecreeps:robothurt";
+        return SoundsHandler.ROBOT_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:todddead";
+        return SoundsHandler.TODD_DEATH;
     }
 
     /**
@@ -231,7 +243,7 @@ public class RobotToddEntity extends MobEntity
     {
     	if(!world.isRemote)
     	{
-    		dropItem(MoreCreepsReboot.battery, rand.nextInt(2) + 1);
+    		entityDropItem(ItemList.battery, rand.nextInt(2) + 1);
     	}
         super.onDeath(damagesource);
     }

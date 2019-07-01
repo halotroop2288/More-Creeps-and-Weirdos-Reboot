@@ -1,9 +1,13 @@
 package fr.elias.morecreeps.common.entity;
 
+import java.util.Collection;
 import java.util.List;
+
+import com.mojang.datafixers.Dynamic;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -23,8 +27,7 @@ import fr.elias.morecreeps.common.advancements.ModAdvancementList;
 import fr.elias.morecreeps.common.entity.RobotToddEntity.AIAttackEntity;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
-public class RockMonsterEntity extends MobEntity
-{
+public class RockMonsterEntity extends MobEntity {
     private static final Item dropItems[];
     protected double attackRange;
     private int angerLevel;
@@ -37,8 +40,7 @@ public class RockMonsterEntity extends MobEntity
     public float length = getWidth();
     public float height = getHeight();
 
-    public RockMonsterEntity(World world)
-    {
+    public RockMonsterEntity(World world) {
         super(null, world);
         texture = "morecreeps:textures/entity/rockmonster.png";
         angerLevel = 0;
@@ -49,7 +51,7 @@ public class RockMonsterEntity extends MobEntity
         modelsize = 3F;
         // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         // tasks.addTask(0, new EntityAISwimming(this));
-        // tasks.addTask(2, new AIAttackEntity()); 
+        // tasks.addTask(2, new AIAttackEntity());
         // tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.35D));
         // tasks.addTask(5, new EntityAIWander(this, 0.35D));
         // tasks.addTask(6, new EntityAIWatchClosest(this, PlayerEntity.class, 16F));
@@ -58,10 +60,9 @@ public class RockMonsterEntity extends MobEntity
     }
 
     @Override
-    public void registerAttributes()
-    {
-    	super.registerAttributes();
-    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60D);
+    public void registerAttributes() {
+        super.registerAttributes();
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60D);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5D);
     }
@@ -75,35 +76,37 @@ public class RockMonsterEntity extends MobEntity
                 .setBaseValue(this.getAttackTarget() != null ? 0.6D : 0.35D);
         super.tick();
 
-        if (motionY > 0.0D)
-        {
+        if (motionY > 0.0D) {
             motionY -= 0.00033000000985339284D;
         }
-        if (angerLevel > 0)
-        {
+        if (angerLevel > 0) {
             angerLevel--;
         }
     }
 
     /**
-     * Basic mob attack. Default to touch of death in EntityCreature. Overridden by each mob to define their attack.
+     * Basic mob attack. Default to touch of death in EntityCreature. Overridden by
+     * each mob to define their attack.
      */
-    protected void attackEntity(Entity entity, float f)
-    {
+    protected void attackEntity(Entity entity, float f) {
         double d = entity.posX - posX;
         double d1 = entity.posZ - posZ;
         float f1 = MathHelper.sqrt(d * d + d1 * d1);
-        motionX = (d / (double)f1) * 0.5D * 0.30000000192092896D + motionX * 0.38000000098023223D;
-        motionZ = (d1 / (double)f1) * 0.5D * 0.17000000192092896D + motionZ * 0.38000000098023223D;
+        motionX = (d / (double) f1) * 0.5D * 0.30000000192092896D + motionX * 0.38000000098023223D;
+        motionZ = (d1 / (double) f1) * 0.5D * 0.17000000192092896D + motionZ * 0.38000000098023223D;
     }
-    public class AIAttackEntity extends Brain
-    {
 
-    	public RockMonsterEntity rockM = RockMonsterEntity.this;
+    @SuppressWarnings("rawtypes")
+    public class AIAttackEntity extends Brain {
+
+        public AIAttackEntity(Collection p_i50378_1_, Collection p_i50378_2_, Dynamic p_i50378_3_)
+        {
+            super(p_i50378_1_, p_i50378_2_, p_i50378_3_);
+        }
+
+        public RockMonsterEntity rockM = RockMonsterEntity.this;
     	public int attackTime;
-    	public AIAttackEntity() {}
     	
-		@Override
 		public boolean shouldExecute() {
             LivingEntity entitylivingbase = this.rockM.getAttackTarget();
             return entitylivingbase != null && entitylivingbase.isAlive() && angerLevel > 0;
@@ -119,9 +122,7 @@ public class RockMonsterEntity extends MobEntity
                 if (this.attackTime <= 0)
                 {
                     this.attackTime = 10;
-                    entitylivingbase.motionX = motionX * 3D;
-                    entitylivingbase.motionY = rand.nextFloat() * 2.533F;
-                    entitylivingbase.motionZ = motionZ * 3D;
+                    entitylivingbase.setMotion(motionX * 3D, rand.nextFloat() * 2.533F, motionZ * 3D);
                     this.rockM.attackEntityAsMob(entitylivingbase); // or entitylivingbase.attackEntityFrom blablabla...
                 }
                 
@@ -242,8 +243,10 @@ public class RockMonsterEntity extends MobEntity
     /**
      * Plays living's sound at its position
      */
-    public void playAmbientSound(World world)
+    @Override
+    public void playAmbientSound()
     {
+        PlayerEntity player = Minecraft.getInstance().player;
         SoundEvent s = getAmbientSound();
 
         if (s != null)
@@ -261,6 +264,7 @@ public class RockMonsterEntity extends MobEntity
         //     world.playSound(player, entity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
         //     ((PlayerEntity) entity).addStat(ModAdvancementList.achieverockmonster, 1);
         // }
+        entityDropItem(getDropItem(), 1)
 
         super.onDeath(damagesource);
     }
@@ -268,7 +272,6 @@ public class RockMonsterEntity extends MobEntity
     /**
      * Returns the item ID for the item the mob drops on death.
      */
-    @Override
     public Item getDropItem()
     {
     	return dropItems[rand.nextInt(dropItems.length)];
@@ -278,7 +281,7 @@ public class RockMonsterEntity extends MobEntity
     {
         dropItems = (new Item[]
                 {
-                    Item.getItemFromBlock(Blocks.COBBLESTONE), Item.getItemFromBlock(Blocks.GRAVEL), Item.getItemFromBlock(Blocks.COBBLESTONE), Item.getItemFromBlock(Blocks.GRAVEL), Item.getItemFromBlock(Blocks.IRON_ORE), Item.getItemFromBlock(Blocks.MOSSY_COBBLESTONE)
+                    Item.getItemFromBlock(Blocks.COBBLESTONE), Item.getItemFromBlock(Blocks.GRAVEL), Item.getItemFromBlock(Blocks.IRON_ORE), Item.getItemFromBlock(Blocks.MOSSY_COBBLESTONE)
                 });
     }
 }

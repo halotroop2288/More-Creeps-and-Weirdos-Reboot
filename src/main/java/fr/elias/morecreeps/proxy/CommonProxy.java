@@ -5,7 +5,7 @@ import java.util.Random;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
+import net.minecraft.particles.BasicParticleType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.entity.AtomEntity;
@@ -40,7 +40,7 @@ public class CommonProxy
 	public void shrinkBlast(World world, Entity entity, Random rand){}
 	public void shrinkSmoke(World world, Entity entity){}
 	public void rocketGoBoom(World world, Entity entity, Random rand) {}
-	public void rocketSmoke(World world, Entity entity, Item item){}
+	public void rocketSmoke(World world, Entity entity, BasicParticleType CREEPS_WHITE){}
 	public void robotTedSmoke(World world, double posX, double posY, double posZ, int floattimer, float modelspeed){}
 	public void confettiB(World world, TrophyEntity trophy){} // for the confetti particles
 	public void barf(World world, PlayerEntity player){}
