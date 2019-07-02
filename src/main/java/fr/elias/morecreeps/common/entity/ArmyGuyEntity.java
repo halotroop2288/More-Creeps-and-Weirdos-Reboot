@@ -1,23 +1,20 @@
 package fr.elias.morecreeps.common.entity;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.CreatureEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -73,31 +70,67 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
         loyal = false;
         attack = 1;
         attackTime = 20;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, EntityCreature.class, 1.0D, false));
-        this.tasks.addTask(2, new EntityAIArrowAttack(this, 1.0D, 20, 60, 15.0F));
-        this.tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(4, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(5, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-        this.targetTasks.addTask(2, new ArmyGuyEntity.AINearestAttackableTarget(this, CreatureEntity.class, 3, false, false, IMob.mobSelector));
+        // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+        // this.tasks.addTask(0, new EntityAISwimming(this));
+        // this.tasks.addTask(1, new EntityAIAttackOnCollide(this, EntityCreature.class, 1.0D, false));
+        // this.tasks.addTask(2, new EntityAIArrowAttack(this, 1.0D, 20, 60, 15.0F));
+        // this.tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 1.0D));
+        // this.tasks.addTask(4, new EntityAIWander(this, 1.0D));
+        // this.tasks.addTask(5, new EntityAILookIdle(this));
+        // this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+        // this.targetTasks.addTask(2, new ArmyGuyEntity.AINearestAttackableTarget(this, CreatureEntity.class, 3, false, false, IMob.mobSelector));
     }
 
-	public void applyEntityAttributes()
+    @Override
+	public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(70D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
     }
 
     /**
-     * Determines if an entity can be despawned, used on idle far away entities
-     */
-    protected boolean canDespawn()
+    * Makes the entity despawn if requirements are reached
+    */
+    @Override
+    protected void checkDespawn() {
+    if (!this.isNoDespawnRequired() && !this.func_213392_I())
     {
-        return !loyal;
+        Entity entity = this.world.getClosestPlayer(this, -1.0D);
+        net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
+        if (result == net.minecraftforge.eventbus.api.Event.Result.DENY)
+        {
+            idleTime = 0;
+            entity = null;
+        }
+        else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW)
+        {
+            this.remove();
+            entity = null;
+        }
+        if (entity != null) {
+            double d0 = entity.getDistanceSq(this);
+            if (d0 > 16384.0D && this.canDespawn(d0))
+            {
+                this.remove();
+            }
+
+          if (this.idleTime > 600 && this.rand.nextInt(800) == 0 && d0 > 1024.0D && this.canDespawn(d0))
+            {
+             this.remove();
+            }
+          else if (d0 < 1024.0D)
+          {
+             this.idleTime = 0;
+          }
+       }
+
     }
+    else
+    {
+       this.idleTime = 0;
+    }
+ }
 
     public ArmyGuyEntity(World world, Entity entity, double d, double d1, double d2, boolean flag)
     {
@@ -107,9 +140,12 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(PlayerEntity playerentity)
+    @Override
+    public void playAmbientSound()
     {
-        SoundEvent s = getLivingSound();
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().world;
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
@@ -120,7 +156,8 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected SoundEvent getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
         if (rand.nextInt(7) == 0)
         {
@@ -135,7 +172,8 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected SoundEvent getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
         return SoundsHandler.ARMY_HURT;
     }
@@ -143,6 +181,7 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
     /**
      * Returns the sound this mob makes on death.
      */
+    @Override
     protected SoundEvent getDeathSound()
     {
         return SoundsHandler.ARMY_DEATH;
@@ -152,9 +191,13 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world, PlayerEntity playerentity)
+    @Override
+    public void livingTick()
     {
-        super.onLivingUpdate();
+        World world = Minecraft.getInstance().world;
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        
+        super.livingTick();
         float health = getHealth();
         if (health < 60 && health > 50 && !helmet)
         {
@@ -290,7 +333,8 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
             return 0.0D;
         }
     }
-    public void onUpdate()
+    @Override
+    public void tick()
     {
         if (this.getAttackTarget() instanceof ArmyGuyArmEntity)
         {
@@ -315,22 +359,7 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
         	this.setJumping(true);
         }
 
-        super.onUpdate();
-    }
-
-    @SuppressWarnings("unused")
-	private void smoke()
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 10; j++)
-            {
-                double d = rand.nextGaussian() * 0.02D;
-                double d1 = rand.nextGaussian() * 0.02D;
-                double d2 = rand.nextGaussian() * 0.02D;
-                world.addParticle(ParticleTypes.EXPLOSION, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height) + (double)i, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2);
-            }
-        }
+        super.tick();
     }
 
     /**
@@ -342,14 +371,17 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
         int j = MathHelper.floor(getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
         //fixed light position getter
-        int l = world.getBlockLightOpacity(getPosition());
+        int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.ACACIA_LOG && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && rand.nextInt(10) == 0 && l > 8;
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.ACACIA_LOG && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+        // && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        && rand.nextInt(10) == 0 && l > 8;
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
+    @Override
     public void writeAdditional(CompoundNBT compound)
     {
         super.writeAdditional(compound);
@@ -443,11 +475,13 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
     {
         return defaultHeldItem;
     }
-	public void attackEntityWithRangedAttack(LivingEntity arg0, float arg1, PlayerEntity playerentity) {
+    public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor)
+    {
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().world;
 	    double d2 = targetedEntity.posX - posX;
-	    double d3 = (targetedEntity.getBoundingBox().minY + (double)(targetedEntity.height / 2.0F)) - (posY + (double)(height / 2.0F));
-	    double d4 = targetedEntity.posZ - posZ;
-	    renderYawOffset = rotationYaw = (-(float)Math.atan2(d2, d4) * 180F) / (float)Math.PI;
+	    double d3 = targetedEntity.posZ - posZ;
+	    renderYawOffset = rotationYaw = (-(float)Math.atan2(d2, d3) * 180F) / (float)Math.PI;
 	    world.playSound(playerentity, this.getPosition(), SoundsHandler.BULLET, SoundCategory.NEUTRAL, 0.5F, 0.4F / (rand.nextFloat() * 0.4F + 0.8F));
 	    BulletEntity creepsentitybullet = new BulletEntity(world);
 	    if(!world.isRemote && !armright)
@@ -464,8 +498,8 @@ public class ArmyGuyEntity extends MobEntity implements IRangedAttackMob, IEntit
         }
         public boolean shouldExecute()
         {
-        	LivingEntity p_180096_1_ = (LivingEntity)armyGuy.getAttackTarget();
-        	if ((p_180096_1_ instanceof PlayerEntity) || (p_180096_1_ instanceof ArmyGuyEntity) || (p_180096_1_ instanceof HunchbackEntity) || (p_180096_1_ instanceof GuineaPigEntity))
+        	LivingEntity target = (LivingEntity)armyGuy.getAttackTarget();
+        	if ((target instanceof PlayerEntity) || (target instanceof ArmyGuyEntity) || (target instanceof HunchbackEntity) || (target instanceof GuineaPigEntity))
             {
                 return false;
             }else

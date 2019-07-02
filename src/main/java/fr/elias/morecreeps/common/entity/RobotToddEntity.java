@@ -1,6 +1,9 @@
 package fr.elias.morecreeps.common.entity;
 
+import java.util.Collection;
 import java.util.Random;
+
+import com.mojang.datafixers.Dynamic;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -19,7 +22,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.lists.ItemList;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
@@ -34,34 +36,36 @@ public class RobotToddEntity extends MobEntity {
     public float modelspeed;
     public ResourceLocation texture;
 
-    public RobotToddEntity(World world) {
+    public RobotToddEntity(World world)
+    {
         super(null, world);
         texnumber = 0;
         texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "robottodd1.png");
         attackRange = 16D;
         jumping = false;
         robotsize = 2.5F;
-        //yOffset *= 1.5F;
-        setSize(1.5F, 2.5F);
+        // yOffset *= 1.5F;
+        // setSize(1.5F, 2.5F);
         modelspeed = 0.4F;
         // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         // tasks.addTask(0, new EntityAISwimming(this));
         // tasks.addTask(1, new EntityAIBreakDoor(this));
-        // // tasks.addTask(2, new AIAttackEntity()); 
+        // // tasks.addTask(2, new AIAttackEntity());
         // tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.061D));
         // tasks.addTask(5, new EntityAIWander(this, 0.25D));
         // tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8F));
         // tasks.addTask(6, new EntityAIWatchClosest(this, RobotTedEntity.class, 8F));
         // tasks.addTask(7, new EntityAILookIdle(this));
         // targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        // targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-        // targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, RobotTedEntity.class, true));
+        // targetTasks.addTask(2, new EntityAINearestAttackableTarget(this,
+        // EntityPlayer.class, true));
+        // targetTasks.addTask(2, new EntityAINearestAttackableTarget(this,
+        // RobotTedEntity.class, true));
     }
 
-    public void registerAttributes()
-    {
-    	super.registerAttributes();
-    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(45D);
+    public void registerAttributes() {
+        super.registerAttributes();
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(45D);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2D);
     }
@@ -70,17 +74,19 @@ public class RobotToddEntity extends MobEntity {
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
     @Override
-    public void writeAdditional(CompoundNBT compound) {
+    public void writeAdditional(CompoundNBT compound)
+    {
         super.writeAdditional(compound);
-        compound.setFloat("RobotSize", robotsize);
-        compound.setFloat("ModelSpeed", modelspeed);
+        compound.putFloat("RobotSize", robotsize);
+        compound.putFloat("ModelSpeed", modelspeed);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
     @Override
-    public void readAdditional(CompoundNBT compound) {
+    public void readAdditional(CompoundNBT compound)
+    {
         super.readAdditional(compound);
         robotsize = compound.getFloat("RobotSize");
         modelspeed = compound.getFloat("ModelSpeed");
@@ -98,8 +104,8 @@ public class RobotToddEntity extends MobEntity {
         int k = MathHelper.floor(posZ);
         int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB
-                && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.SMOOTH_STONE_SLAB
+                && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
                 // && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
                 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 8;
     }
@@ -134,7 +140,6 @@ public class RobotToddEntity extends MobEntity {
         }
     }
 
-    
     protected void attackEntity(Entity entity, float f)
     {
         if (onGround)
@@ -142,17 +147,25 @@ public class RobotToddEntity extends MobEntity {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
             float f1 = MathHelper.sqrt(d * d + d1 * d1);
-            setMotion(((double)f1) * 0.5D * 0.40000000192092894D + getMotion().x * 0.20000000098023224D, 0.35000000196046449D, (d1 / (double)f1) * 0.5D * 0.30000000192092896D + getMotion().z * 0.20000000098023224D);
+            setMotion(((double) f1) * 0.5D * 0.40000000192092894D + getMotion().x * 0.20000000098023224D,
+                    0.35000000196046449D,
+                    (d1 / (double) f1) * 0.5D * 0.30000000192092896D + getMotion().z * 0.20000000098023224D);
             jumping = true;
         }
     }
 
-    //to make attackEntity works in 1.8
-    public class AIAttackEntity extends Brain {
+    // to make attackEntity works in 1.8
+    @SuppressWarnings("rawtypes")
+    public class AIAttackEntity extends Brain
+    {
 
-    	public RobotToddEntity robot = RobotToddEntity.this;
+        public AIAttackEntity(Collection p_i50378_1_, Collection p_i50378_2_, Dynamic p_i50378_3_)
+        {
+            super(p_i50378_1_, p_i50378_2_, p_i50378_3_);
+        }
+
+        public RobotToddEntity robot = RobotToddEntity.this;
     	public int attackTime;
-    	public AIAttackEntity() {}
     	
 		// @Override
         // public boolean shouldExecute()

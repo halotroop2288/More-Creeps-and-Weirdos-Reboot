@@ -4,17 +4,21 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.client.config.CREEPSConfig;
 import fr.elias.morecreeps.client.particles.CREEPSFxSmoke;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class RayEntity extends ThrowableEntity
 {
@@ -24,23 +28,15 @@ public class RayEntity extends ThrowableEntity
 
     public RayEntity(World world)
     {
-        super(world);
-        playerFire = false;
+        super(null, world);
+		playerFire = false;
+		damage = 4;
     }
 
-    public RayEntity(World world, double d, double d1, double d2)
+    public void tick()
     {
-    	super(world, d, d1, d2);
-    }
-    public RayEntity(World world, LivingEntity entityliving)
-    {
-        super(world, entityliving);
-        damage = 4;
-    }
-
-    public void onUpdate(World world)
-    {
-    	super.onUpdate();
+		World world = Minecraft.getInstance().world;
+    	super.tick();
     	if(onGround)
     	{
     		if(rand.nextInt(3) == 0)
@@ -48,10 +44,10 @@ public class RayEntity extends ThrowableEntity
     			if(!world.isRemote)
     			{
     				if(CREEPSConfig.rayGunFire){
-    					world.setBlockState(getPosition(), Blocks.fire.getDefaultState());
+    					world.setBlockState(getPosition(), Blocks.FIRE.getDefaultState());
     				}
     				else{
-        				world.setBlockToAir(getPosition().down());
+        				world.setBlockState(getPosition().down(), Blocks.AIR.getDefaultState());
     				}
     			}
     		}
@@ -91,7 +87,7 @@ public class RayEntity extends ThrowableEntity
     		{
         		world.setBlockState(bp, theNewBlock.getDefaultState());
     		}else{
-    			world.setBlockToAir(bp);
+    			world.setBlockState(getPosition(), Blocks.AIR.getDefaultState());
     		}
     	}
     }
@@ -112,59 +108,53 @@ public class RayEntity extends ThrowableEntity
             }
     	}
     }
-
-	@Override
-	protected void onImpact(MovingObjectPosition movingobjectposition, World world)
-	{
-		if (movingobjectposition.entityHit != null)
-		{
-                if (movingobjectposition.entityHit instanceof PlayerEntity)
-                {
-                    int k = damage;
-
-                    if (world.getDifficulty() == Difficulty.PEACEFUL)
-                    {
-                        k = 0;
-                    }
-
-                    if (world.getDifficulty() == Difficulty.EASY)
-                    {
-                        k = k / 3 + 1;
-                    }
-
-                    if (world.getDifficulty() == Difficulty.HARD)
-                    {
-                        k = (k * 3) / 2;
-                    }
-                }
-
-                if ((movingobjectposition.entityHit instanceof LivingEntity) && playerFire || !(movingobjectposition.entityHit instanceof FloobEntity) || playerFire)
-                {
-                    movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), damage);
-                }
-        		
-        		if(!world.isRemote)
-        		setDead();
-		}
-		if(world.isRemote)
-        blast();
-		
-		world.playSound(this, "morecreeps:raygun", 0.2F, 1.0F / (rand.nextFloat() * 0.1F + 0.95F));
-	}
+	
     protected float getGravityVelocity()
     {
         return 0.0F;
     }
 
 	@Override
-	protected void onImpact(RayTraceResult result) {
-		// TODO Auto-generated method stub
+	protected void onImpact(RayTraceResult result)
+	{
+		PlayerEntity player = Minecraft.getInstance().player;
+		if (result.hitInfo != null)
+		{
+				if (result.hitInfo instanceof PlayerEntity)
+				{
+					int k = damage;
+
+					if (world.getDifficulty() == Difficulty.PEACEFUL)
+					{
+						k = 0;
+					}
+
+					if (world.getDifficulty() == Difficulty.EASY)
+					{
+						k = k / 3 + 1;
+					}
+
+					if (world.getDifficulty() == Difficulty.HARD)
+					{
+						k = (k * 3) / 2;
+					}
+				}
+
+				if ((result.hitInfo instanceof LivingEntity) && playerFire || !(result.hitInfo instanceof FloobEntity) || playerFire)
+				{
+					result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), damage);
+				}
+				
+				if(!world.isRemote)
+				remove();
+		}
+		if(world.isRemote)
+		blast(world);
 		
+		world.playSound(player, this.getPosition(), SoundsHandler.RAY_GUN, SoundCategory.NEUTRAL, 0.2F, 1.0F / (rand.nextFloat() * 0.1F + 0.95F));
 	}
 
 	@Override
-	protected void registerData() {
-		// TODO Auto-generated method stub
-		
-	}
+	protected void registerData()
+	{}
 }

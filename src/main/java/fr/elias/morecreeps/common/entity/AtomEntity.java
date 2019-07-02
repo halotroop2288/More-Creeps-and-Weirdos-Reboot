@@ -5,6 +5,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.FlyingEntity;
 import net.minecraft.entity.LivingEntity;
@@ -12,16 +13,13 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
-import fr.elias.morecreeps.client.particles.CREEPSFxAtoms;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
@@ -100,7 +98,7 @@ public class AtomEntity extends FlyingEntity
             double d3 = d - posX;
             double d4 = d1 - posY;
             double d5 = d2 - posZ;
-            double d6 = MathHelper.sqrt_double(d3 * d3 + d4 * d4 + d5 * d5);
+            double d6 = MathHelper.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
             d3 /= d6;
             d4 /= d6;
             d5 /= d6;
@@ -132,17 +130,18 @@ public class AtomEntity extends FlyingEntity
 
         for (int j1 = 0; j1 < list.size(); j1++)
         {
-            LivingEntity entity = (LivingEntity)list.get(j1);
-            PlayerEntity playerentity;
+            Entity entity = (LivingEntity)list.get(j1);
+            PlayerEntity playerentity = Minecraft.getInstance().player;
+
             float f = getDistance(entity);
 
             if ((entity instanceof AtomEntity) && f < 4F)
             {
                 world.playSound(playerentity, this.getPosition(), SoundsHandler.ATOM_SUCK, SoundCategory.HOSTILE, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 lifespan += ((AtomEntity)entity).lifespan;
-                entity.setHealth(0);
+                entity.remove();
                 atomsize += ((AtomEntity)entity).atomsize - 0.5F;
-                setSize(atomsize * 0.6F, atomsize * 0.6F);
+                // setSize(atomsize * 0.6F, atomsize * 0.6F);
                 continue;
             }
 
@@ -153,7 +152,8 @@ public class AtomEntity extends FlyingEntity
 
             if (entity instanceof LivingEntity)
             {
-            	double targetMoveSpeed = ((LivingEntity)entity).getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
+                @SuppressWarnings("unused")
+            	double targetMoveSpeed = ((LivingEntity)entity).getAttributes().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
             	targetMoveSpeed *= 0.8D;
             }
 

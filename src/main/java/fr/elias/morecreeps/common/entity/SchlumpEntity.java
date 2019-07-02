@@ -16,6 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -311,7 +312,8 @@ public class SchlumpEntity extends AnimalEntity
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets
      * into the saddle on a pig.
      */
-    public boolean interact(PlayerEntity playerentity)
+    @Override
+    public boolean processInteract(PlayerEntity playerentity, Hand hand)
     {
         ItemStack itemstack = playerentity.inventory.getCurrentItem();
 

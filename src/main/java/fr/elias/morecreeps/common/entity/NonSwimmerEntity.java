@@ -1,182 +1,187 @@
 package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class NonSwimmerEntity extends AnimalEntity
 {
     protected double attackRange;
-    private int waittime;
     public boolean swimming;
     public float modelsize;
     public boolean saved;
     public int timeonland;
     public boolean towel;
     public boolean wet;
-    public String texture;
+    public ResourceLocation texture;
 
     public NonSwimmerEntity(World world)
     {
         super(null, world); // EntityType??
-        texture = "morecreeps:textures/entity/nonswimmer.png";
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES+ "nonswimmer.png");
         attackRange = 16D;
         timeonland = 0;
         wet = false;
         swimming = false;
         saved = false;
         towel = false;
-        waittime = rand.nextInt(1500) + 500;
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setAvoidsWater(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIPanic(this, 1.25D));
-        this.tasks.addTask(3, new EntityAIMate(this, 1.0D));
-        this.tasks.addTask(6, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
+        // ((PathNavigateGround)this.getNavigator()).setAvoidsWater(true);
+        // this.tasks.addTask(0, new EntityAISwimming(this));
+        // this.tasks.addTask(1, new EntityAIPanic(this, 1.25D));
+        // this.tasks.addTask(3, new EntityAIMate(this, 1.0D));
+        // this.tasks.addTask(6, new EntityAIWander(this, 1.0D));
+        // this.tasks.addTask(7, new EntityAIWatchClosest(this, PlayerEntity.class, 6.0F));
+        // this.tasks.addTask(8, new EntityAILookIdle(this));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
     }
-    
+
     /**
-     * This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
+     * This function is used when two same-species animals in 'love mode' breed to
+     * generate the new baby animal.
      */
-    public EntityAnimal createChild(AgeableEntity entityanimal, World world)
-    {
+    public AnimalEntity createChild(AgeableEntity animalentity, World world) {
         return new NonSwimmerEntity(world);
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
+     * Called frequently so the entity can update its state every tick as required.
+     * For example, zombies and skeletons use this to react to sunlight and start to
+     * burn.
      */
-    public void onLivingUpdate()
-    {
-        if (inWater)
-        {
-        	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.05D);
+    @Override
+    public void livingTick() {
+        if (inWater) {
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.05D);
             swimming = true;
             wet = true;
-        }
-        else
-        {
-        	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5D);
-            int i = MathHelper.floor_double(posX);
-            int k = MathHelper.floor_double(getEntityBoundingBox().minY);
-            int i1 = MathHelper.floor_double(posZ);
+        } else {
+            this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+            int i = MathHelper.floor(posX);
+            int k = MathHelper.floor(getBoundingBox().minY);
+            int i1 = MathHelper.floor(posZ);
             BlockPos bp = new BlockPos(i, k, i1);
             Block k1 = world.getBlockState(bp).getBlock();
 
-            if (k1 != Blocks.flowing_water && k1 != Blocks.water)
-            {
+            if (k1 != Blocks.WATER) {
                 swimming = false;
-                PlayerEntity entityplayersp = world.getClosestPlayerToEntity(this, 3F);
+                PlayerEntity entityplayersp = world.getClosestPlayer(this, 3F);
 
-                if (entityplayersp != null)
-                {
-                    float f = entityplayersp.getDistanceToEntity(this);
+                if (entityplayersp != null) {
+                    float f = entityplayersp.getDistance(this);
 
-                    if (f < 4F && !saved && timeonland++ > 155 && wet)
-                    {
-                        giveReward((ServerPlayerEntity)entityplayersp);
+                    if (f < 4F && !saved && timeonland++ > 155 && wet) {
+                        giveReward((ServerPlayerEntity) entityplayersp);
                     }
                 }
             }
         }
 
-        if (saved && rand.nextInt(100) == 0 && !towel && onGround)
-        {
-            int j = MathHelper.floor_double(posX);
-            int l = MathHelper.floor_double(getEntityBoundingBox().minY);
-            int j1 = MathHelper.floor_double(posZ);
+        if (saved && rand.nextInt(100) == 0 && !towel && onGround) {
+            int j = MathHelper.floor(posX);
+            int l = MathHelper.floor(getBoundingBox().minY);
+            int j1 = MathHelper.floor(posZ);
             BlockPos bp = new BlockPos(j, l, j1);
             Block l1 = world.getBlockState(bp).getBlock();
 
-            if (l1 != Blocks.water && l1 != Blocks.flowing_water)
-            {
+            if (l1 != Blocks.WATER) {
                 towel = true;
-                TowelEntity creepsentitytowel = new TowelEntity(world);
-                creepsentitytowel.setLocationAndAngles(posX, posY, posZ, rotationYaw, 0.0F);
+                TowelEntity towel = new TowelEntity(world);
+                towel.setLocationAndAngles(posX, posY, posZ, rotationYaw, 0.0F);
                 int i2 = rand.nextInt(6);
-                creepsentitytowel.texture = (new StringBuilder()).append("morecreeps:textures/entity/towel").append(String.valueOf(i2)).append(".png").toString();
-                //creepsentitytowel.basetexture = (new StringBuilder()).append("/mob/creeps/towel").append(String.valueOf(i2)).append(".png").toString();
-                world.spawnEntityInWorld(creepsentitytowel);
-                mountEntity(creepsentitytowel);
+                towel.texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "towel.png");
+                // creepsentitytowel.basetexture = (new
+                // StringBuilder()).append("/mob/creeps/towel").append(String.valueOf(i2)).append(".png").toString();
+                world.addEntity(towel);
+                towel.addPassenger(this);
             }
         }
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     public void giveReward(ServerPlayerEntity entityplayersp)
     {
-        if (!entityplayersp.getStatFile().hasAchievementUnlocked(MoreCreepsReboot.achievenonswimmer))
-        {
-            confetti(entityplayersp);
-            world.playSoundAtEntity(entityplayersp, "morecreeps:achievement", 1.0F, 1.0F);
-            entityplayersp.addStat(MoreCreepsReboot.achievenonswimmer, 1);
-        }
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().world;
+        // if
+        // (!entityplayersp.getStatFile().hasAchievementUnlocked(MoreCreepsReboot.achievenonswimmer))
+        // {
+        // confetti(entityplayersp);
+        // world.playSound(entityplayersp, "morecreeps:achievement", 1.0F, 1.0F);
+        // entityplayersp.addStat(MoreCreepsReboot.achievenonswimmer, 1);
+        // }
 
-        if (rand.nextInt(5) == 0)
-        {
-            world.playSoundAtEntity(this, "morecreeps:nonswimmersorry", 1.0F, 1.0F);
+        if (rand.nextInt(5) == 0) {
+            world.playSound(playerentity, this.getPosition(), SoundsHandler.NON_SWIMMER_SORRY, SoundCategory.NEUTRAL, 1.0F, 1.0F);
             return;
         }
 
-        world.playSoundAtEntity(this, "morecreeps:nonswimmerreward", 1.0F, 1.0F);
+        world.playSound(playerentity, this.getPosition(), SoundsHandler.NON_SWIMMER_REWARD, SoundCategory.NEUTRAL, 1.0F, 1.0F);
         saved = true;
         int i = rand.nextInt(5) + 1;
         faceEntity(entityplayersp, 0.0F, 0.0F);
 
-        if(!world.isRemote)
-        {
-            if (entityplayersp != null)
-            {
-                EntityItem entityitem = null;
+        if (!world.isRemote) {
+            if (entityplayersp != null) {
+                ItemEntity entityitem = null;
 
-                switch (i)
-                {
-                    case 1:
-                        entityitem = entityDropItem(new ItemStack(MoreCreepsReboot.lolly, rand.nextInt(2) + 1, 0), 1.0F);
-                        break;
+                switch (i) {
+                case 1:
+                    entityitem = entityDropItem(new ItemStack(ItemList.lolly, rand.nextInt(2) + 1), 1.0F);
+                    break;
 
-                    case 2:
-                        entityitem = entityDropItem(new ItemStack(MoreCreepsReboot.lolly, 1, 0), 1.0F);
-                        break;
+                case 2:
+                    entityitem = entityDropItem(new ItemStack(ItemList.lolly, 1), 1.0F);
+                    break;
 
-                    case 3:
-                        entityitem = entityDropItem(new ItemStack(MoreCreepsReboot.money, rand.nextInt(10) + 1, 0), 1.0F);
-                        break;
+                case 3:
+                    entityitem = entityDropItem(new ItemStack(ItemList.money, rand.nextInt(10) + 1), 1.0F);
+                    break;
 
-                    case 4:
-                        entityitem = entityDropItem(new ItemStack(MoreCreepsReboot.money, rand.nextInt(30) + 1, 0), 1.0F);
-                        break;
+                case 4:
+                    entityitem = entityDropItem(new ItemStack(ItemList.money, rand.nextInt(30) + 1), 1.0F);
+                    break;
 
-                    case 5:
-                        entityitem = entityDropItem(new ItemStack(Items.gold_ingot, 1, 0), 1.0F);
-                        break;
+                case 5:
+                    entityitem = entityDropItem(new ItemStack(Items.GOLD_INGOT, 1), 1.0F);
+                    break;
 
-                    default:
-                        entityitem = entityDropItem(new ItemStack(MoreCreepsReboot.money, rand.nextInt(3) + 1, 0), 1.0F);
-                        break;
+                default:
+                    entityitem = entityDropItem(new ItemStack(ItemList.money, rand.nextInt(3) + 1), 1.0F);
+                    break;
                 }
 
-                double d = -MathHelper.sin((entityplayersp.rotationYaw * (float)Math.PI) / 180F);
-                double d1 = MathHelper.cos((entityplayersp.rotationYaw * (float)Math.PI) / 180F);
+                double d = -MathHelper.sin((entityplayersp.rotationYaw * (float) Math.PI) / 180F);
+                double d1 = MathHelper.cos((entityplayersp.rotationYaw * (float) Math.PI) / 180F);
                 entityitem.posX = entityplayersp.posX + d * 0.5D;
                 entityitem.posY = entityplayersp.posY + 0.5D;
                 entityitem.posZ = entityplayersp.posZ + d1 * 0.5D;
@@ -184,82 +189,59 @@ public class NonSwimmerEntity extends AnimalEntity
         }
     }
 
-    /*public int[] findTree(Entity entity, Double double1)
-    {
-        AxisAlignedBB axisalignedbb = entity.boundingBox.expand(double1.doubleValue(), double1.doubleValue(), double1.doubleValue());
-        int i = MathHelper.floor_double(axisalignedbb.minX);
-        int j = MathHelper.floor_double(axisalignedbb.maxX + 1.0D);
-        int k = MathHelper.floor_double(axisalignedbb.minY);
-        int l = MathHelper.floor_double(axisalignedbb.maxY + 1.0D);
-        int i1 = MathHelper.floor_double(axisalignedbb.minZ);
-        int j1 = MathHelper.floor_double(axisalignedbb.maxZ + 1.0D);
-
-        for (int k1 = i; k1 < j; k1++)
-        {
-            for (int l1 = k; l1 < l; l1++)
-            {
-                for (int i2 = i1; i2 < j1; i2++)
-                {
-                    int j2 = world.getBlockId(k1, l1, i2);
-
-                    if (j2 != 0 && (j2 == Block.waterStill || j2 == Block.waterMoving))
-                    {
-                        return (new int[]
-                                {
-                                    k1, l1, i2
-                                });
-                    }
-                }
-            }
-        }
-
-        return (new int[]
-                {
-                    -1, 0, 0
-                });
-    }*/
+    /*
+     * public int[] findTree(Entity entity, Double double1) { AxisAlignedBB
+     * axisalignedbb = entity.boundingBox.expand(double1.doubleValue(),
+     * double1.doubleValue(), double1.doubleValue()); int i =
+     * MathHelper.floor_double(axisalignedbb.minX); int j =
+     * MathHelper.floor_double(axisalignedbb.maxX + 1.0D); int k =
+     * MathHelper.floor_double(axisalignedbb.minY); int l =
+     * MathHelper.floor_double(axisalignedbb.maxY + 1.0D); int i1 =
+     * MathHelper.floor_double(axisalignedbb.minZ); int j1 =
+     * MathHelper.floor_double(axisalignedbb.maxZ + 1.0D);
+     * 
+     * for (int k1 = i; k1 < j; k1++) { for (int l1 = k; l1 < l; l1++) { for (int i2
+     * = i1; i2 < j1; i2++) { int j2 = world.getBlockId(k1, l1, i2);
+     * 
+     * if (j2 != 0 && (j2 == Block.waterStill || j2 == Block.waterMoving)) { return
+     * (new int[] { k1, l1, i2 }); } } } }
+     * 
+     * return (new int[] { -1, 0, 0 }); }
+     */
 
     /**
-     * Takes a coordinate in and returns a weight to determine how likely this creature will try to path to the block.
-     * Args: x, y, z
+     * Takes a coordinate in and returns a weight to determine how likely this
+     * creature will try to path to the block. Args: x, y, z
      */
-    public float func_180484_a(BlockPos bp)
-    {
-        if (world.getBlockState(bp.down()).getBlock() == Blocks.water || world.getBlockState(bp.down()) == Blocks.flowing_water)
-        {
+    @Override
+    public float getBlockPathWeight(BlockPos bp) {
+        if (world.getBlockState(bp.down()).getBlock() == Blocks.WATER) {
             return 10F;
-        }
-        else
-        {
-            return -(float)bp.getY();
+        } else {
+            return -(float) bp.getY();
         }
     }
 
     /**
      * Returns the Y Offset of this entity.
      */
-    public double getYOffset()
-    {
-        if (ridingEntity instanceof TowelEntity)
-        {
-            return - 1.85D;
-        }
-        else
-        {
+    public double getYOffset() {
+        if (getRidingEntity() instanceof TowelEntity) {
+            return -1.85D;
+        } else {
             return 0.0D;
         }
     }
 
-    public void updateRiderPosition()
-    {
-        riddenByEntity.setPosition(posX, posY + getMountedYOffset() + riddenByEntity.getYOffset(), posZ);
+    public void updateRiderPosition() {
+        getRidingEntity().setPosition(posX, posY + getMountedYOffset() + getRidingEntity().getYOffset(), posZ);
     }
 
     /**
-     * Returns the Y offset from the entity's position for any entity riding this one.
+     * Returns the Y offset from the entity's position for any entity riding this
+     * one.
      */
-    public double getMountedYOffset()
-    {
+    public double getMountedYOffset() {
         return 0.5D;
     }
 
@@ -268,20 +250,18 @@ public class NonSwimmerEntity extends AnimalEntity
      */
     public boolean attackEntityFrom(DamageSource damagesource, float i)
     {
-        Entity entity = damagesource.getEntity();
+        Entity entity = damagesource.getTrueSource();
 
-        if (entity instanceof EntityPlayer)
-        {
+        if (entity instanceof PlayerEntity) {
             motionY = 0.25D;
 
-            if (i == 1)
-            {
+            if (i == 1) {
                 i = 0;
             }
         }
 
-        mountEntity(null);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.55D);
+        this.dismountEntity(null);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.55D);
         super.attackEntityFrom(DamageSource.causeMobDamage(this), i);
         return true;
     }
@@ -289,54 +269,56 @@ public class NonSwimmerEntity extends AnimalEntity
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setFloat("modelsize", modelsize);
-        nbttagcompound.setBoolean("saved", saved);
-        nbttagcompound.setBoolean("towel", towel);
-        nbttagcompound.setBoolean("wet", wet);
+    @Override
+    public void writeAdditional(CompoundNBT compound) {
+        super.writeAdditional(compound);
+        compound.putFloat("modelsize", modelsize);
+        compound.putBoolean("saved", saved);
+        compound.putBoolean("towel", towel);
+        compound.putBoolean("wet", wet);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readEntityFromNBT(nbttagcompound);
-        modelsize = nbttagcompound.getFloat("modelsize");
-        saved = nbttagcompound.getBoolean("saved");
-        towel = nbttagcompound.getBoolean("towel");
-        wet = nbttagcompound.getBoolean("wet");
+    @Override
+    public void readAdditional(CompoundNBT compound) {
+        super.readAdditional(compound);
+        modelsize = compound.getFloat("modelsize");
+        saved = compound.getBoolean("saved");
+        towel = compound.getBoolean("towel");
+        wet = compound.getBoolean("wet");
     }
 
     /**
      * knocks back this entity
      */
-    public void knockBack(Entity entity, float i, double d, double d1)
-    {
-    	if(entity instanceof EntityPlayer)
-    	{
-            double d2 = -MathHelper.sin((entity.rotationYaw * (float)Math.PI) / 180F);
-            double d3 = MathHelper.cos((entity.rotationYaw * (float)Math.PI) / 180F);
-            motionX = d2 * 0.5D;
-            motionZ = d3 * 0.5D;
-    	}
+    @Override
+    public void knockBack(Entity entity, float i, double d, double d1) {
+        if (entity instanceof PlayerEntity) {
+            double d2 = -MathHelper.sin((entity.rotationYaw * (float) Math.PI) / 180F);
+            double d3 = MathHelper.cos((entity.rotationYaw * (float) Math.PI) / 180F);
+            setMotion(d2 * 0.5D, getMotion().y, d3 * 0.5D);
+        }
     }
 
     /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
+     * Checks if the entity's current position is a valid location to spawn this
+     * entity.
      */
     public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
-        //int l = world.getFullBlockLightValue(i, j, k);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
+        // int l = world.getFullBlockLightValue(i, j, k);
         BlockPos bp = new BlockPos(i, j, k);
         Block i1 = world.getBlockState(bp.down()).getBlock();
         int j1 = world.countEntities(NonSwimmerEntity.class);
-        return (i1 == Blocks.flowing_water || i1 == Blocks.water) && i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.canSeeSky(bp) && rand.nextInt(25) == 0 && /*l > 9 && */j1 < 4;
+        return (i1 == Blocks.WATER) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG
+                && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+                // && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+                && world.canBlockSeeSky(bp) && rand.nextInt(25) == 0 && /* l > 9 && */j1 < 4;
     }
 
     /**
@@ -347,48 +329,32 @@ public class NonSwimmerEntity extends AnimalEntity
         return 1;
     }
 
-    private void smoke()
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            for (int j = 0; j < 2; j++)
-            {
-                double d = rand.nextGaussian() * 0.02D;
-                double d1 = rand.nextGaussian() * 0.02D;
-                double d2 = rand.nextGaussian() * 0.02D;
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, ((posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width) + (double)i, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2, new int[0]);
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width - (double)i, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2, new int[0]);
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F) + (double)i) - (double)width, d, d1, d2, new int[0]);
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)i - (double)width, d, d1, d2, new int[0]);
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, ((posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width) + (double)i, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F) + (double)i) - (double)width, d, d1, d2, new int[0]);
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width - (double)i, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)i - (double)width, d, d1, d2, new int[0]);
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, ((posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width) + (double)i, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F) + (double)i) - (double)width, d, d1, d2, new int[0]);
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width - (double)i, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)i - (double)width, d, d1, d2, new int[0]);
-            }
-        }
-    }
-
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound()
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().world;
+
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.NEUTRAL, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
         if (swimming)
         {
-            return "morecreeps:nonswimmer";
+            return SoundsHandler.NON_SWIMMER;
         }
         else
         {
@@ -399,25 +365,32 @@ public class NonSwimmerEntity extends AnimalEntity
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
-        return "morecreeps:nonswimmerhurt";
+        return SoundsHandler.NON_SWIMMER_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    @Override
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:nonswimmerdeath";
+        return SoundsHandler.NON_SWIMMER_DEATH;
     }
 
-    public void confetti(EntityPlayer player)
+    public void confetti(PlayerEntity player)
     {
         double d = -MathHelper.sin((player.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((player.rotationYaw * (float)Math.PI) / 180F);
         TrophyEntity creepsentitytrophy = new TrophyEntity(world);
         creepsentitytrophy.setLocationAndAngles(player.posX + d * 3D, player.posY - 2D, player.posZ + d1 * 3D, player.rotationYaw, 0.0F);
-        world.spawnEntityInWorld(creepsentitytrophy);
+        world.addEntity(creepsentitytrophy);
+    }
+
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable) {
+        return null;
     }
 }
