@@ -64,7 +64,7 @@ public class HotdogTrainingGUI extends Screen
         int j = (width - c) / 2;
         int k = (height - c1) / 2;
         drawTexturedModalRect(j, k, 0, 0, (int)xSize_lo, (int)ySize_lo);
-        drawEntityOnScreen(j + 51, k + 75, 30, (float)(j + 51) - mouseX, (float)(k + 75 - 50) - mouseY, this.mc.thePlayer);
+        drawEntityOnScreen(j + 51, k + 75, 30, (float)(j + 51) - mouseX, (float)(k + 75 - 50) - mouseY, this.minecraft.player);
     }
 
     public static void drawEntityOnScreen(int p_147046_0_, int p_147046_1_, int p_147046_2_, float p_147046_3_, float p_147046_4_, LivingEntity livingentity)

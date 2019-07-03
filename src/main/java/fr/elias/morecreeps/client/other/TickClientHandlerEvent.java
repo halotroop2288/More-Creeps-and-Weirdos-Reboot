@@ -14,7 +14,7 @@ public class TickClientHandlerEvent
 	final Minecraft minecraft = Minecraft.getInstance();
 	public boolean creepsLoaded = false;
     public static final String welcome[] =
-    { 																	// TODO Add localization support
+    { 																	// TODO Make splashes configurable
         "Now, go out there and have some fun!",
         "Don't let those stinky Floobs push you around!",
         "Give a diamond to a level 25 HotDog for a special reward!",
@@ -45,7 +45,7 @@ public class TickClientHandlerEvent
 		{
 			world1.playSound(player, player.chasingPosX, player.posY, player.posZ, SoundsHandler.WELCOME, SoundCategory.VOICE, 1.0F, 1.0F);
             String randomMessage = welcome[world1.rand.nextInt(welcome.length)];
-            player.sendMessage(new StringTextComponent("\2476More Creeps and Weirdos Reboot \247ev1 (unofficial) \2476loaded."));
+            player.sendMessage(new StringTextComponent("\2476More Creeps and Weirdos Reboot \247ev1(unofficial) \2476loaded."));
 			player.sendMessage(new StringTextComponent(randomMessage));
 			creepsLoaded = true;
 		}

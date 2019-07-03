@@ -2,12 +2,11 @@ package fr.elias.morecreeps.common.advancements;
 
 import fr.elias.morecreeps.common.Reference;
 import net.minecraft.advancements.AdvancementList;
-import net.minecraft.stats.Stat;
 import net.minecraft.util.ResourceLocation;
 
 public class ModAdvancementList extends AdvancementList
 {
-	public static ResourceLocation FRISBEE = new ResourceLocation(Reference.MODID + "advancements/frisbee.json");
+	public static ResourceLocation frisbee = new ResourceLocation(Reference.MODID + "advancements/frisbee.json");
     public static ResourceLocation radio = new ResourceLocation(Reference.MODID + "advancements/radio.json");
     public static ResourceLocation gotohell = new ResourceLocation(Reference.MODID + "advancements/gotohell");
     public static ResourceLocation chugcola = new ResourceLocation(Reference.MODID + "advancements/chugcola");

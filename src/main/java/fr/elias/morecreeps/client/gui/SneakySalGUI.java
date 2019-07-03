@@ -3,6 +3,9 @@ package fr.elias.morecreeps.client.gui;
 import java.io.IOException;
 import java.util.Random;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.sun.jna.platform.KeyboardUtils;
+
 import net.minecraft.client.KeyboardListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -11,27 +14,31 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import afu.org.checkerframework.checker.oigj.qual.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.entity.RatManEntity;
 import fr.elias.morecreeps.common.entity.SneakySalEntity;
+import fr.elias.morecreeps.common.lists.ItemList;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class SneakySalGUI extends Screen {
     private SneakySalEntity sneakysal;
-    private TextFieldWidget namescreen;
-    private boolean field_28217_m;
     private float xSize_lo;
     private float ySize_lo;
     public int playercash;
@@ -41,7 +48,8 @@ public class SneakySalGUI extends Screen {
     protected int ySize;
     private ItemRenderer itemRender;
 
-    public SneakySalGUI(SneakySalEntity creepsentitysneakysal, ITextComponent title) {
+    public SneakySalGUI(SneakySalEntity creepsentitysneakysal, ITextComponent title)
+    {
         super(title);
         sneakysal = creepsentitysneakysal;
         xSize = 512;
@@ -54,76 +62,128 @@ public class SneakySalGUI extends Screen {
      */
     public void initGui(PlayerEntity playerentity)
     {
-        KeyboardListener.enableRepeatEvents(true);
+        KeyboardListener keyboardlistener;
+        keyboardlistener.enableRepeatEvents(true);
         buttonList.clear();
         byte byte0 = -18;
         ClientPlayerEntity PlayerEntity = Minecraft.getInstance().player;
         ClientWorld world = Minecraft.getInstance().world;
-        world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.SAL_GREETING, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.SAL_GREETING, SoundCategory.NEUTRAL,
+                1.0F, 1.0F);
         saleprice = sneakysal.saleprice;
-        this.addButton(new Button(2, width / 2 - 170, height / 4 + 8 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[0]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[0]])).toString()));
-        this.addButton(new Button(3, width / 2 + 2, height / 4 + 8 + byte0, 155, 20, (new StringBuilder()).append("   \2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[1]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[1]])).toString()));
-        this.addButton(new Button(4, width / 2 - 170, height / 4 + 35 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[2]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[2]])).toString()));
-        this.addButton(new Button(5, width / 2 + 2, height / 4 + 35 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[3]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[3]])).toString()));
-        this.addButton(new Button(6, width / 2 - 170, height / 4 + 65 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[4]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[4]])).toString()));
-        this.addButton(new Button(7, width / 2 + 2, height / 4 + 65 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[5]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[5]])).toString()));
-        this.addButton(new Button(8, width / 2 - 170, height / 4 + 95 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[6]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[6]])).toString()));
-        this.addButton(new Button(9, width / 2 + 2, height / 4 + 95 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[7]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[7]])).toString()));
-        this.addButton(new Button(10, width / 2 - 170, height / 4 + 125 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[8]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[8]])).toString()));
-        this.addButton(new Button(11, width / 2 + 2, height / 4 + 125 + byte0, 155, 20, (new StringBuilder()).append("\2472    $\2476").append(String.valueOf(Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[9]] * saleprice))).append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[9]])).toString()));
+        this.addButton(new Button(2, width / 2 - 170, height / 4 + 8 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[0]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[0]]))
+                        .toString()));
+        this.addButton(new Button(3, width / 2 + 2, height / 4 + 8 + byte0, 155, 20,
+                (new StringBuilder()).append("   \2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[1]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[1]]))
+                        .toString()));
+        this.addButton(new Button(4, width / 2 - 170, height / 4 + 35 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[2]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[2]]))
+                        .toString()));
+        this.addButton(new Button(5, width / 2 + 2, height / 4 + 35 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[3]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[3]]))
+                        .toString()));
+        this.addButton(new Button(6, width / 2 - 170, height / 4 + 65 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[4]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[4]]))
+                        .toString()));
+        this.addButton(new Button(7, width / 2 + 2, height / 4 + 65 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[5]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[5]]))
+                        .toString()));
+        this.addButton(new Button(8, width / 2 - 170, height / 4 + 95 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[6]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[6]]))
+                        .toString()));
+        this.addButton(new Button(9, width / 2 + 2, height / 4 + 95 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[7]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[7]]))
+                        .toString()));
+        this.addButton(new Button(10, width / 2 - 170, height / 4 + 125 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[8]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[8]]))
+                        .toString()));
+        this.addButton(new Button(11, width / 2 + 2, height / 4 + 125 + byte0, 155, 20,
+                (new StringBuilder()).append("\2472    $\2476")
+                        .append(String.valueOf(
+                                Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[9]] * saleprice)))
+                        .append("\247f ").append(String.valueOf(SneakySalEntity.saldescriptions[sneakysal.salslots[9]]))
+                        .toString()));
         this.addButton(new Button(0, width / 2 - 100, height / 4 + 158 + byte0, 98, 20, "RIPOFF SAL"));
         this.addButton(new Button(1, width / 2 + 2, height / 4 + 158 + byte0, 98, 20, "DONE"));
     }
 
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
-    {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         char c = '\260';
         char c1 = '\246';
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
+        minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
         int j = (width - c) / 2;
         int k = (height - c1) / 2;
-        drawTexturedModalRect(j, k, 0, 0, (int)xSize_lo, (int)ySize_lo);
-        drawEntityOnScreen(j + 51, k + 75, 30, (float)(j + 51) - mouseX, (float)(k + 75 - 50) - mouseY, this.mc.thePlayer);
+        drawTexturedModalRect(j, k, 0, 0, (int) xSize_lo, (int) ySize_lo);
+        drawEntityOnScreen(j + 51, k + 75, 30, (float) (j + 51) - mouseX, (float) (k + 75 - 50) - mouseY,
+                this.minecraft.player);
     }
 
-    public static void drawEntityOnScreen(int p_147046_0_, int p_147046_1_, int p_147046_2_, float p_147046_3_, float p_147046_4_, EntityLivingBase p_147046_5_)
-    {
+    public static void drawEntityOnScreen(int p_147046_0_, int p_147046_1_, int p_147046_2_, float p_147046_3_,
+            float p_147046_4_, LivingEntity livingentity) {
         GlStateManager.enableColorMaterial();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float)p_147046_0_, (float)p_147046_1_, 50.0F);
-        GlStateManager.scale((float)(-p_147046_2_), (float)p_147046_2_, (float)p_147046_2_);
-        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-        float f2 = p_147046_5_.renderYawOffset;
-        float f3 = p_147046_5_.rotationYaw;
-        float f4 = p_147046_5_.rotationPitch;
-        float f5 = p_147046_5_.prevRotationYawHead;
-        float f6 = p_147046_5_.rotationYawHead;
-        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.translatef((float) p_147046_0_, (float) p_147046_1_, 50.0F);
+        GlStateManager.scalef((float) (-p_147046_2_), (float) p_147046_2_, (float) p_147046_2_);
+        GlStateManager.rotatef(180.0F, 0.0F, 0.0F, 1.0F);
+        float f2 = livingentity.renderYawOffset;
+        float f3 = livingentity.rotationYaw;
+        float f4 = livingentity.rotationPitch;
+        float f5 = livingentity.prevRotationYawHead;
+        float f6 = livingentity.rotationYawHead;
+        GlStateManager.rotatef(135.0F, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
-        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-((float)Math.atan((double)(p_147046_4_ / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
-        p_147046_5_.renderYawOffset = (float)Math.atan((double)(p_147046_3_ / 40.0F)) * 20.0F;
-        p_147046_5_.rotationYaw = (float)Math.atan((double)(p_147046_3_ / 40.0F)) * 40.0F;
-        p_147046_5_.rotationPitch = -((float)Math.atan((double)(p_147046_4_ / 40.0F))) * 20.0F;
-        p_147046_5_.rotationYawHead = p_147046_5_.rotationYaw;
-        p_147046_5_.prevRotationYawHead = p_147046_5_.rotationYaw;
-        GlStateManager.translate(0.0F, 0.0F, 0.0F);
-        RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        GlStateManager.rotatef(-135.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotatef(-((float) Math.atan((double) (p_147046_4_ / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
+        livingentity.renderYawOffset = (float) Math.atan((double) (p_147046_3_ / 40.0F)) * 20.0F;
+        livingentity.rotationYaw = (float) Math.atan((double) (p_147046_3_ / 40.0F)) * 40.0F;
+        livingentity.rotationPitch = -((float) Math.atan((double) (p_147046_4_ / 40.0F))) * 20.0F;
+        livingentity.rotationYawHead = livingentity.rotationYaw;
+        livingentity.prevRotationYawHead = livingentity.rotationYaw;
+        GlStateManager.translatef(0.0F, 0.0F, 0.0F);
+        EntityRendererManager rendermanager = Minecraft.getInstance().getRenderManager();
         rendermanager.setPlayerViewY(180.0F);
         rendermanager.setRenderShadow(false);
-        rendermanager.renderEntityWithPosYaw(p_147046_5_, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+        rendermanager.renderEntityWithPosYaw(livingentity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
         rendermanager.setRenderShadow(true);
-        p_147046_5_.renderYawOffset = f2;
-        p_147046_5_.rotationYaw = f3;
-        p_147046_5_.rotationPitch = f4;
-        p_147046_5_.prevRotationYawHead = f5;
-        p_147046_5_.rotationYawHead = f6;
+        livingentity.renderYawOffset = f2;
+        livingentity.rotationYaw = f3;
+        livingentity.rotationPitch = f4;
+        livingentity.prevRotationYawHead = f5;
+        livingentity.rotationYawHead = f6;
         GlStateManager.popMatrix();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableRescaleNormal();
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
     
@@ -132,25 +192,25 @@ public class SneakySalGUI extends Screen {
      */
     public void onGuiClosed()
     {
-        Keyboard.enableRepeatEvents(false);
+        KeyboardUtils.enableRepeatEvents(false);
     }
 
     /**
      * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
      */
-    protected void actionPerformed(GuiButton guibutton)
+    protected void actionPerformed(Button guibutton)
     {
-        EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
-        World world = Minecraft.getMinecraft().theWorld;
+        PlayerEntity playerentity = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().world;
 
-        if (!guibutton.enabled)
+        if (!guibutton.active)
         {
             return;
         }
 
         if (guibutton.id == 1)
         {
-            mc.displayGuiScreen(null);
+            minecraft.displayGuiScreen(null);
             return;
         }
 
@@ -160,103 +220,100 @@ public class SneakySalGUI extends Screen {
 
             if (rand.nextInt(9) == 0)
             {
-                world.playSoundAtEntity(entityplayersp, "mob.chickenplop", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                world.playSound(playerentity, playerentity.getPosition(), SoundEvents.ENTITY_CHICKEN_EGG, SoundCategory.MASTER, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 int i = rand.nextInt(15) + 1;
 
                 switch (i)
                 {
                     case 1:
-                        sneakysal.dropItem(MoreCreepsReboot.armygem, 1);
-                        break;
+                        sneakysal.entityDropItem(ItemList.army_gem, 1);
+                    break;
 
-                    case 2:
-                        sneakysal.dropItem(MoreCreepsReboot.horseheadgem, 1);
-                        break;
+                case 2:
+                    sneakysal.entityDropItem(ItemList.horse_head_gem, 1);
+                    break;
 
-                    case 3:
-                        sneakysal.dropItem(MoreCreepsReboot.bandaid, 1);
-                        break;
+                case 3:
+                    sneakysal.entityDropItem(ItemList.band_aid, 1);
+                    break;
 
-                    case 4:
-                        sneakysal.dropItem(MoreCreepsReboot.shrinkray, 1);
-                        break;
+                case 4:
+                    sneakysal.entityDropItem(ItemList.shrink_ray, 1);
+                    break;
 
-                    case 5:
-                        sneakysal.dropItem(MoreCreepsReboot.extinguisher, 1);
-                        break;
+                case 5:
+                    sneakysal.entityDropItem(ItemList.extinguisher, 1);
+                    break;
 
-                    case 6:
-                        sneakysal.dropItem(MoreCreepsReboot.growray, 1);
-                        break;
+                case 6:
+                    sneakysal.entityDropItem(ItemList.grow_ray, 1);
+                    break;
 
-                    case 7:
-                        sneakysal.dropItem(MoreCreepsReboot.frisbee, 1);
-                        break;
+                case 7:
+                    sneakysal.entityDropItem(ItemList.frisbee, 1);
+                    break;
 
-                    case 8:
-                        sneakysal.dropItem(MoreCreepsReboot.lifegem, 1);
-                        break;
+                case 8:
+                    sneakysal.entityDropItem(ItemList.life_gem, 1);
+                    break;
 
-                    case 9:
-                        sneakysal.dropItem(MoreCreepsReboot.gun, 1);
-                        break;
+                case 9:
+                    sneakysal.entityDropItem(ItemList.gun, 1);
+                    break;
 
-                    case 10:
-                        sneakysal.dropItem(MoreCreepsReboot.raygun, 1);
-                        break;
+                case 10:
+                    sneakysal.entityDropItem(ItemList.ray_gun, 1);
+                    break;
 
-                    default:
-                        sneakysal.dropItem(MoreCreepsReboot.bandaid, 1);
-                        break;
+                default:
+                    sneakysal.entityDropItem(ItemList.band_aid, 1);
+                    break;
                 }
 
-                mc.displayGuiScreen(null);
+                minecraft.displayGuiScreen(null);
                 return;
             }
 
-            for (int j = 0; j < rand.nextInt(15) + 5; j++)
-            {
-                double d = -MathHelper.sin((sneakysal.rotationYaw * (float)Math.PI) / 180F);
-                double d1 = MathHelper.cos((sneakysal.rotationYaw * (float)Math.PI) / 180F);
+            for (int j = 0; j < rand.nextInt(15) + 5; j++) {
+                double d = -MathHelper.sin((sneakysal.rotationYaw * (float) Math.PI) / 180F);
+                double d1 = MathHelper.cos((sneakysal.rotationYaw * (float) Math.PI) / 180F);
                 RatManEntity creepsentityratman = new RatManEntity(world);
-                creepsentityratman.setLocationAndAngles((sneakysal.posX + d * 1.0D + (double)rand.nextInt(4)) - 2D, sneakysal.posY - 1.0D, (sneakysal.posZ + d1 * 1.0D + (double)rand.nextInt(4)) - 2D, sneakysal.rotationYaw, 0.0F);
-                creepsentityratman.motionY = 1.0D;
-                world.spawnEntityInWorld(creepsentityratman);
+                creepsentityratman.setLocationAndAngles((sneakysal.posX + d * 1.0D + (double) rand.nextInt(4)) - 2D,
+                        sneakysal.posY - 1.0D, (sneakysal.posZ + d1 * 1.0D + (double) rand.nextInt(4)) - 2D,
+                        sneakysal.rotationYaw, 0.0F);
+                creepsentityratman.setMotion(creepsentityratman.getMotion().x, 1.0D, creepsentityratman.getMotion().z);
+                world.addEntity(creepsentityratman);
             }
 
-            world.playSoundAtEntity(entityplayersp, "morecreeps:salrats", 1.0F, 1.0F);
-            mc.displayGuiScreen(null);
+            world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.SAL_RATS, SoundCategory.HOSTILE, 1.0F, 1.0F);
+            minecraft.displayGuiScreen(null);
             return;
         }
 
         int k = guibutton.id;
 
-        if (k > 1 && k < 12)
-        {
+        if (k > 1 && k < 12) {
             k -= 2;
             SneakySalEntity _tmp = sneakysal;
-            int l = Math.round((float)SneakySalEntity.salprices[sneakysal.salslots[k]] * saleprice);
+            int l = Math.round((float) SneakySalEntity.salprices[sneakysal.salslots[k]] * saleprice);
             playercash = checkCash();
 
-            if (playercash < l)
-            {
-                world.playSoundAtEntity(entityplayersp, "morecreeps:salnomoney", 1.0F, 1.0F);
-            }
-            else
-            {
+            if (playercash < l) {
+                world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.SAL_NO_MONEY, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+            } else {
                 removeCash(l);
                 SneakySalEntity _tmp1 = sneakysal;
-                sneakysal.dropItem(SneakySalEntity.salitems[sneakysal.salslots[k]], 1);
-                world.playSoundAtEntity(entityplayersp, "morecreeps:salsale", 1.0F, 1.0F);
+                sneakysal.entityDropItem(SneakySalEntity.salitems[sneakysal.salslots[k]], 1);
+                world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.SAL_SALE, SoundCategory.NEUTRAL, 1.0F, 1.0F);
             }
         }
     }
 
     public boolean removeCash(int i)
     {
-        EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
+        PlayerEntity playerentity = Minecraft.getInstance().player;
         Object obj = null;
-        ItemStack aitemstack[] = ((EntityPlayer)(entityplayersp)).inventory.mainInventory;
+        ItemStack aitemstack[] = ((PlayerEntity)(playerentity)).inventory.mainInventory;
         boolean flag = false;
         label0:
 
@@ -264,27 +321,27 @@ public class SneakySalGUI extends Screen {
         {
             ItemStack itemstack = aitemstack[j];
 
-            if (itemstack == null || itemstack.getItem() != MoreCreepsReboot.money)
+            if (itemstack == null || itemstack.getItem() != ItemList.money)
             {
                 continue;
             }
 
             do
             {
-                if (itemstack.stackSize <= 0 || i <= 0)
+                if (itemstack.getCount() <= 0 || i <= 0)
                 {
                     continue label0;
                 }
 
                 i--;
 
-                if (itemstack.stackSize - 1 == 0)
+                if (itemstack.getCount() - 1 == 0)
                 {
-                    ((EntityPlayer)(entityplayersp)).inventory.mainInventory[j] = null;
+                    ((PlayerEntity)(playerentity)).inventory.mainInventory[j] = null;
                     continue label0;
                 }
 
-                itemstack.stackSize--;
+                itemstack.setCount(itemstack.getCount() - 1);
             }
             while (true);
         }
@@ -294,18 +351,18 @@ public class SneakySalGUI extends Screen {
 
     public int checkCash()
     {
-        EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
+        PlayerEntity playerentity = Minecraft.getInstance().player;
         Object obj = null;
-        ItemStack aitemstack[] = ((EntityPlayer)(entityplayersp)).inventory.mainInventory;
+        ItemStack aitemstack[] = ((PlayerEntity)(playerentity)).inventory.mainInventory;
         int i = 0;
 
         for (int j = 0; j < aitemstack.length; j++)
         {
             ItemStack itemstack = aitemstack[j];
 
-            if (itemstack != null && itemstack.getItem() == MoreCreepsReboot.money)
+            if (itemstack != null && itemstack.getItem() == ItemList.money)
             {
-                i += itemstack.stackSize;
+                itemstack.setCount(itemstack.getCount() + i);
             }
         }
 
@@ -325,12 +382,7 @@ public class SneakySalGUI extends Screen {
      */
     protected void mouseClicked(int i, int j, int k)
     {
-        try {
-			super.mouseClicked(i, j, k);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        super.mouseClicked(i, j, k);
     }
 
     /**
@@ -340,15 +392,15 @@ public class SneakySalGUI extends Screen {
     {
         drawWorldBackground(0);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(new ResourceLocation("morecreeps:textures/gui/gui-screensal.png"));
+        minecraft.renderEngine.bindTexture(new ResourceLocation(Reference.MODID + "textures/gui/gui-screensal.png"));
         int l = (width - xSize) / 2;
         int i1 = (height - (ySize + 16)) / 2;
         drawTexturedModalRect(20, 20, 0, 0, xSize + 400, ySize);
         byte byte0 = -18;
         boolean flag = false;
         playercash = checkCash();
-        drawCenteredString(fontRendererObj, "\2475******* \247fWELCOME TO SAL'S SHOP \2475*******", width / 2, height / 4 - 40, 0xffffff);
-        drawCenteredString(fontRendererObj, (new StringBuilder()).append("\247eYour cash : \2472$\2476 ").append(String.valueOf(playercash)).toString(), width / 2, height / 4 - 25, 0xffffff);
+        drawCenteredString(Minecraft.getInstance().fontRenderer, "\2475******* \247fWELCOME TO SAL'S SHOP \2475*******", width / 2, height / 4 - 40, 0xffffff);
+        drawCenteredString(Minecraft.getInstance().fontRenderer, (new StringBuilder()).append("\247eYour cash : \2472$\2476 ").append(String.valueOf(playercash)).toString(), width / 2, height / 4 - 25, 0xffffff);
 
         for (int j1 = 0; j1 < 5; j1++)
         {
