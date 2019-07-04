@@ -40,7 +40,7 @@ public class ItemShrinkRay extends Item
             if (creepsentityshrink != null)
             {
                 itemstack.damageItem(1, entityplayer);
-                world.spawnEntityInWorld(creepsentityshrink);
+                world.addEntity(creepsentityshrink);
             }
         }
 

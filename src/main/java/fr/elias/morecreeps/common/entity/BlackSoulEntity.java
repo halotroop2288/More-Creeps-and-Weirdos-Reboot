@@ -31,13 +31,13 @@ public class BlackSoulEntity extends MobEntity
         super(null, world);
         texture = new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_BLACK_SOUL);
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, PlayerEntity.class, 1.0D, false));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, PlayerEntity.class, 1.0D, false));
+//        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
+//        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(8, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
     
     @Override
@@ -130,9 +130,9 @@ public class BlackSoulEntity extends MobEntity
         // int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
         int j1 = world.countEntities(BlackSoulEntity.class);
-        return i1 != Blocks.COBBLESTONE && i1 != Blocks.log && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
-                && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && rand.nextInt(15) == 0
-                && j1 < 10;
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//                && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+                && rand.nextInt(15) == 0 && j1 < 10;
     }
     
     public void knockBack(Entity entity, int i, double d, double d1)

@@ -17,7 +17,7 @@ public class CREEPSRenderBlackSoul extends RenderLiving
 	
     public CREEPSRenderBlackSoul(ModelBiped modelbiped, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), new ModelBiped(), 1.0F);
+        super(Minecraft.getInstance().getRenderManager(), new ModelBiped(), 1.0F);
         this.addLayer(new LayerBlackSoulEyes(this));
     }
 

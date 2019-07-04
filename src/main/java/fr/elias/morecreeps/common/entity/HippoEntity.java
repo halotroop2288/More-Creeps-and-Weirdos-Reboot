@@ -56,31 +56,31 @@ public class HippoEntity extends MobEntity
         goatlevel = 1;
         modelsize = 2.0F;
         hippoHit = false;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.45D, true));
-        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, MobEntity.class, 0.45D, false));
-        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, AnimalEntity.class, 0.45D, false));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-        this.targetTasks.addTask(2, new HippoEntity.AIAttackEntity(this, PlayerEntity.class, true));
-        this.targetTasks.addTask(2, new HippoEntity.AIAttackEntity(this, MobEntity.class, true));
-        this.targetTasks.addTask(2, new HippoEntity.AIAttackEntity(this, AnimalEntity.class, true));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.45D, true));
+//        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, MobEntity.class, 0.45D, false));
+//        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, AnimalEntity.class, 0.45D, false));
+//        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
+//        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
+//        this.tasks.addTask(8, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        this.targetTasks.addTask(2, new HippoEntity.AIAttackEntity(this, PlayerEntity.class, true));
+//        this.targetTasks.addTask(2, new HippoEntity.AIAttackEntity(this, MobEntity.class, true));
+//        this.targetTasks.addTask(2, new HippoEntity.AIAttackEntity(this, AnimalEntity.class, true));
     }
 
-    protected void applyEntityAttributes()
+    protected void registerAttributes()
     {
-        super.applyEntityAttributes();
+        super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
     }
 
     public float func_180484_a(BlockPos bp, World world)
     {
-        if (world.getBlockState(bp.down()).getBlock() == Blocks.water || world.getBlockState(bp.down()) == Blocks.WATER)
+        if (world.getBlockState(bp.down()).getBlock() == Blocks.WATER)
         {
             return 10F;
         }
@@ -225,7 +225,9 @@ public class HippoEntity extends MobEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(35) == 0; //&& l > 7;
+        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(35) == 0; //&& l > 7;
     }
 
     /**

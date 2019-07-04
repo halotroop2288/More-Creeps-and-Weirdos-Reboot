@@ -249,7 +249,7 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
             {
                 world.setBlockState(new BlockPos(i + 1, j - 1, k - k5), Blocks.AIR.getDefaultState());
                 world.setBlockState(new BlockPos(i + 1, j, k - k5), Blocks.AIR.getDefaultState());
-                world.setBlockState(new BlockPos(i + 1, j, k - k5), Blocks.torch.getDefaultState());
+                world.setBlockState(new BlockPos(i + 1, j, k - k5), Blocks.TORCH.getDefaultState());
             }
 
             world.setBlockState(new BlockPos(i - 1, j, k - 5), Blocks.TORCH.getDefaultState());

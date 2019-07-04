@@ -2,12 +2,11 @@ package fr.elias.morecreeps.client.models;
 
 import java.util.Random;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 
-public class CREEPSModelNonSwimmer extends ModelBase
+public class CREEPSModelNonSwimmer extends Model
 {
     public static Random rand = new Random();
     public ModelRenderer bipedHead;

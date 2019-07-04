@@ -22,7 +22,7 @@ public class GooDonutEntity extends ThrowableEntity
 
     public GooDonutEntity(World world)
     {
-        super(world);
+        super(null, world);
         setSize(0.25F, 0.25F);
         initialVelocity = 1.0D;
         bounceFactor = 0.84999999999999998D;
@@ -65,7 +65,7 @@ public class GooDonutEntity extends ThrowableEntity
 
     public void func_20048_a(double d, double d1, double d2, float f, float f1)
     {
-        float f2 = MathHelper.sqrt_double(d * d + d1 * d1 + d2 * d2);
+        float f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
         d /= f2;
         d1 /= f2;
         d2 /= f2;
@@ -78,7 +78,7 @@ public class GooDonutEntity extends ThrowableEntity
         motionX = d;
         motionY = d1;
         motionZ = d2;
-        float f3 = MathHelper.sqrt_double(d * d + d2 * d2);
+        float f3 = MathHelper.sqrt(d * d + d2 * d2);
         prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
         prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / Math.PI);
     }
@@ -94,7 +94,7 @@ public class GooDonutEntity extends ThrowableEntity
 
         if (prevRotationPitch == 0.0F && prevRotationYaw == 0.0F)
         {
-            float f = MathHelper.sqrt_double(d * d + d2 * d2);
+            float f = MathHelper.sqrt(d * d + d2 * d2);
             prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
             prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f) * 180D) / Math.PI);
         }

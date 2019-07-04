@@ -198,7 +198,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion {
             {
                 for (int i8 = -12; i8 < 38; i8++)
                 {
-                    world.setBlockToAir(new BlockPos(l + k6, i1 + k5, j1 + i8));
+                    world.setBlockState(new BlockPos(l + k6, i1 + k5, j1 + i8), Blocks.AIR.getDefaultState());
                 }
             }
         }
@@ -450,8 +450,8 @@ public class CREEPSWorldGenCastle extends WorldGenRegion {
 
         for (int k11 = 11; k11 < 15; k11++) {
             for (int k14 = 0; k14 < 4; k14++) {
-                world.setBlockToAir(new BlockPos(l + k11, i1 + k14, j1 - 5));
-                world.setBlockToAir(new BlockPos(l + k11, i1 + k14, j1 + 29));
+                world.setBlockState(new BlockPos(l + k11, i1 + k14, j1 - 5), Blocks.AIR.getDefaultState());
+                world.setBlockState(new BlockPos(l + k11, i1 + k14, j1 + 29), Blocks.AIR.getDefaultState());
             }
         }
 
@@ -646,7 +646,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion {
 
                                 if (j3 < 4 && j3 > -5)
                                 {
-                                    world.setBlockToAir(new BlockPos(k4, i5, j5));
+                                    world.setBlockState(new BlockPos(k4, i5, j5), Blocks.AIR.getDefaultState());
                                 }
 
                                 continue;
@@ -670,7 +670,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion {
                             }
                             else
                             {
-                                world.setBlockToAir(new BlockPos(k4, i5, j5));
+                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.AIR.getDefaultState());
                             }
 
                             continue;
@@ -697,7 +697,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion {
 
                             if (world.getBlockState(new BlockPos(k4, i5, j5)).getBlock() != Blocks.CHEST)
                             {
-                                world.setBlockToAir(new BlockPos(k4, i5, j5));
+                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.AIR.getDefaultState());
                             }
 
                             continue;
@@ -732,7 +732,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion {
                             }
                             else
                             {
-                                world.setBlockToAir(new BlockPos(k4, i5, j5));
+                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.AIR.getDefaultState());
                             }
 
                             continue;
@@ -757,7 +757,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion {
                             }
                             else
                             {
-                                world.setBlockToAir(new BlockPos(k4, i5, j5));
+                                world.setBlockState(new BlockPos(k4, i5, j5), Blocks.AIR.getDefaultState());
                             }
 
                             continue;
@@ -886,7 +886,7 @@ public class CREEPSWorldGenCastle extends WorldGenRegion {
 
                 if (world.getBlockState(new BlockPos(k3, j4, l4)).getBlock() == Blocks.STONE_SLAB && world.getBlockState(new BlockPos(k3, j4 + 1, l4)).getBlock() != Blocks.SPAWNER)
                 {
-                    world.setBlockToAir(new BlockPos(k3, j4, l4));
+                    world.setBlockState(new BlockPos(k3, j4, l4), Blocks.AIR.getDefaultState());
                 }
             }
 

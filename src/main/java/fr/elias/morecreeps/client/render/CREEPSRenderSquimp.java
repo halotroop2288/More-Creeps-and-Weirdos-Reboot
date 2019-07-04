@@ -11,7 +11,7 @@ public class CREEPSRenderSquimp extends RenderLiving
 {
     public CREEPSRenderSquimp(CREEPSModelSquimp creepsmodelsquimp, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelsquimp, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelsquimp, f);
     }
 
     protected ResourceLocation getEntityTexture(SquimpEntity entity)

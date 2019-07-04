@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelHorseHead;
 import fr.elias.morecreeps.common.entity.CREEPSEntityHorseHead;
+import fr.elias.morecreeps.common.entity.HorseHeadEntity;
 import fr.elias.morecreeps.common.entity.HunchbackSkeletonEntity;
 
 public class CREEPSRenderHorseHead extends RenderLiving
@@ -18,27 +19,27 @@ public class CREEPSRenderHorseHead extends RenderLiving
 
     public CREEPSRenderHorseHead(CREEPSModelHorseHead creepsmodelhorsehead, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelhorsehead, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelhorsehead, f);
         modelBipedMain = creepsmodelhorsehead;
     }
 
-    protected void fattenup(CREEPSEntityHorseHead creepsentityhorsehead, float f)
+    protected void fattenup(HorseHeadEntity creepsentityhorsehead, float f)
     {
         GL11.glScalef(1.6F, 1.6F, 1.6F);
     }
     
     protected void preRenderCallback(LivingEntity entityliving, float f)
     {
-        fattenup((CREEPSEntityHorseHead)entityliving, f);
+        fattenup((HorseHeadEntity)entityliving, f);
     }
 
-    protected ResourceLocation getEntityTexture(CREEPSEntityHorseHead entity)
+    protected ResourceLocation getEntityTexture(HorseHeadEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((CREEPSEntityHorseHead) entity);
+		return getEntityTexture((HorseHeadEntity) entity);
 	}
 }

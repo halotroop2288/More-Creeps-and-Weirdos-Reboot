@@ -69,7 +69,7 @@ public class HunchbackEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    public void livingTick()
     {
         if (this.getAttackTarget() instanceof HunchbackSkeletonEntity)
         {
@@ -94,7 +94,7 @@ public class HunchbackEntity extends MobEntity
             }
         }
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     /**
@@ -210,7 +210,7 @@ public class HunchbackEntity extends MobEntity
         {
             Entity entity1 = (Entity)world.loadedEntityList.get(i);
 
-            if (!(entity1 instanceof LivingEntity) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof PlayerEntity) || (entity1 instanceof MobEntity) || (entity1 instanceof HunchbackSkeletonEntity))
+            if (!(entity1 instanceof LivingEntity) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.getRidingEntity() || (entity1 instanceof PlayerEntity) || (entity1 instanceof MobEntity) || (entity1 instanceof HunchbackSkeletonEntity))
             {
                 continue;
             }
@@ -335,7 +335,9 @@ public class HunchbackEntity extends MobEntity
         int k = MathHelper.floor(posZ);
         int l = world.getLight(new BlockPos(i, j, k));
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.COBBLESTONE && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 10;
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 10;
     }
 
     /**
@@ -354,7 +356,7 @@ public class HunchbackEntity extends MobEntity
         double d1 = MathHelper.cos((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
         TrophyEntity creepsentitytrophy = new TrophyEntity(world);
         creepsentitytrophy.setLocationAndAngles(((PlayerEntity)(playerentity)).posX + d * 3D, ((PlayerEntity)(playerentity)).posY - 2D, ((PlayerEntity)(playerentity)).posZ + d1 * 3D, ((PlayerEntity)(playerentity)).rotationYaw, 0.0F);
-        world.spawnEntityInWorld(creepsentitytrophy);
+        world.addEntity(creepsentitytrophy);
     }
 
     /**

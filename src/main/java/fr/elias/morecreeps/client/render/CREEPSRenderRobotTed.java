@@ -3,10 +3,7 @@ package fr.elias.morecreeps.client.render;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
@@ -27,7 +24,7 @@ public class CREEPSRenderRobotTed extends RenderLiving
 
     public CREEPSRenderRobotTed(CREEPSModelRobotTed creepsmodelrobotted, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelrobotted, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelrobotted, f);
         modelBipedMain = creepsmodelrobotted;
         scaleAmount = creepsmodelrobotted;
         this.addLayer(new LayerRobotTed(this));

@@ -154,7 +154,7 @@ public class LetterGEntity extends MobEntity
         int j1 = world.countEntities(MummyEntity.class);
         return i1 != Blocks.SAND && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/
             && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
-            && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+//            && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
             && rand.nextInt(15) == 0 && j1 < 5;
     }
 

@@ -4,9 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
@@ -21,7 +19,7 @@ public class CREEPSRenderCamel extends RenderLiving
 
     public CREEPSRenderCamel(CREEPSModelCamel creepsmodelcamel, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelcamel, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelcamel, f);
         modelBipedMain = creepsmodelcamel;
         shadowSize = f;
     }

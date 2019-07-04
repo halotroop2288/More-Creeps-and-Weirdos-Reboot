@@ -37,9 +37,9 @@ public class DogHouseEntity extends AnimalEntity
         houseoccupied = false;
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
     }
@@ -98,10 +98,10 @@ public class DogHouseEntity extends AnimalEntity
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate()
+    public void tick()
     {
         ignoreFrustumCheck = true;
-        super.onUpdate();
+        super.tick();
     }
 
     /**
@@ -140,7 +140,7 @@ public class DogHouseEntity extends AnimalEntity
 
                     if (creepsentityhotdog.tamed)
                     {
-                        creepsentityhotdog.mountEntity(this);
+                        creepsentityhotdog.addPassenger(this);
                         houseoccupied = true;
                         world.playSound(playerentity, this.getPosition(), SoundsHandler.HOT_DOG_PICK_UP, SoundCategory.NEUTRAL, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                         break;
@@ -156,7 +156,7 @@ public class DogHouseEntity extends AnimalEntity
             getRidingEntity().fallDistance = -10F;
             world.playSound(playerentity, this.getPosition(), SoundsHandler.HOT_DOG_PUT_DOWN, SoundCategory.NEUTRAL, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
             houseoccupied = false;
-            getRidingEntity().addPassenger(null);
+            getRidingEntity().removePassengers();
         }
 
         return false;
@@ -200,7 +200,7 @@ public class DogHouseEntity extends AnimalEntity
 
             if (entity != null && (entity instanceof HotdogEntity) && ((HotdogEntity)entity).tamed)
             {
-                entity.addPassenger(this);
+                entity.removePassengers();
                 houseoccupied = true;
                 return;
             }

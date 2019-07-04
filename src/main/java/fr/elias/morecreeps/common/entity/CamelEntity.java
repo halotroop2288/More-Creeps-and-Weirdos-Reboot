@@ -517,7 +517,9 @@ public class CamelEntity extends MobEntity
         int l = world.getLight(getPosition());
         int j1 = world.countEntities(CamelEntity.class);
         Block i1 = world.getBlockState(new BlockPos(getPosition())).getBlock();
-        return (i1 == Blocks.SAND || i1 == Blocks.DIRT || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_CARPET && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 &&world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && l > 6 && rand.nextInt(40) == 0 && j1 < 25;
+        return (i1 == Blocks.SAND || i1 == Blocks.DIRT || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_CARPET
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && l > 6 && rand.nextInt(40) == 0 && j1 < 25;
     }
 
     /**

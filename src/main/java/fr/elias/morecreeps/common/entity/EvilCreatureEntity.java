@@ -47,9 +47,9 @@ public class EvilCreatureEntity extends MobEntity
         // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(110D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
     	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3D);
@@ -192,7 +192,7 @@ public class EvilCreatureEntity extends MobEntity
      * Returns the sound this mob makes when it is hurt.
      */
     @Override
-    protected SoundEvent getHurtSound()
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
         return SoundsHandler.EVIL_CREATURE_HURT;
     }

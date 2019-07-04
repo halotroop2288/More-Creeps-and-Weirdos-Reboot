@@ -561,7 +561,7 @@ public class ClientProxy extends CommonProxy
 	}
 	public void playSoundEffectAtPlayer(World world, String s, float volume, float pitch)
 	{
-		PlayerEntity player = Minecraft.getInstance().thePlayer;
+		PlayerEntity player = Minecraft.getInstance().player;
 		world.playSoundEffect(player.posX, player.posY, player.posZ, s, volume, pitch);
 	}
 	public void bubble(World world, LivingEntity entity)

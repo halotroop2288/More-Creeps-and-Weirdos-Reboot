@@ -16,7 +16,7 @@ public class CREEPSRenderDesertLizard extends RenderLiving
 {
     public CREEPSRenderDesertLizard(CREEPSModelDesertLizard creepsmodeldesertlizard, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodeldesertlizard, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodeldesertlizard, f);
     }
 
     protected void fattenup(DesertLizardEntity creepsentitydesertlizard, float f)

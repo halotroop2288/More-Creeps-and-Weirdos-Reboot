@@ -86,7 +86,7 @@ public class ItemSkyGem extends Item
                     player.swingItem();
                 }
 
-                world.playSoundAtEntity(player, "morecreeps:skygemdown", 0.6F, 1.0F);
+                world.playSound(player, "morecreeps:skygemdown", 0.6F, 1.0F);
                 jumpboost = -0.35F;
                 player.fallDistance = -15F;
             }

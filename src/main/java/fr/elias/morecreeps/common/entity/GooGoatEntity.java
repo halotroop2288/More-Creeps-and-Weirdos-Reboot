@@ -57,15 +57,15 @@ public class GooGoatEntity extends SheepEntity
         hungrytime = rand.nextInt(100) + 10;
         goatlevel = 1;
         modelspeed = 0.45F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.45D, true));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-        this.targetTasks.addTask(2, new GooGoatEntity.AIAttackEntity(this, PlayerEntity.class, true));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.45D, true));
+//        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
+//        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
+//        this.tasks.addTask(8, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        this.targetTasks.addTask(2, new GooGoatEntity.AIAttackEntity(this, PlayerEntity.class, true));
     }
 
     @Override
@@ -82,7 +82,7 @@ public class GooGoatEntity extends SheepEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world, PlayerEntity playerentity)
+    public void livingTick(World world, PlayerEntity playerentity)
     {
         if (modelspeed < 0.05F)
         {
@@ -90,7 +90,7 @@ public class GooGoatEntity extends SheepEntity
         }
 
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)modelspeed);
-        super.onLivingUpdate();
+        super.livingTick();
 
         if (hungry)
         {
@@ -190,7 +190,8 @@ public class GooGoatEntity extends SheepEntity
 			super(creature, class, bool);
 		}
 
-		public boolean shouldExecute() {
+		public boolean shouldExecute()
+		{
 			return angry && GooGoatEntity.this.getAttackTarget() != null && super.shouldExecute();
 		}
 		public void startExecuting()
@@ -301,9 +302,11 @@ public class GooGoatEntity extends SheepEntity
         int i = MathHelper.floor(posX);
         int j = MathHelper.floor(getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
-        int l = world.getBlockLightOpacity(new BlockPos(i, j, k));
+        int l = world.getLight(new BlockPos(i, j, k));
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(40) == 0 && l > 7;
+        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(40) == 0 && l > 7;
     }
 
     /**

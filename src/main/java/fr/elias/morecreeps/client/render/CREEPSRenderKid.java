@@ -18,7 +18,7 @@ public class CREEPSRenderKid extends RenderLiving
 
     public CREEPSRenderKid(CREEPSModelKid creepsmodelkid, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelkid, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelkid, f);
         modelBipedMain = creepsmodelkid;
     }
 

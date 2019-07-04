@@ -26,25 +26,25 @@ public class HunchbackSkeletonEntity extends MobEntity
 
     public HunchbackSkeletonEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "/mob/creeps/hunchbackskeleton1.png";
         health = rand.nextInt(10) + 10;
         timeleft = rand.nextInt(500) + 200;
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.45D, true));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.45D, true));
+//        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
+//        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
+//        this.tasks.addTask(8, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
     
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(health);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
     }
 
     
@@ -191,7 +191,7 @@ public class HunchbackSkeletonEntity extends MobEntity
             double d1 = entity.posZ - posZ;
 
             
-            	ArrowEntity entityarrow = new ArrowEntity(world, this, 1.0F);
+            	ArrowEntity entityarrow = new ArrowEntity(world, this);
                 entityarrow.posY += 1.3999999761581421D;
                 double d2 = entity.posY - 0.20000000298023224D - entityarrow.posY;
                 float f1 = MathHelper.sqrt(d * d + d1 * d1) * 0.2F;
@@ -254,12 +254,12 @@ public class HunchbackSkeletonEntity extends MobEntity
         {
             if (rand.nextInt(2) == 0)
             {
-                dropItem(Items.ARROW, rand.nextInt(3));
+                entityDropItem(Items.ARROW, rand.nextInt(3));
             }
 
             if (rand.nextInt(2) == 0)
             {
-                dropItem(Items.BONE, rand.nextInt(2));
+                entityDropItem(Items.BONE, rand.nextInt(2));
             }
         }
     }

@@ -32,7 +32,7 @@ public class ItemTombstone extends Item
             itemstack.stackSize = 0;
         }
 
-        world.playSoundAtEntity(entityplayer, "morecreeps:evileggcluck", 1.0F, 1.0F);
+        world.playSound(entityplayer, "morecreeps:evileggcluck", 1.0F, 1.0F);
 
         if (world.isRemote);
 

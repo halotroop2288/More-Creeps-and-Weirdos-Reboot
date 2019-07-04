@@ -260,7 +260,7 @@ public class BulletEntity extends Entity
         {
             Entity entity1 = (Entity)list.get(j);
 
-            if (!entity1.canBeCollidedWith() || (entity1 == shootingEntity || shootingEntity != null && entity1 == shootingEntity.ridingEntity) && aoLightValueScratchXYNN < 5 || aoLightValueScratchXYZNNN)
+            if (!entity1.canBeCollidedWith() || (entity1 == shootingEntity || shootingEntity != null && entity1 == shootingEntity.getRidingEntity()) && aoLightValueScratchXYNN < 5 || aoLightValueScratchXYZNNN)
             {
                 if (motionZ != 0.0D || !((motionX == 0.0D) & (motionY == 0.0D)))
                 {
@@ -358,7 +358,7 @@ public class BulletEntity extends Entity
                 if (CREEPSConfig.rayGunFire && blockHit == Blocks.glass)
                 {
                     world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.AIR.getDefaultState());
-                    Blocks.GLASS.onBlockDestroyedByPlayer(world, new BlockPos(hitX, hitY, hitZ), world.getBlockState(new BlockPos(hitX, hitY, hitZ)));
+                    Blocks.GLASS.onPlayerDestroy(world, new BlockPos(hitX, hitY, hitZ), world.getBlockState(new BlockPos(hitX, hitY, hitZ)));
                 }
 
                 setDead();
@@ -368,7 +368,7 @@ public class BulletEntity extends Entity
             setDead();
         }
 
-        posX += motionX=;
+        posX += motionX;
         posY += motionY;
         posZ += motionZ;
         float f2 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);

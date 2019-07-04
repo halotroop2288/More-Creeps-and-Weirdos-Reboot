@@ -1,10 +1,9 @@
 package fr.elias.morecreeps.client.models;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
 
-public class CREEPSModelAtom extends ModelBase
+public class CREEPSModelAtom extends Model
 {
     public ModelRenderer box1;
     public ModelRenderer box2;

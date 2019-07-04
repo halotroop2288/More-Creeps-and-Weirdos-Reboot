@@ -1,11 +1,10 @@
 package fr.elias.morecreeps.client.models;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 
-public class CREEPSModelLolliman extends ModelBase
+public class CREEPSModelLolliman extends Model
 {
     public ModelRenderer bipedHead;
     public ModelRenderer bipedHeadwear;

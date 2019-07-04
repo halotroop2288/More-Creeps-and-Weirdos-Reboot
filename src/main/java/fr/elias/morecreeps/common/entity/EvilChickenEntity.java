@@ -28,7 +28,7 @@ public class EvilChickenEntity extends MobEntity
 
     public EvilChickenEntity(World world)
     {
-        super(world);
+        super(null, world);
         field_753_a = false;
         field_752_b = 0.0F;
         destPos = 0.0F;
@@ -45,9 +45,9 @@ public class EvilChickenEntity extends MobEntity
 //        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
     	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);

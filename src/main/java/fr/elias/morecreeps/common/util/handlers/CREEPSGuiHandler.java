@@ -27,7 +27,7 @@ public class CREEPSGuiHandler  implements IGuiHandler
     	
     	if (ID == 2)
     	{
-    		return new SneakySalGUI(sneakysal);
+    		return new SneakySalGUI(sneakysal, null);
     	}
     	if (ID == 3)
     	{
@@ -51,7 +51,7 @@ public class CREEPSGuiHandler  implements IGuiHandler
     	if (ID == 2)
     	{
     		// Sneaky Sal Trading GUI
-    		return new SneakySalGUI(sneakysal);
+    		return new SneakySalGUI(sneakysal, null);
     	}
     	
     	if (ID == 3)

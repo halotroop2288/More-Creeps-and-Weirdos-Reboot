@@ -18,7 +18,7 @@ public class CREEPSRenderCastleCritter extends RenderLiving
 
     public CREEPSRenderCastleCritter(CREEPSModelCastleCritter creepsmodelcastlecritter, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelcastlecritter, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelcastlecritter, f);
         this.addLayer(new LayerCastleCritterEyes(this));
         modelBipedMain = creepsmodelcastlecritter;
     }

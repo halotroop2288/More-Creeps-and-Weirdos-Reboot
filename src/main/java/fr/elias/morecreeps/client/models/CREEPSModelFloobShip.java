@@ -1,10 +1,9 @@
 package fr.elias.morecreeps.client.models;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
 
-public class CREEPSModelFloobShip extends ModelBase
+public class CREEPSModelFloobShip extends Model
 {
     public ModelRenderer headFloobship;
     public ModelRenderer headFloobship1;

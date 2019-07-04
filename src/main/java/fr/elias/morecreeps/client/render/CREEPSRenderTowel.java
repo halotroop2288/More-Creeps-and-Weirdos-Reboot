@@ -1,7 +1,6 @@
 package fr.elias.morecreeps.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import fr.elias.morecreeps.client.models.CREEPSModelTowel;
@@ -13,7 +12,7 @@ public class CREEPSRenderTowel extends RenderLiving
 
     public CREEPSRenderTowel(CREEPSModelTowel creepsmodeltowel, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodeltowel, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodeltowel, f);
         modelBipedMain = creepsmodeltowel;
     }
 

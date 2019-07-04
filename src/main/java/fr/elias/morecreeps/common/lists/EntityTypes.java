@@ -18,6 +18,15 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class EntityTypes extends EntityType
 {
 
+	public EntityTypes(IFactory factoryIn, EntityClassification classificationIn, boolean serializableIn,
+			boolean summonableIn, boolean immuneToFireIn, Type dataFixerType, EntitySize sizeIn,
+			Predicate velocityUpdateSupplier, ToIntFunction trackingRangeSupplier, ToIntFunction updateIntervalSupplier,
+			BiFunction customClientFactory) {
+		super(factoryIn, classificationIn, serializableIn, summonableIn, immuneToFireIn, dataFixerType, sizeIn,
+				velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
+		// TODO Auto-generated constructor stub
+	}
+
 	public static final EntityType ARMY_GUY_ARM, ARMY_GUY;
 	public static final EntityType ATOM;
 	public static final EntityType BABY_MUMMY;

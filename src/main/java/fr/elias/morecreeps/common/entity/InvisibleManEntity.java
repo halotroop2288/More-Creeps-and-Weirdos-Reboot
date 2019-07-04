@@ -144,7 +144,9 @@ public class InvisibleManEntity extends MobEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.sand && i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
+        return i1 != Blocks.SAND && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
     }
 
     /**
@@ -173,7 +175,7 @@ public class InvisibleManEntity extends MobEntity
         {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
             moveForward = (float) ((d / (double)f1) * 0.20000000000000001D * 0.80000001192092896D + getMotion().x * 0.20000000298023224D);
             moveStrafing = (float) ((d1 / (double)f1) * 0.20000000000000001D * 0.80000001192092896D + getMotion().z * 0.20000000298023224D);
             moveVertical = (float) 0.20000000596246448D;
@@ -184,9 +186,9 @@ public class InvisibleManEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    public void livingTick()
     {
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     public boolean canAttackEntity22(Entity entity, float i)
@@ -228,7 +230,7 @@ public class InvisibleManEntity extends MobEntity
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
+            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
         }
     }
 

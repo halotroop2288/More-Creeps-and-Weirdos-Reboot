@@ -389,7 +389,9 @@ public class ThiefEntity extends MobEntity
         }
         else
         {
-            return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.SMOOTH_STONE_SLAB && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 7;
+            return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.SMOOTH_STONE_SLAB
+//            		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+            		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(10) == 0 && l > 7;
         }
     }
 

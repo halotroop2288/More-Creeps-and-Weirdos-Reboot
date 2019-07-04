@@ -18,7 +18,7 @@ public class CREEPSRenderGooGoat extends RenderLiving
 
     public CREEPSRenderGooGoat(CREEPSModelGooGoat creepsmodelgoogoat, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelgoogoat, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelgoogoat, f);
         modelBipedMain = creepsmodelgoogoat;
         scaleAmount = creepsmodelgoogoat;
         this.addLayer(new LayerGooGoat(this));

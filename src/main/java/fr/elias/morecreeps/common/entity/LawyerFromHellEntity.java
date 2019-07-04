@@ -350,7 +350,7 @@ public class LawyerFromHellEntity extends MobEntity
                         if (k < 20)
                         {
                             ((Entity)obj).fallDistance = -25F;
-                            ((Entity)obj).mountEntity(null);
+                            ((Entity)obj).removePassengers();
                         }
                     }
 
@@ -375,7 +375,7 @@ public class LawyerFromHellEntity extends MobEntity
                     if (l < 20)
                     {
                         ((Entity)obj1).fallDistance = -25F;
-                        ((Entity)obj1).mountEntity(null);
+                        ((Entity)obj1).removePassengers();
                     }
                 }
 
@@ -655,7 +655,7 @@ public class LawyerFromHellEntity extends MobEntity
                     world.setBlockState(new BlockPos(jailX + 5, jailY + 1, jailZ + j6 * 7 + 19), Blocks.OAK_DOOR.getDefaultState(), 10);
                     world.setBlockState(new BlockPos(jailX + 9, jailY + 1, jailZ + j6 * 7 + 19 + 2), Blocks.IRON_BARS.getDefaultState());
                     world.setBlockState(new BlockPos(jailX + 9, jailY, jailZ + j6 * 7 + 19), Blocks.AIR.getDefaultState());
-                    world.setBlockToAir(new BlockPos(jailX + 9, jailY + 1, jailZ + j6 * 7 + 19), Blocks.AIR.getDefaultState());
+                    world.setBlockState(new BlockPos(jailX + 9, jailY + 1, jailZ + j6 * 7 + 19), Blocks.AIR.getDefaultState());
                     world.setBlockState(new BlockPos(jailX + 9, jailY, jailZ + j6 * 7 + 19), Blocks.OAK_DOOR.getDefaultState());
                     world.setBlockState(new BlockPos(jailX + 9, jailY, jailZ + j6 * 7 + 19), Blocks.OAK_DOOR.getDefaultState(), 0);
                     world.setBlockState(new BlockPos(jailX + 9, jailY + 1, jailZ + j6 * 7 + 19), Blocks.OAK_DOOR.getDefaultState());
@@ -768,7 +768,7 @@ public class LawyerFromHellEntity extends MobEntity
         tileentitychest1.setInventorySlotContents(rand.nextInt(5) + 5, new ItemStack(Items.APPLE, 1));
         tileentitychest2.setInventorySlotContents(rand.nextInt(5) + 5, new ItemStack(Blocks.TORCH, rand.nextInt(16)));
         tileentitychest2.setInventorySlotContents(rand.nextInt(5), new ItemStack(Items.APPLE, 1));
-        world.setBlockState(new BlockPos(jailX + 6, jailY + 2, jailZ + 9), Blocks.torch.getDefaultState());
+        world.setBlockState(new BlockPos(jailX + 6, jailY + 2, jailZ + 9), Blocks.TORCH.getDefaultState());
         int j9 = rand.nextInt(11);
 
         for (int k9 = 0; k9 < 4; k9++)
@@ -1150,11 +1150,11 @@ public class LawyerFromHellEntity extends MobEntity
     {
         if (!undead)
         {
-            return "morecreeps:lawyer";
+            return SoundsHandler.LAWYER_HURT;
         }
         else
         {
-            return "morecreeps:lawyerundead";
+            return SoundsHandler.LAWYER_UNDEAD;
         }
     }
 
@@ -1166,11 +1166,11 @@ public class LawyerFromHellEntity extends MobEntity
     {
         if (!undead)
         {
-            return "morecreeps:lawyerhurt";
+            return SoundsHandler.LAWYER_HURT;
         }
         else
         {
-            return "morecreeps:lawyerundeadhurt";
+            return SoundsHandler.LAWYER_UNDEAD_HURT;
         }
     }
 
@@ -1182,11 +1182,11 @@ public class LawyerFromHellEntity extends MobEntity
     {
         if (!undead)
         {
-            return "morecreeps:lawyerdeath";
+            return SoundsHandler.LAWYER_DEATH;
         }
         else
         {
-            return "morecreeps:lawyerundeaddeath";
+            return SoundsHandler.LAWYER_UNDEAD_DEATH;
         }
     }
 

@@ -23,7 +23,7 @@ public class CREEPSRenderRobotTodd extends RenderLiving
 
     public CREEPSRenderRobotTodd(CREEPSModelRobotTodd creepsmodelrobottodd, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelrobottodd, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelrobottodd, f);
         modelBipedMain = creepsmodelrobottodd;
         scaleAmount = creepsmodelrobottodd;
         this.addLayer(new LayerRobotTodd(this));

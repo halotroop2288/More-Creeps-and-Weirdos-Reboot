@@ -18,7 +18,7 @@ public class CREEPSRenderFloob extends RenderLiving
 
     public CREEPSRenderFloob(CREEPSModelFloob creepsmodelfloob, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelfloob, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelfloob, f);
         modelFloobMain = creepsmodelfloob;
     }
 

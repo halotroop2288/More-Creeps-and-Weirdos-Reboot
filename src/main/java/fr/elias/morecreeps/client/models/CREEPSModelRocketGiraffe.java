@@ -1,11 +1,9 @@
 package fr.elias.morecreeps.client.models;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
 
-public class CREEPSModelRocketGiraffe extends ModelBase
+public class CREEPSModelRocketGiraffe extends Model
 {
     public ModelRenderer body;
     public ModelRenderer tail;

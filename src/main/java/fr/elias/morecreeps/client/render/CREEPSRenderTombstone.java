@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
@@ -19,7 +18,7 @@ public class CREEPSRenderTombstone extends RenderLiving
 {
     public CREEPSRenderTombstone(CREEPSModelTombstone creepsmodeltombstone, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodeltombstone, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodeltombstone, f);
     }
 
     public void doRenderLiving(LivingEntity entityliving, double d, double d1, double d2, float f, float f1)

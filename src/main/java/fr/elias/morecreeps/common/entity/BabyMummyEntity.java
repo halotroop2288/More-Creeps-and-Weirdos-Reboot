@@ -7,7 +7,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -17,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.Reference;
-import fr.elias.morecreeps.common.entity.ai.EntityBabyMummyAI;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class BabyMummyEntity extends MobEntity
@@ -81,7 +79,7 @@ public class BabyMummyEntity extends MobEntity
      * Plays living's sound at its position
      */
     @Override
-    public void playLivingSound()
+    public void playAmbientSound()
     {
     	World world = Minecraft.getInstance().world;
     	PlayerEntity playerentity = Minecraft.getInstance().player;
@@ -105,7 +103,7 @@ public class BabyMummyEntity extends MobEntity
         //Fixed the light checker!
         int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.SAND || i1 == Blocks.BEDROCK) && i1 != Blocks.COBBLESTONE && i1 != Blocks.log && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+        return (i1 == Blocks.SAND || i1 == Blocks.BEDROCK) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
 //        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
         		&& rand.nextInt(15) == 0 && l > 10;
     }
@@ -158,7 +156,7 @@ public class BabyMummyEntity extends MobEntity
                 int j = MathHelper.floor(entity.posY);
                 int k = MathHelper.floor(entity.posZ);
 
-                if (world.getBlockState(new BlockPos(i, j - 2, k)).getBlock() == Blocks.sand)
+                if (world.getBlockState(new BlockPos(i, j - 2, k)).getBlock() == Blocks.SAND)
                 {
                     if (rand.nextInt(5) == 0)
                     {
@@ -209,7 +207,7 @@ public class BabyMummyEntity extends MobEntity
                     setMotion(
                     		(d / (double)f2) * 0.5D * 0.8000000019209289D + getMotion().x * 0.18000000098023225D, // motionX
                     		getMotion().y, // motionY
-                    		(d1 / (double)f2) * 0.5D * 0.70000000192092893D + motionZ * 0.18000000098023225D // motionZ
+                    		(d1 / (double)f2) * 0.5D * 0.70000000192092893D + getMotion().z * 0.18000000098023225D // motionZ
                     		);
                 }
             }
@@ -225,11 +223,11 @@ public class BabyMummyEntity extends MobEntity
     	{
             if (rand.nextInt(5) == 0)
             {
-                dropItem(Item.getItemFromBlock(Blocks.wool), rand.nextInt(6) + 1);
+                entityDropItem(Blocks.WHITE_WOOL, rand.nextInt(6) + 1);
             }
             else
             {
-                dropItem(Item.getItemFromBlock(Blocks.sand), rand.nextInt(3) + 1);
+                entityDropItem(Blocks.SAND, rand.nextInt(3) + 1);
             }
     	}
 

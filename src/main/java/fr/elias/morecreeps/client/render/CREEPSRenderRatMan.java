@@ -18,7 +18,7 @@ public class CREEPSRenderRatMan extends RenderLiving
 
     public CREEPSRenderRatMan(CREEPSModelRatMan creepsmodelratman, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelratman, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelratman, f);
         modelBipedMain = creepsmodelratman;
     }
 

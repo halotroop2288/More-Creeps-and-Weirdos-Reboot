@@ -18,7 +18,7 @@ public class CREEPSRenderRockMonster extends RenderLiving
 
     public CREEPSRenderRockMonster(CREEPSModelRockMonster creepsmodelrockmonster, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelrockmonster, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelrockmonster, f);
         modelBipedMain = creepsmodelrockmonster;
     }
 

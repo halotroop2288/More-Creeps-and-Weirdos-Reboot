@@ -1,9 +1,11 @@
 package fr.elias.morecreeps.common.items;
 
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 
 public class ItemPopsicle extends Item
@@ -12,9 +14,8 @@ public class ItemPopsicle extends Item
 
     public ItemPopsicle()
     {
-        super();
+        super(new Item.Properties().maxStackSize(16));
         healAmount = 4;
-        maxStackSize = 16;
     }
 
     /**
@@ -30,9 +31,9 @@ public class ItemPopsicle extends Item
      */
     public ItemStack onItemRightClick(ItemStack itemstack, World world, PlayerEntity entityplayer)
     {
-        entityplayer.swingItem();
-        world.playSoundAtEntity(entityplayer, "morecreeps:lick", 1.0F, 1.0F);
-        itemstack.stackSize--;
+        entityplayer.swingArm(Hand.MAIN_HAND);
+        world.playSound(entityplayer, entityplayer.getPosition(), SoundsHandler.LICK, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        itemstack.setCount(itemstack.getCount() - 1);
         entityplayer.heal(healAmount);
         return itemstack;
     }

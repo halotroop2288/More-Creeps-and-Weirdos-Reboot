@@ -25,32 +25,32 @@ public class KidEntity extends AnimalEntity
 
     public KidEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/kid.png";
         attack = 1;
         attackrange = 16D;
         checktimer = 0;
         modelsize = 0.6F;
-        setEntitySize(width * modelsize, getHeight() * modelsize);
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new KidEntity.AIAttackEntity());
-        this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(4, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        setEntitySize(getWidth() * modelsize, getHeight() * modelsize);
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(1, new KidEntity.AIAttackEntity());
+//        this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 0.5D));
+//        this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(4, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
 
-    public void setEntitySize(float width, float getHeight())
+    public void setEntitySize()
     {
-    	setSize(width, getHeight());
+//    	setSize(getWidth(), getHeight());
     }
     
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.55D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25D);
+    	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.55D);
     }
 
     public float getShadowSize()
@@ -63,7 +63,7 @@ public class KidEntity extends AnimalEntity
      */
     public boolean isEntityInsideOpaqueBlock()
     {
-        if (ridingEntity != null)
+        if (getRidingEntity() != null)
         {
             return false;
         }
@@ -78,7 +78,7 @@ public class KidEntity extends AnimalEntity
      */
     public double getYOffset()
     {
-        if (ridingEntity instanceof PlayerEntity)
+        if (getRidingEntity() instanceof PlayerEntity)
         {
             float f = 0.6F - modelsize;
 
@@ -90,9 +90,9 @@ public class KidEntity extends AnimalEntity
             return (double)1.5F + f;
         }
 
-        if (ridingEntity instanceof LollimanEntity)
+        if (getRidingEntity() instanceof LollimanEntity)
         {
-            return (double)((2.6F + (0.6F - modelsize)) - (2.0F - ((LollimanEntity)ridingEntity).modelsize) * 2.75F);
+            return (double)((2.6F + (0.6F - modelsize)) - (2.0F - ((LollimanEntity)getRidingEntity()).modelsize) * 2.75F);
         }
         else
         {
@@ -117,9 +117,9 @@ public class KidEntity extends AnimalEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world)
+    public void livingTick(World world)
     {
-        super.onLivingUpdate();
+        super.livingTick();
 
         if (modelsize > 1.0F)
         {
@@ -131,7 +131,7 @@ public class KidEntity extends AnimalEntity
             motionY = 0.15999999642372131D;
         }
 
-        if (ridingEntity != null && checktimer-- < 0)
+        if (getRidingEntity() != null && checktimer-- < 0)
         {
             checktimer = 60;
             List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(8D, 8D, 8D));
@@ -142,7 +142,7 @@ public class KidEntity extends AnimalEntity
 
                 if (entity instanceof LollimanEntity)
                 {
-                    world.playSoundAtEntity(this, "morecreeps:kidfind", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+                    world.playSound(this, "morecreeps:kidfind", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
                 }
             }
         }
@@ -174,28 +174,28 @@ public class KidEntity extends AnimalEntity
             rotationYaw = entityplayer.rotationYaw;
             Object obj = entityplayer;
 
-            if (ridingEntity != obj)
+            if (getRidingEntity() != obj)
             {
                 rotationYaw = ((Entity)obj).rotationYaw;
-                mountEntity((Entity)obj);
-                world.playSoundAtEntity(this, "morecreeps:kidup", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+                addPassenger((Entity)obj);
+                world.playSound(this, "morecreeps:kidup", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
             }
             else
             {
                 obj = ((Entity)obj).riddenByEntity;
                 rotationYaw = ((Entity)obj).rotationYaw;
                 ((Entity)obj).fallDistance = -25F;
-                ((Entity)obj).mountEntity(null);
+                ((Entity)obj).removePassengers();
                 double d = -MathHelper.sin((entityplayer.rotationYaw * (float)Math.PI) / 180F);
                 double d1 = MathHelper.cos((entityplayer.rotationYaw * (float)Math.PI) / 180F);
                 ((Entity)obj).motionX = d * 0.60000002384185791D;
                 ((Entity)obj).motionZ = d1 * 0.60000002384185791D;
-                world.playSoundAtEntity(this, "morecreeps:kiddown", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+                world.playSound(this, "morecreeps:kiddown", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
             }
         }
         else
         {
-            world.playSoundAtEntity(this, "morecreeps:kidnontpickup", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+            world.playSound(this, "morecreeps:kidnontpickup", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
         }
 
         return true;
@@ -220,7 +220,7 @@ public class KidEntity extends AnimalEntity
         {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
             motionX = (d / (double)f1) * 0.20000000000000001D * (0.850000011920929D + motionX * 0.20000000298023224D);
             motionZ = (d1 / (double)f1) * 0.20000000000000001D * (0.80000001192092896D + motionZ * 0.20000000298023224D);
             motionY = 0.10000000596246449D;
@@ -263,7 +263,9 @@ public class KidEntity extends AnimalEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.GRASS_BLOCK || i1 == Blocks.SAND || i1 == Blocks.DIRT || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.double_stone_slab && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0;// && l > 6;
+        return (i1 == Blocks.GRASS_BLOCK || i1 == Blocks.SAND || i1 == Blocks.DIRT || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.double_stone_slab && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0;// && l > 6;
     }
 
     /**
@@ -293,7 +295,7 @@ public class KidEntity extends AnimalEntity
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
         }
     }
 
@@ -309,19 +311,19 @@ public class KidEntity extends AnimalEntity
 
         if (rand.nextInt(5) == 0)
         {
-            int i = MathHelper.floor_double(posX);
-            int j = MathHelper.floor_double(getBoundingBox().minY);
-            int k = MathHelper.floor_double(posZ);
+            int i = MathHelper.floor(posX);
+            int j = MathHelper.floor(getBoundingBox().minY);
+            int k = MathHelper.floor(posZ);
             Block l = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
             Block i1 = world.getBlockState(new BlockPos(i, j, k)).getBlock();
 
-            if (i1 == Blocks.snow || l == Blocks.snow || l == Blocks.ice)
+            if (i1 == Blocks.SNOW || l == Blocks.SNOW || l == Blocks.ICE)
             {
                 return "morecreeps:kidcold";
             }
         }
 
-        if (ridingEntity != null)
+        if (getRidingEntity() != null)
         {
             return "morecreeps:kidride";
         }
@@ -356,12 +358,12 @@ public class KidEntity extends AnimalEntity
     	{
             if (rand.nextInt(10) == 0)
             {
-                dropItem(Items.PORKCHOP, rand.nextInt(3) + 1);
+                entityDropItem(Items.PORKCHOP, rand.nextInt(3) + 1);
             }
 
             if (rand.nextInt(10) == 0)
             {
-                dropItem(Items.WHEAT_SEEDS, rand.nextInt(3) + 1);
+                entityDropItem(Items.WHEAT_SEEDS, rand.nextInt(3) + 1);
             }
     	}
 

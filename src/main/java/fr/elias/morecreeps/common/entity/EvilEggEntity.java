@@ -111,7 +111,7 @@ public class EvilEggEntity extends ItemEntity
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
-        moveEntity(motionX, motionY, motionZ);
+        setMotion(motionX, motionY, motionZ);
 
         if (motionX != d) {
             if (rand.nextInt(40) == 0) {

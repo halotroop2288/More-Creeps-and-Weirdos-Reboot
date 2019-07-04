@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.entity.GuineaPigEntity;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class ItemPetRadio extends Item
 {
@@ -33,12 +36,12 @@ public class ItemPetRadio extends Item
             return itemstack;
         }
 
-        if (entityplayer.ridingEntity == null)
+        if (entityplayer.getRidingEntity() == null)
         {
             if (pickup)
             {
                 pickup = false;
-                world.playSoundAtEntity(entityplayer, "morecreeps:ggpigunmount", 1.0F, 1.0F);
+                world.playSoundAtEntity(entityplayer, entityplayer.getPosition(), SoundsHandler.GUINEA_PIG_MOUNT, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
                 for (int i = 0; i < 21; i++)
                 {
@@ -53,14 +56,14 @@ public class ItemPetRadio extends Item
                     if (k < 20)
                     {
                         ((Entity)obj).fallDistance = -25F;
-                        ((Entity)obj).mountEntity(null);
+                        ((Entity)obj).removePassengers();
                     }
                 }
             }
             else
             {
                 pickup = true;
-                world.playSoundAtEntity(entityplayer, "morecreeps:ggpigradio", 1.0F, 1.0F);
+                world.playSound(entityplayer, "morecreeps:ggpigradio", 1.0F, 1.0F);
                 List list = world.getEntitiesWithinAABB(fr.elias.morecreeps.common.entity.GuineaPigEntity.class, new AxisAlignedBB(entityplayer.posX, entityplayer.posY, entityplayer.posZ, entityplayer.posX + 1.0D, entityplayer.posY + 1.0D, entityplayer.posZ + 1.0D).expand(150D, 150D, 150D));
 
                 for (int j = 0; j < list.size(); j++)
@@ -71,7 +74,7 @@ public class ItemPetRadio extends Item
                     {
                         Object obj1 = entityplayer;
 
-                        if (entity.ridingEntity != obj1 && entity.ridingEntity == null)
+                        if (entity.getRidingEntity() != obj1 && entity.getRidingEntity() == null)
                         {
                             int l;
 
@@ -83,7 +86,7 @@ public class ItemPetRadio extends Item
                             if (l < 20)
                             {
                                 entity.rotationYaw = ((Entity)obj1).rotationYaw;
-                                entity.mountEntity((Entity)obj1);
+                                entity.addPassenger((Entity)obj1);
                                 world.playSoundAtEntity(entityplayer, "morecreeps:ggpigmount", 1.0F, 1.0F);
                             }
                         }

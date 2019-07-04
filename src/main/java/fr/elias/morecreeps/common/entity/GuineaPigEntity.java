@@ -146,27 +146,27 @@ public class GuineaPigEntity extends MobEntity
         skillspeed = 0;
         firepower = 0;
         criticalHitCooldown = 5;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(2, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(3, new EntityAILookIdle(this));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(1, new EntityAIMoveTowardsRestriction(this, 0.5D));
+//        this.tasks.addTask(2, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(3, new EntityAILookIdle(this));
     }
     
-    protected void applyEntityAttributes()
+    protected void registerAttributes()
     {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(health);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(moveSpeed);
-        this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(attackStrength);
-        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(attackStrength);
+        super.registerAttributes();
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(moveSpeed);
+        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackStrength);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackStrength);
     }
 
     protected void updateAITick()
     {
         super.updateEntityActionState();
 
-        if (!this.attackEntityAsMob(entitymain) && !hasPath() && tamed && ridingEntity == null && wanderstate != 2)
+        if (!this.attackEntityAsMob(entitymain) && !hasPath() && tamed && getRidingEntity() == null && wanderstate != 2)
         {
             
 
@@ -253,7 +253,7 @@ public class GuineaPigEntity extends MobEntity
      */
     protected void attackEntity(Entity entity, float f)
     {
-        if (!(this.getAttackTarget() instanceof PlayerEntity) && !(this.getAttackTarget() instanceof GuineaPigEntity) && !(this.getAttackTarget() instanceof HotdogEntity) && ridingEntity == null)
+        if (!(this.getAttackTarget() instanceof PlayerEntity) && !(this.getAttackTarget() instanceof GuineaPigEntity) && !(this.getAttackTarget() instanceof HotdogEntity) && getRidingEntity() == null)
         {
             if (onGround && tamed)
             {
@@ -394,7 +394,7 @@ public class GuineaPigEntity extends MobEntity
      */
     public boolean isEntityInsideOpaqueBlock()
     {
-        if (ridingEntity != null || unmounttimer-- > 0)
+        if (getRidingEntity() != null || unmounttimer-- > 0)
         {
             return false;
         }
@@ -408,20 +408,20 @@ public class GuineaPigEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    public void livingTick()
     {
-        super.onLivingUpdate();
+        super.livingTick();
 
         if (getRidingEntity() != null && getRidingEntity() == null)
         {
             if (getRidingEntity() != null)
             {
-            	getRidingEntity().addPassenger(null);
+            	getRidingEntity().removePassengers();
             }
 
             if (getRidingEntity() != null)
             {
-            	getRidingEntity().addPassenger(null);
+            	getRidingEntity().removePassengers();
             }
 
             this.addPassenger(null);
@@ -631,9 +631,11 @@ public class GuineaPigEntity extends MobEntity
         int i = MathHelper.floor(posX);
         int j = MathHelper.floor(this.getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
-        int l = world.getBlockLightOpacity(getPosition());
+        int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.COBBLESTONE && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && rand.nextInt(5) == 0 && l > 8;
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && rand.nextInt(5) == 0 && l > 8;
     }
 
     /**
@@ -708,7 +710,7 @@ public class GuineaPigEntity extends MobEntity
                 {
                     rotationYaw = ((Entity)obj).rotationYaw;
                     ((Entity)obj).fallDistance = -25F;
-                    ((Entity)obj).mountEntity(null);
+                    ((Entity)obj).removePassengers();
 
                     if ((Entity)obj instanceof GuineaPigEntity)
                     {

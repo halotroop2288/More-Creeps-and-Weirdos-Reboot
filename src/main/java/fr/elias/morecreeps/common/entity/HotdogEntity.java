@@ -151,10 +151,10 @@ public class HotdogEntity extends CreatureEntity
     protected void registerAttributes()
     {
         super.registerAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(basehealth);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(moveSpeed);
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(basehealth);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(moveSpeed);
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackStrength);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackStrength);
     }
 
     /**
@@ -213,7 +213,7 @@ public class HotdogEntity extends CreatureEntity
             }
         }
 
-        if (!hasPath() && tamed && ridingEntity == null && wanderstate != 2)
+        if (!hasPath() && tamed && getRidingEntity() == null && wanderstate != 2)
         {
             
 
@@ -249,28 +249,28 @@ public class HotdogEntity extends CreatureEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    public void livingTick()
     {
-        super.onLivingUpdate();
+        super.livingTick();
 
-        if (riddenByEntity != null && ridingEntity == null)
+        if (riddenByEntity != null && getRidingEntity() == null)
         {
-            if (ridingEntity != null)
+            if (getRidingEntity() != null)
             {
-                ridingEntity.mountEntity(null);
+                getRidingEntity().removePassengers();
             }
 
             if (riddenByEntity != null)
             {
-                riddenByEntity.mountEntity(null);
+                riddenByEntity.removePassengers();
             }
 
-            mountEntity(null);
+            removePassengers();
         }
 
-        if (ridingEntity != null && !(ridingEntity instanceof PlayerEntity) && !(ridingEntity instanceof GuineaPigEntity) && !(ridingEntity instanceof HotdogEntity) && !(ridingEntity instanceof DogHouseEntity))
+        if (getRidingEntity() != null && !(getRidingEntity() instanceof PlayerEntity) && !(getRidingEntity() instanceof GuineaPigEntity) && !(getRidingEntity() instanceof HotdogEntity) && !(getRidingEntity() instanceof DogHouseEntity))
         {
-            mountEntity(null);
+            removePassengers();
             unmounttimer = 20;
         }
 
@@ -289,7 +289,7 @@ public class HotdogEntity extends CreatureEntity
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d3 = rand.nextGaussian() * 0.02D;
                 double d5 = rand.nextGaussian() * 0.02D;
-                world.addParticle(ParticleTypes.HEART, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + 0.5D + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d1, d3, d5);
+                world.addParticle(ParticleTypes.HEART, (posX + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), posY + 0.5D + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), d1, d3, d5);
             }
         }
 
@@ -405,13 +405,13 @@ public class HotdogEntity extends CreatureEntity
      */
     protected void attackEntity(Entity entity, float f)
     {
-        if (wanderstate == 0 && !(getAttackTarget() instanceof PlayerEntity) && !(getAttackTarget() instanceof GuineaPigEntity) && ridingEntity == null)
+        if (wanderstate == 0 && !(getAttackTarget() instanceof PlayerEntity) && !(getAttackTarget() instanceof GuineaPigEntity) && getRidingEntity() == null)
         {
             if (onGround && tamed)
             {
                 double d = entity.posX - posX;
                 double d2 = entity.posZ - posZ;
-                float f2 = MathHelper.sqrt_double(d * d + d2 * d2);
+                float f2 = MathHelper.sqrt(d * d + d2 * d2);
                 motionX = (d / (double)f2) * 0.5D * 0.88000001192092892D + motionX * 0.20000000298023224D;
                 motionZ = (d2 / (double)f2) * 0.5D * 0.88000001192092892D + motionZ * 0.20000000298023224D;
                 motionY = 0.4200000059604645D;
@@ -420,7 +420,7 @@ public class HotdogEntity extends CreatureEntity
             {
                 if (rand.nextInt(5) == 0)
                 {
-                    world.playSoundAtEntity(this, "morecreeps:hotdogattack", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(this, "morecreeps:hotdogattack", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 }
 
                 double d1 = 1.0D;
@@ -454,7 +454,7 @@ public class HotdogEntity extends CreatureEntity
 
                     if ((float)((LivingEntity)entity).getHealth() - f1 <= 0.0F)
                     {
-                        world.playSoundAtEntity(entity, "morecreeps:hotdogkill", 1.0F, 1.0F);
+                        world.playSound(entity, "morecreeps:hotdogkill", 1.0F, 1.0F);
                     }
 
                     ((LivingEntity)entity).attackEntityFrom(DamageSource.causeThrownDamage(this, (LivingEntity)entity), (int)f1);
@@ -499,12 +499,12 @@ public class HotdogEntity extends CreatureEntity
 
                     if (flag)
                     {
-                        world.playSoundAtEntity(playerentity, "morecreeps:achievement", 1.0F, 1.0F);
+                        world.playSound(playerentity, "morecreeps:achievement", 1.0F, 1.0F);
                         double d4 = -MathHelper.sin((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
                         double d6 = MathHelper.cos((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
                         TrophyEntity creepsentitytrophy = new TrophyEntity(world);
                         creepsentitytrophy.setLocationAndAngles(((PlayerEntity)(playerentity)).posX + d4 * 3D, ((PlayerEntity)(playerentity)).posY - 2D, ((PlayerEntity)(playerentity)).posZ + d6 * 3D, ((PlayerEntity)(playerentity)).rotationYaw, 0.0F);
-                        world.spawnEntityInWorld(creepsentitytrophy);
+                        world.addEntity(creepsentitytrophy);
                     }
 
                     MoreCreepsReboot.proxy.addChatMessage((new StringBuilder()).append("\247b").append(name).append(" \247fincreased to level \2476").append(String.valueOf(level)).append("!").toString());
@@ -544,7 +544,7 @@ public class HotdogEntity extends CreatureEntity
             }
 
             
-            world.playSoundAtEntity(playerentity, "morecreeps:hotdogwhoosh", 1.0F, 1.0F);
+            world.playSound(playerentity, "morecreeps:hotdogwhoosh", 1.0F, 1.0F);
         }
 
         if (i < 1)
@@ -623,7 +623,7 @@ public class HotdogEntity extends CreatureEntity
      */
     public boolean isEntityInsideOpaqueBlock()
     {
-        if (ridingEntity != null || unmounttimer-- > 0)
+        if (getRidingEntity() != null || unmounttimer-- > 0)
         {
             return false;
         }
@@ -740,7 +740,7 @@ public class HotdogEntity extends CreatureEntity
                 creepsentitytombstone.firepower = firepower;
                 creepsentitytombstone.dogsize = dogsize;
                 creepsentitytombstone.deathtype = "Hotdog";
-                world.spawnEntityInWorld(creepsentitytombstone);
+                world.addEntity(creepsentitytombstone);
             }
 
             super.setDead();
@@ -766,7 +766,7 @@ public class HotdogEntity extends CreatureEntity
             double d = rand.nextGaussian() * 0.02D;
             double d2 = rand.nextGaussian() * 0.02D;
             double d4 = rand.nextGaussian() * 0.02D;
-            world.spawnParticle(ParticleTypes.HEART, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + 0.5D + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d2, d4);
+            world.spawnParticle(ParticleTypes.HEART, (posX + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), posY + 0.5D + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), d, d2, d4);
         }
 
         for (int j = 0; j < 4; j++)
@@ -776,7 +776,7 @@ public class HotdogEntity extends CreatureEntity
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d3 = rand.nextGaussian() * 0.02D;
                 double d5 = rand.nextGaussian() * 0.02D;
-                world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * getHeight()) + (double)j, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d1, d3, d5);
+                world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), posY + (double)(rand.nextFloat() * getHeight()) + (double)j, (posZ + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), d1, d3, d5);
             }
         }
     }
@@ -790,7 +790,7 @@ public class HotdogEntity extends CreatureEntity
                 double d = rand.nextGaussian() * 0.02D;
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d2 = rand.nextGaussian() * 0.02D;
-                world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * getHeight()) + (double)i, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2);
+                world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), posY + (double)(rand.nextFloat() * getHeight()) + (double)i, (posZ + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), d, d1, d2);
             }
         }
     }
@@ -803,9 +803,9 @@ public class HotdogEntity extends CreatureEntity
         int i = MathHelper.floor(posX);
         int j = MathHelper.floor(this.getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
-        int l = world.getBlockLightOpacity(new BlockPos(i, j, k));
+        int l = world.getLight(new BlockPos(i, j, k));
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.sand && i1 != Blocks.cobblestone && world.checkBlockCollision(getEntityBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0 && l > 8;
+        return i1 != Blocks.SAND && i1 != Blocks.COBBLESTONE && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0 && l > 8;
     }
 
     /**
@@ -850,7 +850,7 @@ public class HotdogEntity extends CreatureEntity
             rotationYaw = playerentity.rotationYaw;
             Object obj = playerentity;
 
-            if (ridingEntity != obj)
+            if (getRidingEntity() != obj)
             {
                 int k;
 
@@ -862,8 +862,8 @@ public class HotdogEntity extends CreatureEntity
                 if (k < 20)
                 {
                     rotationYaw = ((Entity)obj).rotationYaw;
-                    mountEntity((Entity)obj);
-                    world.playSoundAtEntity(this, "morecreeps:hotdogpickup", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    addPassenger((Entity)obj);
+                    world.playSound(this, "morecreeps:hotdogpickup", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 }
             }
             else
@@ -879,14 +879,14 @@ public class HotdogEntity extends CreatureEntity
                 {
                     rotationYaw = ((Entity)obj).rotationYaw;
                     ((Entity)obj).fallDistance = -25F;
-                    ((Entity)obj).mountEntity(null);
+                    ((Entity)obj).removePassengers();
 
                     if ((Entity)obj instanceof HotdogEntity)
                     {
                         ((HotdogEntity)obj).unmounttimer = 20;
                     }
 
-                    world.playSoundAtEntity(this, "morecreeps:hotdogputdown", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(this, "morecreeps:hotdogputdown", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 }
             }
         }
@@ -912,9 +912,9 @@ public class HotdogEntity extends CreatureEntity
                 {
                     if (level >= 25)
                     {
-                        int i = MathHelper.floor_double(playerentity.posX);
-                        int i1 = MathHelper.floor_double(playerentity.getEntityBoundingBox().minY);
-                        int j1 = MathHelper.floor_double(playerentity.posZ);
+                        int i = MathHelper.floor(playerentity.posX);
+                        int i1 = MathHelper.floor(playerentity.getBoundingBox().minY);
+                        int j1 = MathHelper.floor(playerentity.posZ);
                         buildHeaven(playerentity, i + 1, i1, j1 + 1);
 
                         if (heavenbuilt)
@@ -999,7 +999,7 @@ public class HotdogEntity extends CreatureEntity
             if (itemstack.getItem() == Items.egg)
             {
                 used = true;
-                world.playSoundAtEntity(this, "random.fuse", 1.0F, 0.5F);
+                world.playSound(this, "random.fuse", 1.0F, 0.5F);
                 setLocationAndAngles(playerentity.posX, playerentity.posY + (double)playerentity.getEyeHeight(), playerentity.posZ, playerentity.rotationYaw, playerentity.rotationPitch);
                 motionX = -MathHelper.sin((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI);
                 motionZ = MathHelper.cos((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI);
@@ -1008,11 +1008,11 @@ public class HotdogEntity extends CreatureEntity
 
                 for (int l1 = 0; l1 < 2000; l1++)
                 {
-                    moveEntity(d, 0.0D, d1);
+                    setMotion(d, 0.0D, d1);
                     double d2 = rand.nextGaussian() * 0.02D;
                     double d3 = rand.nextGaussian() * 0.02D;
                     double d4 = rand.nextGaussian() * 0.02D;
-                    world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d2, d3, d4);
+                    world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), posY + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), d2, d3, d4);
                 }
 
                 world.createExplosion(null, posX, posY, posZ, 1.1F, true);
@@ -1076,7 +1076,7 @@ public class HotdogEntity extends CreatureEntity
                     texture = s2;
                     basetexture = s2;
                     smoke();
-                    world.playSoundAtEntity(this, "morecreeps:ggpigarmor", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(this, "morecreeps:ggpigarmor", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 }
 
                 if (armor > 313 + k1 && armor < 318 + k1)
@@ -1090,7 +1090,7 @@ public class HotdogEntity extends CreatureEntity
                     texture = s3;
                     basetexture = s3;
                     smoke();
-                    world.playSoundAtEntity(this, "morecreeps:ggpigarmor", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(this, "morecreeps:ggpigarmor", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 }
 
                 if (armor > 305 + k1 && armor < 310 + k1)
@@ -1104,7 +1104,7 @@ public class HotdogEntity extends CreatureEntity
                     texture = s4;
                     basetexture = s4;
                     smoke();
-                    world.playSoundAtEntity(this, "morecreeps:ggpigarmor", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(this, "morecreeps:ggpigarmor", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 }
 
                 if (armor > 309 + k1 && armor < 314 + k1)
@@ -1118,7 +1118,7 @@ public class HotdogEntity extends CreatureEntity
                     texture = s5;
                     basetexture = s5;
                     smoke();
-                    world.playSoundAtEntity(this, SoundsHandler.GUINEA_PIG_ARMOUR, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(this, SoundsHandler.GUINEA_PIG_ARMOUR, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 }
             }
 
@@ -1238,7 +1238,7 @@ public class HotdogEntity extends CreatureEntity
 
         if (i1 < 3000 && chunky)
         {
-            world.playSoundAtEntity(this, SoundsHandler.HOT_DOG_HEAVEN, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+            world.playSound(this, SoundsHandler.HOT_DOG_HEAVEN, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
             used = true;
             heavenbuilt = true;
             world.playSound(this, SoundsHandler.GUINEA_PIG_HOTEL, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
@@ -1551,12 +1551,12 @@ public class HotdogEntity extends CreatureEntity
     public void confetti()
     {
         
-        World world = Minecraft.getInstance().theWorld;
+        World world = Minecraft.getInstance().world;
         double d = -MathHelper.sin((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((((PlayerEntity)(playerentity)).rotationYaw * (float)Math.PI) / 180F);
         TrophyEntity creepsentitytrophy = new TrophyEntity(world);
         creepsentitytrophy.setLocationAndAngles(((PlayerEntity)(playerentity)).posX + d * 3D, ((PlayerEntity)(playerentity)).posY - 2D, ((PlayerEntity)(playerentity)).posZ + d1 * 3D, ((PlayerEntity)(playerentity)).rotationYaw, 0.0F);
-        world.spawnEntityInWorld(creepsentitytrophy);
+        world.addEntity(creepsentitytrophy);
     }
 
     public void onDeath(Entity entity)
@@ -1567,7 +1567,7 @@ public class HotdogEntity extends CreatureEntity
         }
         else
         {
-            dropItem(Items.PORKCHOP, 1);
+            entityDropItem(Items.PORKCHOP, 1);
             return;
         }
     }

@@ -19,7 +19,7 @@ public class CREEPSRenderRocketGiraffe extends RenderLiving
 {
     public CREEPSRenderRocketGiraffe(CREEPSModelRocketGiraffe creepsmodelrocketgiraffe, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelrocketgiraffe, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelrocketgiraffe, f);
     }
 
     protected void fattenup(RocketGiraffeEntity creepsentityrocketgiraffe, float f)

@@ -89,7 +89,7 @@ public class FloobEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world)
+    public void livingTick(World world)
     {
         if (this.getAttackTarget() instanceof FloobEntity)
         {
@@ -129,19 +129,19 @@ public class FloobEntity extends MobEntity
                     double d3 = (targetedEntity.getBoundingBox().minY + (double)(targetedEntity.getHeight() / 2.0F)) - (posY + (double)(getHeight() / 2.0F));
                     double d4 = targetedEntity.posZ - posZ;
                     renderYawOffset = rotationYaw = (-(float)Math.atan2(d2, d4) * 180F) / (float)Math.PI;
-                    world.playSoundAtEntity(this, "morecreeps:raygun", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(this, "morecreeps:raygun", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                     RayEntity creepsentityray = new RayEntity(world, this);
 
                     if (creepsentityray != null && getHealth() > 0)
                     {
                     	if(!world.isRemote)
-                        world.spawnEntityInWorld(creepsentityray);
+                        world.addEntity(creepsentityray);
                     }
                 }
             }
         }
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     /**
@@ -171,7 +171,7 @@ public class FloobEntity extends MobEntity
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
+            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
         }
     }
 
@@ -209,7 +209,10 @@ public class FloobEntity extends MobEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.stone_slab && i1 != Blocks.double_stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0;// && l > 10;
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0// && l > 10
+        		;
     }
 
     /**
@@ -253,14 +256,14 @@ public class FloobEntity extends MobEntity
 
             if (!((PlayerEntityMP)player).getStatFile().hasAchievementUnlocked(MoreCreepsReboot.achievefloobkill))
             {
-                world.playSoundAtEntity(player, "morecreeps:achievement", 1.0F, 1.0F);
+                world.playSound(player, "morecreeps:achievement", 1.0F, 1.0F);
                 player.addStat(MoreCreepsReboot.achievefloobkill, 1);
                 confetti();
             }
 
             if (!((PlayerEntityMP)player).getStatFile().hasAchievementUnlocked(MoreCreepsReboot.achievefloobicide) && MoreCreepsReboot.floobcount >= 20)
             {
-                world.playSoundAtEntity(player, "morecreeps:achievement", 1.0F, 1.0F);
+                world.playSound(player, "morecreeps:achievement", 1.0F, 1.0F);
                 player.addStat(MoreCreepsReboot.achievefloobicide, 1);
                 confetti();
             }

@@ -16,7 +16,7 @@ public class CREEPSRenderArmyGuyArm extends RenderLiving
 
     public CREEPSRenderArmyGuyArm(CREEPSModelArmyGuyArm creepsmodelarmyguyarm, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelarmyguyarm, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelarmyguyarm, f);
        // setRenderPassModel(new CREEPSModelArmyGuyArm());
         modelBipedMain = creepsmodelarmyguyarm;
     }

@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -24,7 +25,7 @@ public class ItemMoopsWorm extends Item
 
     public ItemStack onItemRightClick(ItemStack itemstack, World world, PlayerEntity entityplayer)
     {
-        entityplayer.swingItem();
+        entityplayer.swingArm(Hand.MAIN_HAND);
         world.playSound(entityplayer, "morecreeps:armygem", 1.0F, 1.0F);
         double d = -MathHelper.sin((entityplayer.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((entityplayer.rotationYaw * (float)Math.PI) / 180F);

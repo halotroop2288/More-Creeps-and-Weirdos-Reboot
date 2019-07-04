@@ -18,7 +18,7 @@ public class CREEPSRenderNonSwimmer extends RenderLiving
 
     public CREEPSRenderNonSwimmer(CREEPSModelNonSwimmer creepsmodelnonswimmer, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelnonswimmer, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelnonswimmer, f);
         modelBipedMain = creepsmodelnonswimmer;
     }
 

@@ -1,8 +1,9 @@
 package fr.elias.morecreeps.client.models;
 
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
 
-public class CREEPSModelArmyGuyArm extends ModelBase
+public class CREEPSModelArmyGuyArm extends Model
 {
     public ModelRenderer bipedRightArm;
 

@@ -18,7 +18,7 @@ public class CREEPSRenderEvilPig extends RenderLiving
 
     public CREEPSRenderEvilPig(CREEPSModelEvilPig creepsmodelevilpig, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelevilpig, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelevilpig, f);
         modelBipedMain = creepsmodelevilpig;
     }
 

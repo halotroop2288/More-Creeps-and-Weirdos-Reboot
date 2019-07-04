@@ -19,7 +19,7 @@ public class CREEPSRenderCaveman extends RenderLiving
 
     public CREEPSRenderCaveman(CREEPSModelCaveman creepsmodelcaveman, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelcaveman, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelcaveman, f);
         modelcavemanmain = creepsmodelcaveman;
     }
 

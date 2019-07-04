@@ -49,7 +49,7 @@ public class EntityBlorpAI extends EntityAIBase {
         }
         else
         {
-            this.blorp.getNavigator().clearPathEntity();
+            this.blorp.getNavigator().clearPath();
             this.blorp.getMoveHelper().setMoveTo(entityToAttack.posX, entityToAttack.posY, entityToAttack.posZ, 0.5D);
         }
         
@@ -87,7 +87,7 @@ public class EntityBlorpAI extends EntityAIBase {
         {
             Entity entity1 = (Entity)blorp.world.loadedEntityList.get(i);
 
-            if (!(entity1 instanceof LivingEntity) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof PlayerEntity) || (entity1 instanceof MobEntity) || (entity1 instanceof EntityAnimal) && !(entity1 instanceof BlorpEntity))
+            if (!(entity1 instanceof LivingEntity) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.getRidingEntity() || (entity1 instanceof PlayerEntity) || (entity1 instanceof MobEntity) || (entity1 instanceof EntityAnimal) && !(entity1 instanceof BlorpEntity))
             {
                 continue;
             }

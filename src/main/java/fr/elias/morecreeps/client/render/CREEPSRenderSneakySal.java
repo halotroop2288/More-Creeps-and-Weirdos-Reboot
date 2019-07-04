@@ -18,7 +18,7 @@ public class CREEPSRenderSneakySal extends RenderLiving
 
     public CREEPSRenderSneakySal(CREEPSModelSneakySal creepsmodelsneakysal, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelsneakysal, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelsneakysal, f);
         modelBipedMain = creepsmodelsneakysal;
     }
 

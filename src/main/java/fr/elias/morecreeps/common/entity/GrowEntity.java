@@ -151,7 +151,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
         motionX = d;
         motionY = d1;
         motionZ = d2;
-        float f3 = MathHelper.sqrt_double(d * d + d2 * d2);
+        float f3 = MathHelper.sqrt(d * d + d2 * d2);
         prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
         prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / Math.PI);
         aoLightValueScratchXYZNNP = 0;
@@ -169,9 +169,9 @@ public class GrowEntity extends ItemEntity implements IProjectile
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate(World world)
+    public void tick(World world)
     {
-        super.onUpdate();
+        super.tick();
 
         if (aoLightValueScratchXYNN == 5)
         {
@@ -180,7 +180,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
 
         if (prevRotationPitch == 0.0F && prevRotationYaw == 0.0F)
         {
-            float f = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+            float f = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
             prevRotationYaw = rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
             prevRotationPitch = rotationPitch = (float)((Math.atan2(motionY, f) * 180D) / Math.PI);
         }
@@ -233,7 +233,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
         {
             Entity entity1 = (Entity)list.get(j);
 
-            if (!entity1.canBeCollidedWith() || (entity1 == lightValueOwn || lightValueOwn != null && entity1 == lightValueOwn.ridingEntity) && aoLightValueScratchXYNN < 5 || aoLightValueScratchXYZNNN)
+            if (!entity1.canBeCollidedWith() || (entity1 == lightValueOwn || lightValueOwn != null && entity1 == lightValueOwn.getRidingEntity()) && aoLightValueScratchXYNN < 5 || aoLightValueScratchXYZNNN)
             {
                 if (motionZ != 0.0D || !((motionX == 0.0D) & (motionY == 0.0D)))
                 {
@@ -630,7 +630,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
                     double d = rand.nextGaussian() * 0.12D;
                     double d1 = rand.nextGaussian() * 0.12D;
                     double d2 = rand.nextGaussian() * 0.12D;
-                    world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2);
+                    world.addParticle(ParticleTypes.EXPLOSION, (posX + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), posY + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), d, d1, d2);
                 }
             }
         }

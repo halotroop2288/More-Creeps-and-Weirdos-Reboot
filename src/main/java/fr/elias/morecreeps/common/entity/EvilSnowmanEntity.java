@@ -57,9 +57,9 @@ public class EvilSnowmanEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world)
+    public void livingTick(World world)
     {
-        super.onLivingUpdate();
+        super.livingTick();
 
         if (!onGround && !isJumping)
         {
@@ -120,9 +120,9 @@ public class EvilSnowmanEntity extends MobEntity
 
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
-            moveForward = (d / (double)f1) * 0.5D * 0.30000000192092896D + getMotion().x * 0.20000000098023224D;
-            moveStrafing = (d1 / (double)f1) * 0.5D * 0.25000000192092897D + getMotion().z * 0.20000000098023224D;
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
+            moveForward = (float) ((d / (double)f1) * 0.5D * 0.30000000192092896D + getMotion().x * 0.20000000098023224D);
+            moveStrafing = (float) ((d1 / (double)f1) * 0.5D * 0.25000000192092897D + getMotion().z * 0.20000000098023224D);
             moveVertical = (float) 0.35000000196046449D;
 
             if (rand.nextInt(20) == 0)

@@ -18,7 +18,7 @@ public class CREEPSRenderEvilLight extends RenderLiving
 {
     public CREEPSRenderEvilLight(CREEPSModelEvilLight creepsmodelevillight, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelevillight, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelevillight, f);
         shadowSize = 0.0F;
         this.addLayer(new LayerEvilLightGlow(this));
     }

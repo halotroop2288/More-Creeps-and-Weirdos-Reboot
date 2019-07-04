@@ -5,9 +5,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
-import fr.elias.morecreeps.client.particles.CREEPSFxBlood;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.lists.ItemList;
@@ -49,9 +47,10 @@ public class ArmyGuyArmEntity extends AnimalEntity
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate()
+    @Override
+    public void tick()
     {
-        super.onUpdate();
+        super.tick();
 
         if (lifetime-- < 0)
         {

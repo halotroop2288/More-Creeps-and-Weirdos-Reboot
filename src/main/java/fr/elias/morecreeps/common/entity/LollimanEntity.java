@@ -42,7 +42,7 @@ public class LollimanEntity extends AnimalEntity
 
     public LollimanEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = Reference.MODID + Reference.TEXTURE_PATH_ENTITES +"lolliman.png";
         setSize(0.9F, 3F);
         attack = 2;
@@ -52,17 +52,17 @@ public class LollimanEntity extends AnimalEntity
         rockettime = 0;
         modelsize = 2.0F;
         treats = 0;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(4, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 0.5D));
+//        this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(4, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
     }
@@ -312,7 +312,9 @@ public class LollimanEntity extends AnimalEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.grass || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
+        return (i1 == Blocks.grass || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
     }
 
     /**
@@ -359,7 +361,7 @@ public class LollimanEntity extends AnimalEntity
     {
         if (!kidmounted)
         {
-            return "morecreeps:lolliman";
+            return SoundsHandler.LOLLIMAN;
         }
         else
         {

@@ -64,9 +64,9 @@ public class CastleKingEntity extends MobEntity
         hammerswing = 0.0F;
     }
     
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(moveSpeed);
     	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackStrength);
@@ -75,9 +75,9 @@ public class CastleKingEntity extends MobEntity
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate(World world)
+    public void tick(World world)
     {
-        super.onUpdate();
+        super.tick();
 
         if (hammerswing < 0.0F)
         {
@@ -195,9 +195,11 @@ public class CastleKingEntity extends MobEntity
         int i = MathHelper.floor(posX);
         int j = MathHelper.floor(this.getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
-        int l = world.getBlockLightOpacity(getPosition());
+        int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.COBBLESTONE && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && rand.nextInt(5) == 0 && l > 10;
+        return i1 != Blocks.COBBLESTONE
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && rand.nextInt(5) == 0 && l > 10;
     }
 
     /**

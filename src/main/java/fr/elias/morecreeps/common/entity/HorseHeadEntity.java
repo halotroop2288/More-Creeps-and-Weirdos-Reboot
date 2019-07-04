@@ -30,30 +30,30 @@ public class HorseHeadEntity extends AnimalEntity
 
     public HorseHeadEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/horsehead.png";
-        setSize(0.6F, 2.0F);
+//        setSize(0.6F, 2.0F);
         floatdir = 1;
         floatcycle = 0.0D;
         floatmaxcycle = 0.10499999672174454D;
         blastoff = rand.nextInt(500) + 400;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(2, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(3, new EntityAILookIdle(this));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(1, new EntityAIMoveTowardsRestriction(this, 0.5D));
+//        this.tasks.addTask(2, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(3, new EntityAILookIdle(this));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
     }
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate(World world)
+    public void tick(World world)
     {
     	if(world.isRemote){
             for (int i = 0; i < 5; i++)
@@ -131,7 +131,7 @@ public class HorseHeadEntity extends AnimalEntity
             }
         }
 
-        super.onUpdate();
+        super.tick();
     }
 
     protected void updateAITasks()
@@ -175,11 +175,11 @@ public class HorseHeadEntity extends AnimalEntity
 
                 if (handleWaterMovement())
                 {
-                    world.playSoundAtEntity(this, "morecreeps:giraffesplash", getSoundVolume(), 1.2F);
+                    world.playSound(this, "morecreeps:giraffesplash", getSoundVolume(), 1.2F);
                 }
                 else
                 {
-                    world.playSoundAtEntity(this, "morecreeps:giraffegallop", getSoundVolume(), 1.2F);
+                    world.playSound(this, "morecreeps:giraffegallop", getSoundVolume(), 1.2F);
                 }
             }
 
@@ -267,11 +267,11 @@ public class HorseHeadEntity extends AnimalEntity
             rotationYaw = playerentity.rotationYaw;
             rotationPitch = playerentity.rotationPitch;
             playerentity.fallDistance = -15F;
-            playerentity.mountEntity(this);
+            playerentity.addPassenger(this);
             blastoff += rand.nextInt(500) + 200;
-            motionX = 0.0D;
-            motionY = 0.0D;
-            motionZ = 0.0D;
+            moveForward = 0;
+            moveStrafing = 0;
+            moveVertical = 0;
 
             // Dead code
 //            if (this == null)
@@ -297,9 +297,11 @@ public class HorseHeadEntity extends AnimalEntity
         int i = MathHelper.floor(posX);
         int j = MathHelper.floor(getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
-        int l = world.getBlockLightOpacity(new BlockPos(i, j, k));
+        int l = world.getLight(new BlockPos(i, j, k));
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.SAND || i1 Blocks.RED_SAND || i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(25) == 0 && l > 7;
+        return (i1 == Blocks.SAND || i1 Blocks.RED_SAND || i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(25) == 0 && l > 7;
     }
 
     /**

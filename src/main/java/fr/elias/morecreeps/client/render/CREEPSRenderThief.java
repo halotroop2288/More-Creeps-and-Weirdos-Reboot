@@ -1,8 +1,6 @@
 package fr.elias.morecreeps.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
@@ -18,7 +16,7 @@ public class CREEPSRenderThief extends RenderLiving
 
     public CREEPSRenderThief(ModelBiped modelbiped, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), modelbiped, f);
+        super(Minecraft.getInstance().getRenderManager(), modelbiped, f);
         modelBipedMain = modelbiped;
     }
 

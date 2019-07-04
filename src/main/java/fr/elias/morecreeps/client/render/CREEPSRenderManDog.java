@@ -20,7 +20,7 @@ public class CREEPSRenderManDog extends RenderLiving
 
     public CREEPSRenderManDog(CREEPSModelManDog creepsmodelmandog, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelmandog, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelmandog, f);
         superdog = creepsmodelmandog;
     }
 

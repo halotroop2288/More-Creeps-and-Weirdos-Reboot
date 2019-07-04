@@ -19,7 +19,7 @@ public class CREEPSRenderGuineaPig extends RenderLiving
 
     public CREEPSRenderGuineaPig(ModelBase modelbase, ModelBase modelbase1, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), modelbase, f);
+        super(Minecraft.getInstance().getRenderManager(), modelbase, f);
     }
 
     public void doRenderLiving(LivingEntity entityliving, double d, double d1, double d2, float f, float f1)

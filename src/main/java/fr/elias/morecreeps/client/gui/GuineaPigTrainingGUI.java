@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -161,7 +162,7 @@ public class GuineaPigTrainingGUI extends Screen
         }
 
         PlayerEntity entityplayersp = Minecraft.getInstance().player;
-        World world = Minecraft.getInstance().theWorld;
+        World world = Minecraft.getInstance().world;
 
         if (guibutton.id == 2 && guineapig.skillattack < 5)
         {
@@ -174,7 +175,7 @@ public class GuineaPigTrainingGUI extends Screen
             {
                 guineapig.skillattack++;
 
-                double attackStrength = guineapig.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.attackDamage).getAttributeValue();
+                double attackStrength = guineapig.getAttributes().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue();
                 
                 if (guineapig.skillattack < 4)
                 {
@@ -291,16 +292,16 @@ public class GuineaPigTrainingGUI extends Screen
     {
         PlayerEntity entityplayersp = Minecraft.getInstance().player;
         Object obj = null;
-        ItemStack aitemstack[] = ((PlayerEntity)(entityplayersp)).inventory.mainInventory;
+        NonNullList<ItemStack> aitemstack = ((PlayerEntity)(entityplayersp)).inventory.mainInventory;
         int i = 0;
 
-        for (int j = 0; j < aitemstack.length; j++)
+        for (int j = 0; j < aitemstack.size(); j++)
         {
             ItemStack itemstack = aitemstack[j];
 
-            if (itemstack != null && itemstack.getItem() == Items.wheat)
+            if (itemstack != null && itemstack.getItem() == Items.WHEAT)
             {
-                i += itemstack.stackSize;
+                itemstack.setCount(itemstack.getCount() + i);
             }
         }
 
@@ -310,33 +311,33 @@ public class GuineaPigTrainingGUI extends Screen
             boolean flag = false;
             label0:
 
-            for (int i1 = 0; i1 < aitemstack.length; i1++)
+            for (int i1 = 0; i1 < aitemstack.size(); i1++)
             {
                 ItemStack itemstack1 = aitemstack[i1];
 
-                if (itemstack1 == null || itemstack1.getItem() != Items.wheat)
+                if (itemstack1 == null || itemstack1.getItem() != Items.WHEAT)
                 {
                     continue;
                 }
 
-                int l = itemstack1.stackSize;
+                int l = itemstack1.getCount();
 
                 do
                 {
-                    if (itemstack1.stackSize <= 0 || k <= 0)
+                    if (itemstack1.getCount() <= 0 || k <= 0)
                     {
                         continue label0;
                     }
 
                     k--;
 
-                    if (itemstack1.stackSize - 1 == 0)
+                    if (itemstack1.getCount() - 1 == 0)
                     {
                         ((PlayerEntity)(entityplayersp)).inventory.mainInventory[i1] = null;
                         continue label0;
                     }
 
-                    itemstack1.stackSize--;
+                    itemstack1.setCount(itemstack1.getCount() - 1);
                 }
                 while (true);
             }
@@ -382,12 +383,7 @@ public class GuineaPigTrainingGUI extends Screen
      */
     protected void mouseClicked(int i, int j, int k)
     {
-        try {
-			super.mouseClicked(i, j, k);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        super.mouseClicked(i, j, k);
     }
 
     /**
@@ -406,10 +402,10 @@ public class GuineaPigTrainingGUI extends Screen
         drawString(minecraft.fontRenderer, buildStat(guineapig.skillspeed), width / 2 + 16 + k, height / 4 + 95 + byte0, 0xff8d13);
         PlayerEntity entityplayersp = Minecraft.getInstance().player;
         Object obj = null;
-        ItemStack aitemstack[] = ((PlayerEntity)(entityplayersp)).inventory.mainInventory;
+        NonNullList<ItemStack> aitemstack = ((PlayerEntity)(entityplayersp)).inventory.mainInventory;
         int l = 0;
 
-        for (int i1 = 0; i1 < aitemstack.length; i1++)
+        for (int i1 = 0; i1 < aitemstack.size(); i1++)
         {
             ItemStack itemstack = aitemstack[i1];
 

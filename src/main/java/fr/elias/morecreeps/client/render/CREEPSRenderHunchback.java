@@ -18,7 +18,7 @@ public class CREEPSRenderHunchback extends RenderLiving
 
     public CREEPSRenderHunchback(CREEPSModelHunchback creepsmodelhunchback, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelhunchback, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelhunchback, f);
         modelBipedMain = creepsmodelhunchback;
     }
 

@@ -47,10 +47,10 @@ public class BlorpEntity extends AnimalEntity
 
     public BlorpEntity(World world)
     {
-        super(world);
+        super(null, world);
         bone = false;
         texture = Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "blorp.png";
-        setSize(width * 1.5F, height * 2.5F);
+//        setSize(width * 1.5F, height * 2.5F);
         attack = 2;
         attackrange = 16D;
         blorpsize = 1.0F;
@@ -58,18 +58,18 @@ public class BlorpEntity extends AnimalEntity
         hungrytime = rand.nextInt(20) + 20;
         blorplevel = 1;
         angry = false;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityBlorpAI(this));
-        this.tasks.addTask(1, new EntityAISwimming(this));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityBlorpAI(this));
+//        this.tasks.addTask(1, new EntityAISwimming(this));
+//        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
+//        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(8, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
     }
@@ -309,7 +309,10 @@ public class BlorpEntity extends AnimalEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(25) == 0; //&& l > 10;
+        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(25) == 0 //&& l > 10
+        		;
     }
 
     /**

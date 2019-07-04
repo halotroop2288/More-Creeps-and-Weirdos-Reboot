@@ -1,11 +1,9 @@
 package fr.elias.morecreeps.client.models;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
 
-public class CREEPSModelG extends ModelBase
+public class CREEPSModelG extends Model
 {
     public ModelRenderer bipedRightArm;
     public ModelRenderer bipedLeftArm;

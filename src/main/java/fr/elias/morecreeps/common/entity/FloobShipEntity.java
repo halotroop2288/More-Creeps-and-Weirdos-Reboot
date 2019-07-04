@@ -2,18 +2,24 @@ package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.FlyingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.client.config.CREEPSConfig;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class FloobShipEntity extends FlyingEntity
 {
@@ -33,13 +39,13 @@ public class FloobShipEntity extends FlyingEntity
 
     public FloobShipEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/floobship.png";
         hasAttacked = false;
         foundplayer = false;
         landed = false;
-        setSize(4F, 3F);
-        isCollidedVertically = false;
+//        setSize(4F, 3F);
+        collidedVertically = false;
         floobcounter = rand.nextInt(500) + 400;
         firstreset = false;
         bump = 2.0F;
@@ -48,35 +54,35 @@ public class FloobShipEntity extends FlyingEntity
         lifespan = rand.nextInt(10000) + 1500;
     }
 
-    protected void applyEntityAttributes()
+    protected void registerAttributes()
     {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(150D);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.0D);
+        super.registerAttributes();
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(150D);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.0D);
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    public void writeAdditional(CompoundNBT compound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setBoolean("Landed", landed);
-        nbttagcompound.setInteger("FloobCounter", floobcounter);
-        nbttagcompound.setBoolean("FirstReset", firstreset);
-        nbttagcompound.setInteger("LifeSpan", lifespan);
+        super.writeAdditional(compound);
+        compound.putBoolean("Landed", landed);
+        compound.putBoolean("FirstReset", firstreset);
+        compound.putInt("FloobCounter", floobcounter);
+        compound.putInt("LifeSpan", lifespan);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    public void readAdditional(CompoundNBT compound)
     {
-        super.readEntityFromNBT(nbttagcompound);
-        landed = nbttagcompound.getBoolean("Landed");
-        floobcounter = nbttagcompound.getInteger("FloobCounter");
-        firstreset = nbttagcompound.getBoolean("FirstReset");
-        lifespan = nbttagcompound.getInteger("LifeSpan");
+        super.readAdditional(compound);
+        landed = compound.getBoolean("Landed");
+        firstreset = compound.getBoolean("FirstReset");
+        floobcounter = compound.getInt("FloobCounter");
+        lifespan = compound.getInt("LifeSpan");
     }
 
     public void setAngles(float f, float f1)
@@ -132,8 +138,11 @@ public class FloobShipEntity extends FlyingEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world)
+    public void livingTick()
     {
+    	World world = Minecraft.getInstance().world;
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	
         floobcounter--;
         lifespan--;
 
@@ -149,7 +158,7 @@ public class FloobShipEntity extends FlyingEntity
 
         if (isJumping || landed)
         {
-            moveVertical = 0.0D;
+            moveVertical = 0;
             bump = 0.0F;
         }
 
@@ -157,7 +166,7 @@ public class FloobShipEntity extends FlyingEntity
         {
             if (posY < 100D && !firstreset)
             {
-                moveVertical = 4D;
+                moveVertical = 4;
                 bump = 4F;
                 firstreset = true;
             }
@@ -192,7 +201,7 @@ public class FloobShipEntity extends FlyingEntity
         {
             thrusters();
             floobcounter = rand.nextInt(300) + 400;
-            world.playSound(this, "morecreeps:floobshipspawn", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+            world.playSound(playerentity, this.getPosition(), SoundsHandler.FLOOB_SHIP_SPAWN, SoundCategory.HOSTILE, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
 
             for (int j = 0; j < rand.nextInt(4) + 3; j++)
             {
@@ -219,12 +228,14 @@ public class FloobShipEntity extends FlyingEntity
      */
     public boolean attackEntityFrom(DamageSource damagesource, float i, World world)
     {
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	
         Entity entity = damagesource.getTrueSource();
 
         if (entity instanceof PlayerEntity)
         {
             thrusters();
-            world.playSound(this, "morecreeps:floobshipclang", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+            world.playSound(playerentity, this.getPosition(), SoundsHandler.FLOOB_SHIP_CLANG, SoundCategory.HOSTILE, "morecreeps:floobshipclang", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
         }
 
         if (rand.nextInt(10) == 0)
@@ -272,8 +283,11 @@ public class FloobShipEntity extends FlyingEntity
         }
     }
 
-    public void onDeath(Entity entity)
+    @Override
+    public void onDeath()
     {
+    	PlayerEntity player = Minecraft.getInstance().player;
+    	
         if (lifespan > 0 && getHealth() > 0)
         {
             return;
@@ -281,8 +295,8 @@ public class FloobShipEntity extends FlyingEntity
 
         if (lifespan > 0 && CREEPSConfig.floobshipExplode)
         {
-            world.playSound(this, "morecreeps:floobshipexplode", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
-            world.createExplosion(null, posX, posY, posZ, 8F, true);
+            world.playSound(player, this.getPosition(), SoundsHandler.FLOOB_SHIP_EXPLODE, SoundCategory.HOSTILE, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+            world.createExplosion(null, posX, posY, posZ, 8F, true, Mode.NONE);
         }
 
         setDead();
@@ -299,7 +313,7 @@ public class FloobShipEntity extends FlyingEntity
         }
         else
         {
-            super.setDead();
+            super.setHealth(0);
             return;
         }
     }
@@ -307,25 +321,25 @@ public class FloobShipEntity extends FlyingEntity
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    protected SoundEvent getAmbientSound()
     {
-        return "morecreeps:floobship";
+        return SoundsHandler.FLOOB_SHIP;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    protected SoundEvent getHurtSound()
     {
-        return "morecreeps:floobship";
+        return SoundsHandler.FLOOB_SHIP;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:floobshipexplode";
+        return SoundsHandler.FLOOB_SHIP_EXPLODE;
     }
 
     /**
@@ -333,13 +347,15 @@ public class FloobShipEntity extends FlyingEntity
      */
     public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
         int j1 = world.countEntities(FloobShipEntity.class);
-        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && posY > 100D && rand.nextInt(100) == 0 /*&& l > 10*/ && (world.getDifficulty() != Difficulty.PEACEFUL || j1 >= 2);
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && posY > 100D && rand.nextInt(100) == 0 /*&& l > 10*/ && (world.getDifficulty() != Difficulty.PEACEFUL || j1 >= 2);
     }
 
     /**

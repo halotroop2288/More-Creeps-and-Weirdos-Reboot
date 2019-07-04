@@ -2,6 +2,7 @@ package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -40,7 +41,7 @@ public class CamelJockeyEntity extends MobEntity
 
     public CamelJockeyEntity(World world)
     {
-        super(world);
+        super(null, world);
         bone = false;
         texture = "morecreeps:textures/entity/jockey.png";
 //        setSize(width * 0.6F, height * 0.6F);
@@ -56,9 +57,10 @@ public class CamelJockeyEntity extends MobEntity
         strength = 1; 
     }
 
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(speed);
     	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(strength);
@@ -67,11 +69,14 @@ public class CamelJockeyEntity extends MobEntity
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate(World world)
+    @Override
+    public void tick()
     {
-        super.onUpdate();
+        super.tick();
+        
+        World world = Minecraft.getInstance().world;
 
-        if (ridingEntity == null)
+        if (getRidingEntity() == null)
         {
             for (int i = 0; i < world.loadedEntityList.size(); i++)
             {
@@ -84,7 +89,7 @@ public class CamelJockeyEntity extends MobEntity
 
                     if (d < 4D && entity.riddenByEntity == null)
                     {
-                        mountEntity(entity);
+                    	addPassenger(entity);
                     }
 
                     creepsentitycamel.interest = 0;
@@ -100,7 +105,7 @@ public class CamelJockeyEntity extends MobEntity
         }
         else
         {
-            rotationYaw = ridingEntity.rotationYaw;
+            rotationYaw = getRidingEntity().rotationYaw;
         }
     }
 
@@ -109,7 +114,7 @@ public class CamelJockeyEntity extends MobEntity
      */
     public double getYOffset()
     {
-        if (ridingEntity instanceof CamelEntity)
+        if (getRidingEntity() instanceof CamelEntity)
         {
             return (double)(this.getYOffset() + 1.5F);
         }
@@ -136,9 +141,9 @@ public class CamelJockeyEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    public void livingTick()
     {
-        super.onLivingUpdate();
+        super.livingTick();
 
         if (handleWaterMovement())
         {
@@ -172,7 +177,7 @@ public class CamelJockeyEntity extends MobEntity
 
         if (super.attackEntityFrom(DamageSource.causeMobDamage(this), i))
         {
-            if (riddenByEntity == entity || ridingEntity == entity)
+            if (riddenByEntity == entity || getRidingEntity() == entity)
             {
                 return true;
             }
@@ -199,7 +204,7 @@ public class CamelJockeyEntity extends MobEntity
         {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
             motionX = (d / (double)f1) * 0.20000000000000001D * (0.850000011920929D + motionX * 0.20000000298023224D);
             motionZ = (d1 / (double)f1) * 0.20000000000000001D * (0.80000001192092896D + motionZ * 0.20000000298023224D);
             motionY = 0.10000000596246449D;
@@ -221,7 +226,7 @@ public class CamelJockeyEntity extends MobEntity
         int i = MathHelper.floor(posX);
         int j = MathHelper.floor(this.getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
-        int l = world.getBlockLightOpacity(getPosition());
+        int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(getPosition())).getBlock();
 
         if (j < 50)
@@ -230,7 +235,9 @@ public class CamelJockeyEntity extends MobEntity
         }
         else
         {
-            return (i1 == Blocks.sand || i1 == Blocks.dirt || i1 == Blocks.gravel) && i1 != Blocks.cobblestone && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && l > 6;
+            return (i1 == Blocks.SAND || i1 == Blocks.DIRT || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE
+//            		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+            		&& world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && l > 6;
         }
     }
 
@@ -263,7 +270,7 @@ public class CamelJockeyEntity extends MobEntity
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
         }
     }
 
@@ -272,7 +279,7 @@ public class CamelJockeyEntity extends MobEntity
      */
     protected String getLivingSound()
     {
-        if (ridingEntity != null)
+        if (getRidingEntity() != null)
         {
             return "morecreeps:cameljockeyget";
         }

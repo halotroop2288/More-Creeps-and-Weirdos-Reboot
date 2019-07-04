@@ -22,7 +22,7 @@ public class CREEPSRenderSchlump extends RenderLivingEvent
 
     public CREEPSRenderSchlump(CREEPSModelSchlump creepsmodelschlump, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelschlump, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelschlump, f);
         modelBipedMain = creepsmodelschlump;
     }
 

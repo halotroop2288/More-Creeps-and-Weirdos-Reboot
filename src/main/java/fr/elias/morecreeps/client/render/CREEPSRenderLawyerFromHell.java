@@ -22,7 +22,7 @@ public class CREEPSRenderLawyerFromHell extends RenderLiving
 
     public CREEPSRenderLawyerFromHell(CREEPSModelLawyerFromHell creepsmodellawyerfromhell, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodellawyerfromhell, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodellawyerfromhell, f);
         modelBipedMain = creepsmodellawyerfromhell;
     }
 

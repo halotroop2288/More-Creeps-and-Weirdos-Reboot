@@ -131,7 +131,7 @@ public class FoamEntity extends Entity implements IProjectile
 
     public void setThrowableHeading(double d, double d1, double d2, float f, float f1)
     {
-        float f2 = MathHelper.sqrt_double(d * d + d1 * d1 + d2 * d2);
+        float f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
         d /= f2;
         d1 /= f2;
         d2 /= f2;
@@ -144,7 +144,7 @@ public class FoamEntity extends Entity implements IProjectile
         motionX = d;
         motionY = d1;
         motionZ = d2;
-        float f3 = MathHelper.sqrt_double(d * d + d2 * d2);
+        float f3 = MathHelper.sqrt(d * d + d2 * d2);
         prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
         prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / Math.PI);
         aoLightValueScratchXYZNNP = 0;
@@ -162,9 +162,9 @@ public class FoamEntity extends Entity implements IProjectile
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate(PlayerEntity playerentity)
+    public void tick(PlayerEntity playerentity)
     {
-        super.onUpdate();
+        super.tick();
 
         for (int i = 0; i < 15; i++)
         {
@@ -181,7 +181,7 @@ public class FoamEntity extends Entity implements IProjectile
 
         if (prevRotationPitch == 0.0F && prevRotationYaw == 0.0F)
         {
-            float f = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+            float f = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
             prevRotationYaw = rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
             prevRotationPitch = rotationPitch = (float)((Math.atan2(motionY, f) * 180D) / Math.PI);
         }
@@ -236,7 +236,7 @@ public class FoamEntity extends Entity implements IProjectile
         {
             Entity entity1 = (Entity)list.get(k);
 
-            if (!entity1.canBeCollidedWith() || (entity1 == shootingEntity || shootingEntity != null && entity1 == shootingEntity.ridingEntity) && aoLightValueScratchXYNN < 5 || aoLightValueScratchXYZNNN)
+            if (!entity1.canBeCollidedWith() || (entity1 == shootingEntity || shootingEntity != null && entity1 == shootingEntity.getRidingEntity()) && aoLightValueScratchXYNN < 5 || aoLightValueScratchXYZNNN)
             {
                 if (motionZ != 0.0D || !((motionX == 0.0D) & (motionY == 0.0D)))
                 {
@@ -274,7 +274,7 @@ public class FoamEntity extends Entity implements IProjectile
         {
             if (movingobjectposition.getHitVec() != null)
             {
-                if (movingobjectposition.getHitVec(). instanceof LivingEntity)
+                if (movingobjectposition.getHitVec() instanceof LivingEntity)
                 {
                     splash();
                     movingobjectposition.getHitVec().setFire(0);
