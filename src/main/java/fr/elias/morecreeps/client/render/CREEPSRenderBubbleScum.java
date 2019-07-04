@@ -1,9 +1,8 @@
 package fr.elias.morecreeps.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -15,14 +14,14 @@ public class CREEPSRenderBubbleScum extends RenderLiving
 {
     public CREEPSRenderBubbleScum(CREEPSModelBubbleScum creepsmodelbubblescum, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), new CREEPSModelBubbleScum(), 1.0F);
+        super(Minecraft.getInstance().getRenderManager(), new CREEPSModelBubbleScum(), 1.0F);
     }
 
     /**
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         fattenup((BubbleScumEntity)entityliving, f);
     }

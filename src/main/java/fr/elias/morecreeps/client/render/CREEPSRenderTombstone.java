@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -22,7 +22,7 @@ public class CREEPSRenderTombstone extends RenderLiving
         super(Minecraft.getMinecraft().getRenderManager(), creepsmodeltombstone, f);
     }
 
-    public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
+    public void doRenderLiving(LivingEntity entityliving, double d, double d1, double d2, float f, float f1)
     {
         super.doRender(entityliving, d, d1, d2, f, f1);
         float f2 = 1.6F;
@@ -84,7 +84,7 @@ public class CREEPSRenderTombstone extends RenderLiving
     }
     public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
     {
-        doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
+        doRenderLiving((LivingEntity)entity, d, d1, d2, f, f1);
     }
 
     protected ResourceLocation getEntityTexture(TombstoneEntity entity)

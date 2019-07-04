@@ -3,18 +3,14 @@ package fr.elias.morecreeps.client.render;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import fr.elias.morecreeps.client.models.CREEPSModelRobotTodd;
-import fr.elias.morecreeps.client.render.layers.LayerRobotTodd;
 import fr.elias.morecreeps.common.entity.RobotTedEntity;
 import fr.elias.morecreeps.common.entity.RobotToddEntity;
 
@@ -118,7 +114,7 @@ public class CREEPSRenderRobotTodd extends RenderLiving
                     GL11.glEnable(GL11.GL_ALPHA_TEST);
             }
 
-            float f9 = creepsentityrobottodd.getBrightness(f1);
+            float f9 = creepsentityrobottodd.getBrightness();
             int j = getColorMultiplier(creepsentityrobottodd, f9, f1);
 
             if ((j >> 24 & 0xff) > 0 || creepsentityrobottodd.hurtTime > 0 || creepsentityrobottodd.deathTime > 0)
@@ -179,16 +175,16 @@ public class CREEPSRenderRobotTodd extends RenderLiving
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         scaleSlime((RobotToddEntity)entityliving, f);
     }
-    /*protected int shouldRenderPass(EntityLiving entityliving, int i, float f)
+    /*protected int shouldRenderPass(LivingEntity entityliving, int i, float f)
     {
         return func_179_a((CREEPSEntityRobotTodd)entityliving, i, f);
     }*/
 
-    public void doRender(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
+    public void doRender(LivingEntity entityliving, double d, double d1, double d2, float f, float f1)
     {
         doRenderTodd((RobotToddEntity)entityliving, d, d1, d2, f, f1);
     }

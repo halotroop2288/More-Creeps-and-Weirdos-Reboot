@@ -2,11 +2,11 @@ package fr.elias.morecreeps.common.items;
 
 import java.util.Random;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -32,7 +32,7 @@ public class ItemRayRay extends Item
     /**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
-    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+    public ItemStack onItemRightClick(ItemStack itemstack, World world, PlayerEntity entityplayer)
     {
         wayvert = rand.nextInt(8) + 4;
         int i = rand.nextInt(30) + 5;
@@ -42,22 +42,22 @@ public class ItemRayRay extends Item
         wayZ = entityplayer.posZ + (double)j;
         k = getHeightValue(world, (int)wayX, (int)wayZ);
         wayY = k + wayvert;
-        world.setBlockState(new BlockPos((int)wayX, (int)wayY, (int)wayZ), Blocks.dirt.getDefaultState());
+        world.setBlockState(new BlockPos((int)wayX, (int)wayY, (int)wayZ), Blocks.DIRT.getDefaultState());
         wayX = entityplayer.posX + (double)j;
         wayZ = entityplayer.posZ + (double)i;
         k = getHeightValue(world, (int)wayX, (int)wayZ);
         wayY = k + wayvert;
-        world.setBlockState(new BlockPos((int)wayX, (int)wayY, (int)wayZ), Blocks.ice.getDefaultState());
+        world.setBlockState(new BlockPos((int)wayX, (int)wayY, (int)wayZ), Blocks.ICE.getDefaultState());
         wayX = entityplayer.posX + (double)i;
         wayZ = entityplayer.posZ + (double)j;
         k = getHeightValue(world, (int)wayX, (int)wayZ);
         wayY = k + wayvert;
-        world.setBlockState(new BlockPos((int)wayX, (int)wayY, (int)wayZ), Blocks.sandstone.getDefaultState());
+        world.setBlockState(new BlockPos((int)wayX, (int)wayY, (int)wayZ), Blocks.SANDSTONE.getDefaultState());
         wayX = entityplayer.posX + (double)j;
         wayZ = entityplayer.posZ - (double)i;
         k = getHeightValue(world, (int)wayX, (int)wayZ);
         wayY = k + wayvert;
-        world.setBlockState(new BlockPos((int)wayX, (int)wayY, (int)wayZ), Blocks.glass.getDefaultState());
+        world.setBlockState(new BlockPos((int)wayX, (int)wayY, (int)wayZ), Blocks.GLASS.getDefaultState());
         return itemstack;
     }
     public static int getHeightValue(World world, int x, int z)

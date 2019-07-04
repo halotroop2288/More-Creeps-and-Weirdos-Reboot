@@ -14,6 +14,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
@@ -27,28 +28,29 @@ public class EvilSnowmanEntity extends MobEntity
 
     public EvilSnowmanEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/evilsnowman.png";
-        setSize(0.7F, 1.5F);
+//        setSize(0.7F, 1.5F);
         snowsize = 1.0F;
         isImmuneToFire = true;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(4, new EvilSnowmanEntity.AIAttackTarget());
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(4, new EvilSnowmanEntity.AIAttackTarget());
+//        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
+//        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
+//        this.tasks.addTask(8, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
     }
 
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25D);
+    	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
+    	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
     }
     
     /**
@@ -61,15 +63,15 @@ public class EvilSnowmanEntity extends MobEntity
 
         if (!onGround && !isJumping)
         {
-            motionY -= 0.0020000000949949026D;
+            moveVertical -= 0.0020000000949949026D;
         }
 
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
         Block l = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
         Block i1 = world.getBlockState(new BlockPos(i, j, k)).getBlock();
-        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(snowsize + 1);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(snowsize + 1);
 
         if (/*l > 77 && l < 81 || */i1 == Blocks.snow)
         {
@@ -94,7 +96,7 @@ public class EvilSnowmanEntity extends MobEntity
 
         if ((double)snowsize < 0.050000000000000003D)
         {
-            setDead();
+            setHealth(0);
         }
     }
 
@@ -112,16 +114,16 @@ public class EvilSnowmanEntity extends MobEntity
         {
             for (int i = 0; i < 8; i++)
             {
-                world.playSoundAtEntity(this, "morecreeps:snowmanbounce", 1.0F, 2.0F - snowsize);
-                world.spawnParticle(EnumParticleTypes.SNOWBALL, posX, posY, posZ, 0.0D, 0.0D, 0.0D);
+                world.playSound(this, "morecreeps:snowmanbounce", 1.0F, 2.0F - snowsize);
+                world.addParticle(ParticleTypes.ITEM_SNOWBALL, posX, posY, posZ, 0.0D, 0.0D, 0.0D);
             }
 
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
             float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
-            motionX = (d / (double)f1) * 0.5D * 0.30000000192092896D + motionX * 0.20000000098023224D;
-            motionZ = (d1 / (double)f1) * 0.5D * 0.25000000192092897D + motionZ * 0.20000000098023224D;
-            motionY = 0.35000000196046449D;
+            moveForward = (d / (double)f1) * 0.5D * 0.30000000192092896D + getMotion().x * 0.20000000098023224D;
+            moveStrafing = (d1 / (double)f1) * 0.5D * 0.25000000192092897D + getMotion().z * 0.20000000098023224D;
+            moveVertical = (float) 0.35000000196046449D;
 
             if (rand.nextInt(20) == 0)
             {

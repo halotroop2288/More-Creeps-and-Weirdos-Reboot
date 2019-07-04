@@ -2,14 +2,12 @@ package fr.elias.morecreeps.client.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 import org.lwjgl.opengl.GL11;
 
@@ -23,7 +21,7 @@ public class CREEPSRenderBlorp extends RenderLiving
 
     public CREEPSRenderBlorp(CREEPSModelBlorp creepsmodelblorp, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelblorp, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelblorp, f);
         modelBipedMain = creepsmodelblorp;
     }
 
@@ -38,7 +36,7 @@ public class CREEPSRenderBlorp extends RenderLiving
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         updateBlorpScale((BlorpEntity)entityliving, f);
     }

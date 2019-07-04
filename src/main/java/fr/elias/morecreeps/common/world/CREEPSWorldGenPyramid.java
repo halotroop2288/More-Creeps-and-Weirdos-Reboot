@@ -1,18 +1,34 @@
 package fr.elias.morecreeps.common.world;
 
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.WorldGenRegion;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.entity.PyramidGuardianEntity;
+import fr.elias.morecreeps.common.lists.ItemList;
 
 public class CREEPSWorldGenPyramid extends WorldGenRegion
 {
-    public static Random rand = new Random();
+    public CREEPSWorldGenPyramid(ServerWorld world, List<IChunk> chunk)
+    {
+		super(world, chunk);
+	}
+
+	public static Random rand = new Random();
     public boolean chunky;
     public boolean sandy;
     private int count;
@@ -25,16 +41,13 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
     public static int pathCode;
     public static int emptyCode;
     public static int visitedCode;
-    public TileEntityChest chest;
+    public ChestTileEntity chest;
     public int maxObstruct;
 
-    public CREEPSWorldGenPyramid()
-    {
-    }
 
     public boolean blockExists(World parWorld, int x, int y, int z) 
     {
-    	IBlockState state = parWorld.getBlockState(new BlockPos(x, y, z));
+    	BlockState state = parWorld.getBlockState(new BlockPos(x, y, z));
     	if (state != null)
     	{
         	return true;
@@ -72,7 +85,7 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
             {
                 for (int j6 = -2 + i1; j6 < (columns - i1) + 2; j6 += 2)
                 {
-                    if (world.getBlockState(new BlockPos(i + j3, j + i1, k + j6)) != Blocks.air.getDefaultState())
+                    if (world.getBlockState(new BlockPos(i + j3, j + i1, k + j6)) != Blocks.AIR.getDefaultState())
                     {
                         l++;
                     }
@@ -119,7 +132,7 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
                 {
                     for (int k6 = -2 + k1; k6 < (columns - k1) + 2; k6++)
                     {
-                        world.setBlockState(new BlockPos(i + l3, j + k1, k + k6), Blocks.sandstone.getDefaultState());
+                        world.setBlockState(new BlockPos(i + l3, j + k1, k + k6), Blocks.SANDSTONE.getDefaultState());
                     }
                 }
             }
@@ -131,7 +144,7 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
                 	//TODO fix this
                     //world.setBlockState(new BlockPos(i + l1, j, k + i4), maze[l1][i4]);
                     //world.setBlockState(new BlockPos(i + l1, j - 1, k + i4), maze[l1][i4]);
-                    world.setBlockState(new BlockPos(i + l1, j - 2, k + i4), Blocks.bedrock.getDefaultState());
+                    world.setBlockState(new BlockPos(i + l1, j - 2, k + i4), Blocks.BEDROCK.getDefaultState());
                 }
             }
 
@@ -142,7 +155,7 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
 
                 if (maze[j4][l6] == 7)
                 {
-                    world.setBlockState(new BlockPos(i + j4, j, k + l6), Blocks.glass.getDefaultState());
+                    world.setBlockState(new BlockPos(i + j4, j, k + l6), Blocks.GLASS.getDefaultState());
                 }
             }
 
@@ -153,8 +166,8 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
 
                 if (maze[k4][i7] == 7)
                 {
-                    world.setBlockState(new BlockPos(i + k4, j - 1, k + i7), Blocks.sandstone.getDefaultState());
-                    world.setBlockState(new BlockPos(i + k4, j, k + i7), Blocks.sandstone.getDefaultState());
+                    world.setBlockState(new BlockPos(i + k4, j - 1, k + i7), Blocks.SANDSTONE.getDefaultState());
+                    world.setBlockState(new BlockPos(i + k4, j, k + i7), Blocks.SANDSTONE.getDefaultState());
                 }
             }
 
@@ -168,11 +181,11 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
                     continue;
                 }
 
-                world.setBlockState(new BlockPos(i + l4, j - 1, k + j7), Block.getBlockById(30).getDefaultState());
+                world.setBlockState(new BlockPos(i + l4, j - 1, k + j7), Blocks.COBWEB.getDefaultState());
 
                 if (rand.nextInt(4) == 0)
                 {
-                    world.setBlockState(new BlockPos(i + l4, j, k + j7), Blocks.web.getDefaultState());
+                    world.setBlockState(new BlockPos(i + l4, j, k + j7), Blocks.COBWEB.getDefaultState());
                 }
             }
 
@@ -183,7 +196,7 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
 
                 if (maze[i5][k7] == 7)
                 {
-                    world.setBlockState(new BlockPos(i + i5, j, k + k7), Blocks.torch.getDefaultState());
+                    world.setBlockState(new BlockPos(i + i5, j, k + k7), Blocks.TORCH.getDefaultState());
                 }
             }
 
@@ -204,62 +217,62 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
                 if (maze[j5][l7] == wallCode)
                 {
                     i3++;
-                    world.setBlockToAir(new BlockPos(i + j5, j - 1, k + l7));
-                    world.setBlockToAir(new BlockPos(i + j5, j, k + l7));
-                    world.setBlockState(new BlockPos(i + j5, j - 1, k + l7), Blocks.mob_spawner.getDefaultState());
-                    TileEntityMobSpawner tileentitymobspawner = new TileEntityMobSpawner();
+                    world.setBlockState(new BlockPos(i + j5, j - 1, k + l7), Blocks.AIR.getDefaultState());
+                    world.setBlockState(new BlockPos(i + j5, j, k + l7), Blocks.AIR.getDefaultState());
+                    world.setBlockState(new BlockPos(i + j5, j - 1, k + l7), Blocks.SPAWNER.getDefaultState());
+                    MobSpawnerTileEntity tileentitymobspawner = new MobSpawnerTileEntity();
                     world.setTileEntity(new BlockPos(i + j5, j - 1, k + l7), tileentitymobspawner);
                     int i8 = rand.nextInt(5);
 
                     if (i8 == 0)
                     {
-                        tileentitymobspawner.getSpawnerBaseLogic().setEntityName("BlackSoul");
+                        tileentitymobspawner.getSpawnerBaseLogic().setEntityType("BlackSoul"); // TODO register entity types
                     }
 
                     if (i8 == 1)
                     {
-                        tileentitymobspawner.getSpawnerBaseLogic().setEntityName("BabyMummy");
+                        tileentitymobspawner.getSpawnerBaseLogic().setEntityType("BabyMummy");
                     }
 
                     if (i8 > 1)
                     {
-                        tileentitymobspawner.getSpawnerBaseLogic().setEntityName("Mummy");
+                        tileentitymobspawner.getSpawnerBaseLogic().setEntityType("Mummy");
                     }
                 }
             }
             while (true);
 
-            world.setBlockToAir(new BlockPos(i + 1, j - 1, k));
-            world.setBlockToAir(new BlockPos(i + 1, j, k));
+            world.setBlockState(new BlockPos(i + 1, j - 1, k), Blocks.AIR.getDefaultState());
+            world.setBlockState(new BlockPos(i + 1, j, k), Blocks.AIR.getDefaultState());
 
             for (int k5 = 0; k5 < 5; k5++)
             {
-                world.setBlockToAir(new BlockPos(i + 1, j - 1, k - k5));
-                world.setBlockToAir(new BlockPos(i + 1, j, k - k5));
+                world.setBlockState(new BlockPos(i + 1, j - 1, k - k5), Blocks.AIR.getDefaultState());
+                world.setBlockState(new BlockPos(i + 1, j, k - k5), Blocks.AIR.getDefaultState());
                 world.setBlockState(new BlockPos(i + 1, j, k - k5), Blocks.torch.getDefaultState());
             }
 
-            world.setBlockState(new BlockPos(i - 1, j, k - 5), Blocks.torch.getDefaultState());
-            world.setBlockState(new BlockPos(i + 1, j, k - 5), Blocks.torch.getDefaultState());
-            world.setBlockState(new BlockPos(i, j, k - 5), Blocks.torch.getDefaultState());
+            world.setBlockState(new BlockPos(i - 1, j, k - 5), Blocks.TORCH.getDefaultState());
+            world.setBlockState(new BlockPos(i + 1, j, k - 5), Blocks.TORCH.getDefaultState());
+            world.setBlockState(new BlockPos(i, j, k - 5), Blocks.TORCH.getDefaultState());
 
             for (int l5 = 1; l5 < 25; l5++)
             {
-                world.setBlockToAir(new BlockPos(i - 1, j + l5, k - 5));
-                world.setBlockToAir(new BlockPos(i + 1, j + l5, k - 5));
-                world.setBlockToAir(new BlockPos(i, j + l5, k - 5));
+                world.setBlockState(new BlockPos(i - 1, j + l5, k - 5), Blocks.AIR.getDefaultState());
+                world.setBlockState(new BlockPos(i + 1, j + l5, k - 5), Blocks.AIR.getDefaultState());
+                world.setBlockState(new BlockPos(i, j + l5, k - 5), Blocks.AIR.getDefaultState());
             }
 
-            world.setBlockState(new BlockPos(i, j + 26, k - 5), Blocks.torch.getDefaultState());
-            Item i6 = Items.bone;
+            world.setBlockState(new BlockPos(i, j + 26, k - 5), Blocks.TORCH.getDefaultState());
+            Item i6 = Items.BONE;
             float f = 0.7F;
             double d = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
             double d1 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.20000000000000001D + 0.59999999999999998D;
             double d2 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            EntityItem entityitem = new EntityItem(world, ((double)i + d) - 2D, (double)j + d1, ((double)k + d2) - 2D, new ItemStack(i6, 5, 0));
-            world.spawnEntityInWorld(entityitem);
-            world.setBlockState(new BlockPos((i + rows) - 2, j - 1, (k + columns) - 2), Block.getBlockById(54).getDefaultState());
-            TileEntityChest tileentitychest = new TileEntityChest();
+            ItemEntity entityitem = new ItemEntity(world, ((double)i + d) - 2D, (double)j + d1, ((double)k + d2) - 2D, new ItemStack(i6, 5));
+            world.addEntity(entityitem);
+            world.setBlockState(new BlockPos((i + rows) - 2, j - 1, (k + columns) - 2), Blocks.CHEST.getDefaultState());
+            ChestTileEntity tileentitychest = new ChestTileEntity();
             world.setTileEntity(new BlockPos((i + rows) - 2, j - 1, (k + columns) - 2), tileentitychest);
 
             for (int j8 = 1; j8 < tileentitychest.getSizeInventory(); j8++)
@@ -268,157 +281,155 @@ public class CREEPSWorldGenPyramid extends WorldGenRegion
 
                 if (k8 == 0)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.goodonut, rand.nextInt(15) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(ItemList.goo_donut, rand.nextInt(15) + 1));
                 }
 
                 if (k8 == 1)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.bandaid, rand.nextInt(15) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(ItemList.band_aid, rand.nextInt(15) + 1));
                 }
 
                 if (k8 == 2)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.raygun, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(ItemList.ray_gun, 1));
                 }
 
                 if (k8 == 3)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.money, rand.nextInt(15) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(ItemList.money, rand.nextInt(15) + 1));
                 }
 
                 if (k8 == 4)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.blorpcola, rand.nextInt(10) + 5, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(ItemList.blorp_cola, rand.nextInt(10) + 5));
                 }
 
                 if (k8 == 5)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.bread, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.BREAD, 1));
                 }
 
                 if (k8 == 6)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.golden_apple, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.GOLDEN_APPLE, 1));
                 }
 
                 if (k8 == 7)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.gold_ingot, rand.nextInt(3) + 2, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.GOLD_INGOT, rand.nextInt(3) + 2));
                 }
 
                 if (k8 == 8)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.iron_ingot, rand.nextInt(5) + 2, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.IRON_INGOT, rand.nextInt(5) + 2));
                 }
 
                 if (k8 == 9)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.gunpowder, rand.nextInt(4) + 2, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.GUNPOWDER, rand.nextInt(4) + 2));
                 }
 
                 if (k8 == 10)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.egg, rand.nextInt(3) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.EGG, rand.nextInt(3) + 1));
                 }
 
                 if (k8 == 11)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.wheat, rand.nextInt(12) + 2, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.WHEAT, rand.nextInt(12) + 2));
                 }
 
                 if (k8 == 12)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.evilegg, rand.nextInt(15) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(ItemList.evil_egg, rand.nextInt(15) + 1));
                 }
 
                 if (k8 == 13)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.diamond, rand.nextInt(2) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.DIAMOND, rand.nextInt(2) + 1));
                 }
 
                 if (k8 == 14)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.iron_sword, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.IRON_SWORD, 1));
                 }
 
                 if (k8 == 15)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.diamond_sword, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.DIAMOND_SWORD, 1));
                 }
 
                 if (k8 == 16)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.bow, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.BOW, 1));
                 }
 
                 if (k8 == 17)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.arrow, rand.nextInt(30) + 10, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.ARROW, rand.nextInt(30) + 10));
                 }
 
                 if (k8 == 18)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.stick, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.STICK, 1));
                 }
 
                 if (k8 == 19)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.milk_bucket, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.MILK_BUCKET, 1));
                 }
 
                 if (k8 == 20)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.reeds, rand.nextInt(6) + 6, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.SUGAR_CANE, rand.nextInt(6) + 6));
                 }
 
                 if (k8 == 21)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.paper, rand.nextInt(16) + 6, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.PAPER, rand.nextInt(16) + 6));
                 }
 
                 if (k8 == 22)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.book, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.BOOK, 1));
                 }
 
                 if (k8 == 23)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.cookie, rand.nextInt(6) + 6, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.COOKIE, rand.nextInt(6) + 6));
                 }
 
                 if (k8 == 24)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.cake, rand.nextInt(6) + 6, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.CAKE, rand.nextInt(6) + 6));
                 }
 
                 if (k8 == 25)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.bucket, rand.nextInt(6) + 6, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.BUCKET, rand.nextInt(6) + 6));
                 }
 
                 if (k8 == 26)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(MoreCreepsReboot.evilegg, rand.nextInt(40) + 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(ItemList.evil_egg, rand.nextInt(40) + 1));
                 }
 
                 if (k8 == 16)
                 {
-                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.bone, 1, 0));
+                    tileentitychest.setInventorySlotContents(j8, new ItemStack(Items.BONE, 1));
                 }
             }
 
             PyramidGuardianEntity creepsentitypyramidguardian = new PyramidGuardianEntity(world);
             creepsentitypyramidguardian.setLocationAndAngles((i + rows) - 2, j - 1, (k + columns) - 3, 300F, 0.0F);
-            creepsentitypyramidguardian.motionX = 0.0D;
-            creepsentitypyramidguardian.motionY = 0.0D;
-            creepsentitypyramidguardian.motionZ = 0.0D;
-            world.spawnEntityInWorld(creepsentitypyramidguardian);
+            creepsentitypyramidguardian.setMotion(0.0D, 0.0D, 0.0D);
+            world.addEntity(creepsentitypyramidguardian);
 
             for (int l8 = 0; l8 < rows; l8++)
             {
                 for (int i9 = 0; i9 < columns; i9++)
                 {
-                    world.setBlockState(new BlockPos(i + l8, j + 1, k + i9), Block.getBlockById(7).getDefaultState());
+                    world.setBlockState(new BlockPos(i + l8, j + 1, k + i9), Blocks.BEDROCK.getDefaultState());
                 }
             }
 

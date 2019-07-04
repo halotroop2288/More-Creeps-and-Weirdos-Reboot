@@ -1,6 +1,6 @@
 package fr.elias.morecreeps.common.entity.ai;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import fr.elias.morecreeps.common.entity.BabyMummyEntity;
 
@@ -15,15 +15,15 @@ public class EntityBabyMummyAI extends EntityAIBase
 	@Override
 	public boolean shouldExecute()
 	{
-		EntityLivingBase entitylivingbase = this.bmummy.getAttackTarget();
+		LivingEntity entitylivingbase = this.bmummy.getAttackTarget();
 		return entitylivingbase != null && entitylivingbase.isEntityAlive();
 	}
 	
 	public void updateTask()
     {
     	--bmummy.attackTime;
-        EntityLivingBase entitylivingbase = this.bmummy.getAttackTarget();
-        double d0 = this.bmummy.getDistanceSqToEntity(entitylivingbase);
+        LivingEntity entitylivingbase = this.bmummy.getAttackTarget();
+        double d0 = this.bmummy.getDistanceSq(entitylivingbase);
 
         if (d0 < 4.0D)
         {
@@ -39,7 +39,7 @@ public class EntityBabyMummyAI extends EntityAIBase
         {
             // ATTACK ENTITY GOES HERE
         	bmummy.attackEntity(entitylivingbase, (float)d0);
-            this.bmummy.getLookHelper().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
+            this.bmummy.getLookController().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
         }
         else
         {

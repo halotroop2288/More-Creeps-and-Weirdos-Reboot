@@ -11,6 +11,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -313,10 +314,10 @@ public class GrowEntity extends ItemEntity implements IProjectile
                         ((RobotToddEntity)movingobjectposition.hitInfo).modelspeed += 0.05F;
                     }
 
-                    if ((movingobjectposition.hitInfo instanceof EntityGooGoat) && ((EntityGooGoat)movingobjectposition.hitInfo).goatsize < 4F)
+                    if ((movingobjectposition.hitInfo instanceof GooGoatEntity) && ((GooGoatEntity)movingobjectposition.hitInfo).goatsize < 4F)
                     {
-                        ((EntityGooGoat)movingobjectposition.hitInfo).goatsize += 0.24F;
-                        ((EntityGooGoat)movingobjectposition.hitInfo).modelspeed += 0.15F;
+                        ((GooGoatEntity)movingobjectposition.hitInfo).goatsize += 0.24F;
+                        ((GooGoatEntity)movingobjectposition.hitInfo).modelspeed += 0.15F;
                     }
 
                     if ((movingobjectposition.hitInfo instanceof LollimanEntity) && ((LollimanEntity)movingobjectposition.hitInfo).modelsize < 6F)
@@ -523,7 +524,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
 
                 if (blockHit == Blocks.ice)
                 {
-                    world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.flowing_water.getDefaultState());
+                    world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.WATER.getDefaultState());
                 }
 
                 setDead();
@@ -629,7 +630,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
                     double d = rand.nextGaussian() * 0.12D;
                     double d1 = rand.nextGaussian() * 0.12D;
                     double d2 = rand.nextGaussian() * 0.12D;
-                    world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2);
+                    world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2);
                 }
             }
         }

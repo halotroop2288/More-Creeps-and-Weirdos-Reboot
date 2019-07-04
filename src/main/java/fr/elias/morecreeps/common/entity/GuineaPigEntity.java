@@ -289,7 +289,7 @@ public class GuineaPigEntity extends MobEntity
                         {
                             CREEPSFxBlood creepsfxblood = new CREEPSFxBlood(world, entity.posX, entity.posY + 1.0D, entity.posZ, MoreCreepsReboot.partRed, 0.255F);
                             creepsfxblood.renderDistanceWeight = 20D;
-                            Minecraft.getMinecraft().effectRenderer.addEffect(creepsfxblood);
+                            Minecraft.getInstance().effectRenderer.addEffect(creepsfxblood);
                         }
                     }
 
@@ -379,7 +379,7 @@ public class GuineaPigEntity extends MobEntity
      */
     public boolean attackEntityFrom(DamageSource damagesource, int i)
     {
-        Entity entity = damagesource.getEntity();
+        Entity entity = damagesource.getTrueSource();
 
         if (entity != this.getAttackTarget())
         {
@@ -950,7 +950,7 @@ public class GuineaPigEntity extends MobEntity
                 used = true;
                 interest += 15;
                 health += 10;
-                isDead = false;
+                dead = false;
                 smoke();
             }
 
@@ -960,7 +960,7 @@ public class GuineaPigEntity extends MobEntity
                 used = true;
                 interest += 30;
                 health += 15;
-                isDead = false;
+                dead = false;
                 smoke();
             }
 
@@ -970,7 +970,7 @@ public class GuineaPigEntity extends MobEntity
                 used = true;
                 interest += 55;
                 health += 25;
-                isDead = false;
+                dead = false;
                 smoke();
             }
 
@@ -980,7 +980,7 @@ public class GuineaPigEntity extends MobEntity
                 used = true;
                 interest += 111;
                 health += 75;
-                isDead = false;
+                dead = false;
                 smoke();
             }
 

@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.entity.GuineaPigEntity;
@@ -27,7 +26,7 @@ public class ItemPetRadio extends Item
     /**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
-    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+    public ItemStack onItemRightClick(ItemStack itemstack, World world, PlayerEntity entityplayer)
     {
         if (entityplayer.isSneaking())
         {

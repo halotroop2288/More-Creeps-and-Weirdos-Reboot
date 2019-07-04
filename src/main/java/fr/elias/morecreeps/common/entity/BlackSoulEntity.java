@@ -39,9 +39,11 @@ public class BlackSoulEntity extends MobEntity
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
-    public void applyEntityAttributes()
+    
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50D);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.33D);
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(7D);

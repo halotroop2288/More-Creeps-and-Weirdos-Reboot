@@ -2,6 +2,7 @@ package fr.elias.morecreeps.client.models;
 
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
 
 public class CREEPSModelArmyGuy extends Model
 {

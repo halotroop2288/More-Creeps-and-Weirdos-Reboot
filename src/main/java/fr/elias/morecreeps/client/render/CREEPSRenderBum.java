@@ -3,7 +3,7 @@ package fr.elias.morecreeps.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -21,7 +21,7 @@ public class CREEPSRenderBum extends RenderLiving
         super(Minecraft.getMinecraft().getRenderManager(), creepsmodelbum, f);
         modelBipedMain = creepsmodelbum;
     }
-    public void preRenderCallback(EntityLivingBase entityliving, float f)
+    public void preRenderCallback(LivingEntity entityliving, float f)
     {
         BumEntity creepsentitybum = (BumEntity)entityliving;
         modelBipedMain.modelsize = creepsentitybum.modelsize;

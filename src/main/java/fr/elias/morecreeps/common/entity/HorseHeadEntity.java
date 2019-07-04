@@ -93,7 +93,7 @@ public class HorseHeadEntity extends AnimalEntity
             }
         }
 
-        if (getRidingEntity() == null && blastoff > 0 && world.getBlockState(new BlockPos((int)posX, (int)posY - 1, (int)posZ)) == Blocks.air)
+        if (getRidingEntity() == null && blastoff > 0 && world.getBlockState(new BlockPos((int)posX, (int)posY - 1, (int)posZ)) == Blocks.AIR)
         {
             posY -= 0.25D;
         }

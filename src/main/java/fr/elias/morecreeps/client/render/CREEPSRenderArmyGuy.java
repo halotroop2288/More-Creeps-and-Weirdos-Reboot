@@ -1,28 +1,27 @@
 package fr.elias.morecreeps.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import fr.elias.morecreeps.client.models.CREEPSModelArmyGuy;
-import fr.elias.morecreeps.client.render.layers.LayerHeldItemArmyGuy;
 import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.entity.ArmyGuyEntity;
 
 public class CREEPSRenderArmyGuy extends RenderLiving
 {
     protected CREEPSModelArmyGuy modelBipedMain;
-    public static final ResourceLocation texture = new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_ARMY_GUY_DEFAULT);
-    public static final ResourceLocation texture_loyal = new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_ARMY_GUY_LOYAL);
+    public static final ResourceLocation texture = new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_ARMY_GUY_DEFAULT);
+    public static final ResourceLocation texture_loyal = new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_ARMY_GUY_LOYAL);
     
     public CREEPSRenderArmyGuy(CREEPSModelArmyGuy creepsmodelarmyguy, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelarmyguy, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelarmyguy, f);
         modelBipedMain = creepsmodelarmyguy;
         this.addLayer(new LayerHeldItemArmyGuy(this));
     }
@@ -39,14 +38,14 @@ public class CREEPSRenderArmyGuy extends RenderLiving
         modelBipedMain.modelsize = creepsentityarmyguy.modelsize;
         if (creepsentityarmyguy.legleft && creepsentityarmyguy.legright && creepsentityarmyguy.head)
         {
-        	GlStateManager.translate(0.0D, 1.4D, 0.0D);
+        	GlStateManager.translated(0.0D, 1.4D, 0.0D);
         }else if (creepsentityarmyguy.legleft && creepsentityarmyguy.legright)
         {
-        	GlStateManager.translate(0.0D, 0.75D, 0.0D);
+        	GlStateManager.translated(0.0D, 0.75D, 0.0D);
         }
         else
         {
-        	GlStateManager.translate(0.0D, 0.0D, 0.0D);
+        	GlStateManager.translated(0.0D, 0.0D, 0.0D);
         }
         fattenup(entityliving, f);
     }
@@ -55,7 +54,7 @@ public class CREEPSRenderArmyGuy extends RenderLiving
         GL11.glScalef(creepsentityarmyguy.modelsize, creepsentityarmyguy.modelsize, creepsentityarmyguy.modelsize);
     }
 
-    protected void preRenderCallback(EntityLivingBase p_77041_1_, float p_77041_2_)
+    protected void preRenderCallback(LivingEntity p_77041_1_, float p_77041_2_)
     {
         this.preRenderCallback((ArmyGuyEntity)p_77041_1_, p_77041_2_);
     }

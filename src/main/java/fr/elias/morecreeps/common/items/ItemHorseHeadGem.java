@@ -10,7 +10,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
-import fr.elias.morecreeps.common.entity.CREEPSEntityHorseHead;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class ItemHorseHeadGem extends Item

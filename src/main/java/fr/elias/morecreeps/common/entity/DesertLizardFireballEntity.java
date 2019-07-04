@@ -60,7 +60,7 @@ public class DesertLizardFireballEntity extends Entity {
         return d < d1 * d1;
     }
 
-    public DesertLizardFireballEntity(World world, EntityLivingBase entityliving, double d, double d1, double d2) {
+    public DesertLizardFireballEntity(World world, LivingEntity entityliving, double d, double d1, double d2) {
         super(null, world);
         xTile = -1;
         yTile = -1;

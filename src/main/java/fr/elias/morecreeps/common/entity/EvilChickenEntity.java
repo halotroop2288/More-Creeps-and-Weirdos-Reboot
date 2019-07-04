@@ -1,11 +1,17 @@
 package fr.elias.morecreeps.common.entity;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.lists.ItemList;
 
 public class EvilChickenEntity extends MobEntity
 {
@@ -31,29 +37,29 @@ public class EvilChickenEntity extends MobEntity
         timeUntilNextEgg = rand.nextInt(300) + 50;
         isImmuneToFire = true;
         modelsize = 1.5F;
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 0.3D, false));
-        this.tasks.addTask(5, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
-        this.tasks.addTask(7, new EntityAILookIdle(this));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.3D, false));
+//        this.tasks.addTask(5, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(6, new EntityAIWatchClosest(this, PlayerEntity.class, 6.0F));
+//        this.tasks.addTask(7, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
     }
 
     public void applyEntityAttributes()
     {
     	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1D);
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25D);
+    	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
+    	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
     }
     
     /**
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world)
+    public void livingTick(World world)
     {
-        super.onLivingUpdate();
+        super.livingTick();
         field_756_e = field_752_b;
         field_757_d = destPos;
         destPos += (double)(onGround ? -1 : 4) * 0.29999999999999999D;
@@ -86,7 +92,7 @@ public class EvilChickenEntity extends MobEntity
         {
             world.playSound(this, "morecreeps:evileggbirth", 1.0F, 1.0F);
             world.playSound(this, "mob.chickenplop", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
-            dropItem(MoreCreepsReboot.evilegg, 1);
+            dropItem(ItemList.evil_egg, 1);
             timeUntilNextEgg = rand.nextInt(600) + 200;
         }
     }
@@ -119,21 +125,21 @@ public class EvilChickenEntity extends MobEntity
      */
     public boolean attackEntityFrom(DamageSource damagesource, float i, World world)
     {
-        EntityLivingBase entity = (EntityLivingBase) damagesource.getEntity();
-        EntityPlayer player = (EntityPlayer) entity;
+        LivingEntity entity = (LivingEntity) damagesource.getTrueSource();
+        PlayerEntity player = (PlayerEntity) entity;
         double d = -MathHelper.sin((player.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((player.rotationYaw * (float)Math.PI) / 180F);
-        motionX = d * 4D;
-        motionZ = d1 * 4D;
+        moveForward = (float) (d * 4D);
+        moveStrafing = (float) (d1 * 4D);
 
         if (super.attackEntityFrom(DamageSource.causeMobDamage(this), i))
         {
-            if (riddenByEntity == entity || ridingEntity == entity)
+            if (getPassengers() == entity || getRidingEntity() == entity)
             {
                 return true;
             }
 
-            if (entity != this && world.getDifficulty() != EnumDifficulty.PEACEFUL)
+            if (entity != this && world.getDifficulty() != Difficulty.PEACEFUL)
             {
                 setRevengeTarget(entity);
             }
@@ -204,6 +210,6 @@ public class EvilChickenEntity extends MobEntity
      */
     protected Item getDropItem()
     {
-        return Items.feather;
+        return Items.FEATHER;
     }
 }

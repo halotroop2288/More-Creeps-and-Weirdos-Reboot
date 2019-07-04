@@ -3,15 +3,30 @@ package fr.elias.morecreeps.common.entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
+@SuppressWarnings("deprecation")
 public class DigBugEntity extends MobEntity
 {
     private static final Item dropItems[];
@@ -31,32 +46,33 @@ public class DigBugEntity extends MobEntity
     public int hunger;
     public int waittimer;
     public float modelsize;
-    public String texture;
+    public ResourceLocation texture;
 	private int attackTime;
 
     public DigBugEntity(World world)
     {
         super(null, world);
-        texture = "morecreeps:textures/entity/digbug0.png";
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "digbug0.png");
         angerLevel = 0;
         attackRange = 16D;
-        setSize(0.5F, 1.2F);
+//        setSize(0.5F, 1.2F);
         hunger = rand.nextInt(3) + 1;
         digstage = 0;
         digtimer = rand.nextInt(500) + 500;
         lifespan = 5000;
         holedepth = 0;
         modelsize = 1.0F;
-        this.targetTasks.addTask(0, new DigBugEntity.AIFindPlayerToAttack());
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        this.targetTasks.addTask(0, new DigBugEntity.AIFindPlayerToAttack());
+//        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
     
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(60D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(4D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60D);
+    	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
+    	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4D);
     }
 
     public float getShadowSize()
@@ -67,7 +83,8 @@ public class DigBugEntity extends MobEntity
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate()
+    @Override
+    public void tick()
     {
         if (lifespan >= 0 && holedepth > 0)
         {
@@ -82,12 +99,13 @@ public class DigBugEntity extends MobEntity
                 digstage = 4;
             }
         }
-        super.onUpdate();
+        super.tick();
     }
 
     /**
      * Determines if an entity can be despawned, used on idle far away entities
      */
+    @Override
     protected boolean canDespawn()
     {
         return lifespan < 0;
@@ -97,13 +115,18 @@ public class DigBugEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world)
+    @SuppressWarnings("rawtypes")
+	@Override
+    public void livingTick()
     {
-        super.onLivingUpdate();
+    	World world = Minecraft.getInstance().world;
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	
+        super.livingTick();
 
         if (prevPosX != posX || prevPosY != posY)
         {
-            texture = (new StringBuilder()).append("/mob/creeps/digbug").append(String.valueOf(skinframe)).append(".png").toString();
+        	texture = new ResourceLocation("mob/creeps/digbug.png")
             skinframe++;
 
             if (skinframe > 3)
@@ -114,13 +137,13 @@ public class DigBugEntity extends MobEntity
 
         if (digstage == 0 && posY < 90D && digtimer-- < 1)
         {
-            int i = MathHelper.floor_double(posX);
-            int i1 = MathHelper.floor_double(getEntityBoundingBox().minY);
-            int i2 = MathHelper.floor_double(posZ);
+            int i = MathHelper.floor(posX);
+            int i1 = MathHelper.floor(getBoundingBox().minY);
+            int i2 = MathHelper.floor(posZ);
             Block l2 = world.getBlockState(new BlockPos(i, i1 - 1, i2)).getBlock();
             holedepth = rand.nextInt(2) + 3;
 
-            if (l2 == Blocks.grass)
+            if (l2 == Blocks.GRASS_BLOCK)
             {
                 if (checkHole(i, i1, i2, holedepth))
                 {
@@ -141,28 +164,28 @@ public class DigBugEntity extends MobEntity
 
         if (digstage == 1)
         {
-            int j = MathHelper.floor_double(posX);
-            int j1 = MathHelper.floor_double(getEntityBoundingBox().minY);
-            int j2 = MathHelper.floor_double(posZ);
-            world.setBlockToAir(new BlockPos(j, j1, j2));
-            world.setBlockToAir(new BlockPos(j, j1 + 1, j2));
+            int j = MathHelper.floor(posX);
+            int j1 = MathHelper.floor(getBoundingBox().minY);
+            int j2 = MathHelper.floor(posZ);
+            world.setBlockState(new BlockPos(j, j1, j2), Blocks.AIR.getDefaultState());
+            world.setBlockState(new BlockPos(j, j1 + 1, j2), Blocks.AIR.getDefaultState());
 
             if (posX < holeX + xx)
             {
-                motionX += 0.20000000298023224D;
+            	setMotion(getMotion().x + 0.20000000298023224D, getMotion().y, getMotion().z);
             }
             else
             {
-                motionX -= 0.20000000298023224D;
+            	setMotion(getMotion().x - 0.20000000298023224D, getMotion().y, getMotion().z);
             }
 
             if (posZ < holeZ + zz)
             {
-                motionZ += 0.20000000298023224D;
+            	setMotion(getMotion().x, getMotion().y, getMotion().z + 0.20000000298023224D);
             }
             else
             {
-                motionZ -= 0.20000000298023224D;
+            	setMotion(getMotion().x, getMotion().y, getMotion().z - 0.20000000298023224D);
             }
             if(world.isRemote)
             {
@@ -177,19 +200,19 @@ public class DigBugEntity extends MobEntity
 
                 if (rand.nextInt(50) == 0)
                 {
-                    i3 = Blocks.coal_ore;
+                    i3 = Blocks.COAL_ORE;
                 }
 
-                if (i3 != Blocks.sand && i3 != Blocks.log)
+                if (i3 != Blocks.SAND && i3 != Blocks.OAK_LOG)
                 {
                     for (int j3 = 0; j3 < rand.nextInt(2) + 1; j3++)
                     {
-                        EntityItem entityitem1 = new EntityItem(world, (int)(holeX + xx), (int)((holeY - yy) + 1.0D), (int)(holeZ + zz), new ItemStack(i3, 1, 1));
-                        world.spawnEntityInWorld(entityitem1);
+                    	ItemEntity entityitem1 = new ItemEntity(world, (int)(holeX + xx), (int)((holeY - yy) + 1.0D), (int)(holeZ + zz), new ItemStack(i3, 1));
+                        world.addEntity(entityitem1);
                     }
                 }
 
-                world.setBlockToAir(new BlockPos((int)(holeX + xx), (int)(holeY - yy), (int)(holeZ + zz)));
+                world.setBlockState(new BlockPos((int)(holeX + xx), (int)(holeY - yy), (int)(holeZ + zz)), Blocks.AIR.getDefaultState());
 
                 if (zz++ > 1.0D)
                 {
@@ -220,19 +243,17 @@ public class DigBugEntity extends MobEntity
 
                                 BubbleScumEntity creepsentitybubblescum = new BubbleScumEntity(world);
                                 creepsentitybubblescum.setLocationAndAngles(posX + (double)l3, posY + (double)holedepth + 2D, posZ + (double)i4, rotationYaw, 0.0F);
-                                creepsentitybubblescum.motionX = rand.nextFloat() * 1.5F;
-                                creepsentitybubblescum.motionY = rand.nextFloat() * 2.0F;
-                                creepsentitybubblescum.motionZ = rand.nextFloat() * 1.5F;
+                                creepsentitybubblescum.setMotion(rand.nextFloat() * 1.5F, rand.nextFloat() * 2.0F, rand.nextFloat() * 1.5F);
                                 creepsentitybubblescum.fallDistance = -25F;
                                 if(!world.isRemote)
-                                world.spawnEntityInWorld(creepsentitybubblescum);
+                                world.addEntity(creepsentitybubblescum);
                             }
 
                             digstage = 2;
-                            double moveSpeed = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+                            double moveSpeed = this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
                             moveSpeed = 0.0D;
                             lifespan = 5000;
-                            motionY = 0.44999998807907104D;
+                            setMotion(getMotion().x, 0.44999998807907104D, getMotion().z); // motionY
                             setPosition((int)(holeX + 1.0D), (int)(holeY - yy), (int)(holeZ + 1.0D));
                             digtimer = rand.nextInt(5) + 5;
                         }
@@ -253,7 +274,7 @@ public class DigBugEntity extends MobEntity
 
             digtimer = 50;
             List list = null;
-            list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(5D, 1.0D, 5D));
+            list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(5D, 1.0D, 5D));
 
             for (int k1 = 0; k1 < list.size(); k1++)
             {
@@ -261,8 +282,8 @@ public class DigBugEntity extends MobEntity
 
                 if ((entity != null) & (entity instanceof BubbleScumEntity))
                 {
-                    entity.setDead();
-                    double moveSpeed = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getBaseValue();
+                    entity.remove();
+                    double moveSpeed = this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
                     moveSpeed = 0.4F;
                     motionY = 0.60000002384185791D;
                     digstage = 3;
@@ -274,7 +295,7 @@ public class DigBugEntity extends MobEntity
         if (digstage == 3)
         {
             int l = rand.nextInt(25) + 15;
-            world.playSoundAtEntity(this, "morecreeps:digbugeat", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+            world.playSound(playerentity, this.getPosition(), SoundsHandler.DIG_BUG_EAT, SoundCategory.HOSTILE, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
 
             for (int l1 = 0; l1 < l; l1++)
             {
@@ -286,10 +307,11 @@ public class DigBugEntity extends MobEntity
                     }
             	}
 
-                EntityItem entityitem = entityDropItem(new ItemStack(Items.cookie, 1, 0), 1.0F);
-                entityitem.motionY += rand.nextFloat() * 2.0F + 3F;
-                entityitem.motionX += (rand.nextFloat() - rand.nextFloat()) * 0.33F;
-                entityitem.motionZ += (rand.nextFloat() - rand.nextFloat()) * 0.33F;
+            	ItemEntity entityitem = entityDropItem(new ItemStack(Items.COOKIE, 1), 1.0F);
+            	entityitem.setMotion(
+            			getMotion().x + rand.nextFloat() * 2.0F + 3F, // motionX
+            			getMotion().y + (rand.nextFloat() - rand.nextFloat()) * 0.33F, // motionY
+            			getMotion().z + (rand.nextFloat() - rand.nextFloat()) * 0.33F); // motionZ
             }
 
             if (hunger-- < 1)
@@ -299,7 +321,7 @@ public class DigBugEntity extends MobEntity
                 yy = holedepth;
                 zz = -1D;
                 digstage = 4;
-                world.playSoundAtEntity(this, "morecreeps:digbugfull", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                world.playSound(playerentity, this.getPosition(), SoundsHandler.DIG_BUG_FULL, SoundCategory.HOSTILE, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
             }
             else
             {
@@ -337,9 +359,9 @@ public class DigBugEntity extends MobEntity
             {
                 digtimer = rand.nextInt(10);
 
-                if (world.getBlockState(new BlockPos((int)(holeX + xx), (int)(holeY - yy), (int)(holeZ + zz))).getBlock() == Blocks.air)
+                if (world.getBlockState(new BlockPos((int)(holeX + xx), (int)(holeY - yy), (int)(holeZ + zz))).getBlock() == Blocks.AIR)
                 {
-                    world.setBlockState(new BlockPos((int)(holeX + xx), (int)(holeY - yy), (int)(holeZ + zz)), Blocks.dirt.getDefaultState());
+                    world.setBlockState(new BlockPos((int)(holeX + xx), (int)(holeY - yy), (int)(holeZ + zz)), Blocks.DIRT.getDefaultState());
                 }
 
                 if (zz++ > 2D)
@@ -389,7 +411,7 @@ public class DigBugEntity extends MobEntity
                 {
                     Block l1 = world.getBlockState(new BlockPos(i + j1, j - i1 - 1, k + k1)).getBlock();
 
-                    if (l1 == Blocks.air)
+                    if (l1 == Blocks.AIR)
                     {
                         return false;
                     }
@@ -407,16 +429,15 @@ public class DigBugEntity extends MobEntity
     {
         double d = entity.posX - posX;
         double d1 = entity.posZ - posZ;
-        float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
-        motionX = (d / (double)f1) * 0.40000000000000002D * 0.10000000192092896D + motionX * 0.18000000098023225D;
-        motionZ = (d1 / (double)f1) * 0.40000000000000002D * 0.070000001920928964D + motionZ * 0.18000000098023225D;
+        float f1 = MathHelper.sqrt(d * d + d1 * d1);
+        setMotion((d / (double)f1) * 0.40000000000000002D * 0.10000000192092896D + getMotion().x * 0.18000000098023225D,
+        		getMotion().y,
+        		(d1 / (double)f1) * 0.40000000000000002D * 0.070000001920928964D + getMotion().z * 0.18000000098023225D);
 
-        if ((double)f < 2D - (1.0D - (double)modelsize) && entity.getEntityBoundingBox().maxY > getEntityBoundingBox().minY && entity.getEntityBoundingBox().minY < getEntityBoundingBox().maxY)
+        if ((double)f < 2D - (1.0D - (double)modelsize) && entity.getBoundingBox().maxY > getBoundingBox().minY && entity.getBoundingBox().minY < getBoundingBox().maxY)
         {
             attackTime = 10;
-            entity.motionX = -(motionX * 3D);
-            entity.motionY = rand.nextFloat() * 2.133F;
-            entity.motionZ = -(motionZ * 3D);
+            entity.setMotion(-(getMotion().x * 3D), rand.nextFloat() * 2.133F, -(getMotion().z * 3D));
             this.attackEntityAsMob(entity);
         }
     }
@@ -424,39 +445,41 @@ public class DigBugEntity extends MobEntity
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void writeAdditional(CompoundNBT compound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setShort("Anger", (short)angerLevel);
-        nbttagcompound.setInteger("DigStage", digstage);
-        nbttagcompound.setInteger("DigTimer", digtimer);
-        nbttagcompound.setInteger("LifeSpan", lifespan);
-        nbttagcompound.setInteger("HoleDepth", holedepth);
-        nbttagcompound.setDouble("XX", xx);
-        nbttagcompound.setDouble("YY", yy);
-        nbttagcompound.setDouble("ZZ", zz);
-        nbttagcompound.setDouble("holeX", holeX);
-        nbttagcompound.setDouble("holeY", holeY);
-        nbttagcompound.setDouble("holeZ", holeZ);
+        super.writeAdditional(compound);
+        compound.putShort("Anger", (short)angerLevel);
+        compound.putInt("DigStage", digstage);
+        compound.putInt("DigTimer", digtimer);
+        compound.putInt("LifeSpan", lifespan);
+        compound.putInt("HoleDepth", holedepth);
+        compound.putDouble("XX", xx);
+        compound.putDouble("YY", yy);
+        compound.putDouble("ZZ", zz);
+        compound.putDouble("holeX", holeX);
+        compound.putDouble("holeY", holeY);
+        compound.putDouble("holeZ", holeZ);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void readAdditional(CompoundNBT compound)
     {
-        super.readEntityFromNBT(nbttagcompound);
-        angerLevel = nbttagcompound.getShort("Anger");
-        digstage = nbttagcompound.getInteger("DigStage");
-        digtimer = nbttagcompound.getInteger("DigTimer");
-        lifespan = nbttagcompound.getInteger("LifeSpan");
-        holedepth = nbttagcompound.getInteger("HoleDepth");
-        xx = nbttagcompound.getDouble("XX");
-        yy = nbttagcompound.getDouble("YY");
-        zz = nbttagcompound.getDouble("ZZ");
-        holeX = nbttagcompound.getDouble("holeX");
-        holeY = nbttagcompound.getDouble("holeY");
-        holeZ = nbttagcompound.getDouble("holeZ");
+        super.readAdditional(compound);
+        angerLevel = compound.getShort("Anger");
+        digstage = compound.getInt("DigStage");
+        digtimer = compound.getInt("DigTimer");
+        lifespan = compound.getInt("LifeSpan");
+        holedepth = compound.getInt("HoleDepth");
+        xx = compound.getDouble("XX");
+        yy = compound.getDouble("YY");
+        zz = compound.getDouble("ZZ");
+        holeX = compound.getDouble("holeX");
+        holeY = compound.getDouble("holeY");
+        holeZ = compound.getDouble("holeZ");
     }
 
     /**
@@ -464,13 +487,15 @@ public class DigBugEntity extends MobEntity
      */
     public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
         int j1 = world.countEntities(DigBugEntity.class);
-        return (i1 == Blocks.grass || i1 == Blocks.dirt) && i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(25) == 0 && /*l > 10 &&*/ j1 < 10;
+        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(25) == 0 && /*l > 10 &&*/ j1 < 10;
     }
 
     /**
@@ -483,9 +508,9 @@ public class DigBugEntity extends MobEntity
 
     public boolean attackEntityFrom(Entity entity, float i)
     {
-        if (entity instanceof EntityPlayer)
+        if (entity instanceof PlayerEntity)
         {
-            List list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(32D, 32D, 32D));
+            List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(32D, 32D, 32D));
 
             for (int j = 0; j < list.size(); j++)
             {
@@ -508,13 +533,13 @@ public class DigBugEntity extends MobEntity
     {
         public AIFindPlayerToAttack()
         {
-            super(DigBugEntity.this, EntityPlayer.class, true);
+            super(DigBugEntity.this, PlayerEntity.class, true);
         }
         
         public void updateTask()
         {
-        	EntityLivingBase target = DigBugEntity.this.getAttackTarget();
-        	float f = getDistanceToEntity(target);
+        	LivingEntity target = DigBugEntity.this.getAttackTarget();
+        	float f = getDistance(target);
         	attackEntity(target, f);
         }
         
@@ -538,28 +563,29 @@ public class DigBugEntity extends MobEntity
     
     private void becomeAngryAt(Entity entity)
     {
-        setRevengeTarget((EntityLivingBase) entity);
+        setRevengeTarget((LivingEntity) entity);
         angerLevel = 400 + rand.nextInt(400);
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
         if (digstage == 0)
         {
-            return "morecreeps:digbug";
+            return null; // Sound "digbug" not found
         }
 
         if (digstage == 1 || digstage == 4)
         {
-            return "morecreeps:digbugdig";
+            return SoundsHandler.DIG_BUG_DIG;
         }
 
         if (digstage == 2)
         {
-            return "morecreeps:digbugcall";
+            return SoundsHandler.DIG_BUG_CALL;
         }
         else
         {
@@ -570,17 +596,19 @@ public class DigBugEntity extends MobEntity
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
-        return "morecreeps:digbughurt";
+        return SoundsHandler.DIG_BUG_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    @Override
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:digbugdeath";
+        return SoundsHandler.DIG_BUG_DEATH;
     }
 
     /**
@@ -595,7 +623,7 @@ public class DigBugEntity extends MobEntity
     {
         dropItems = (new Item[]
                 {
-                    Item.getItemFromBlock(Blocks.cobblestone), Item.getItemFromBlock(Blocks.gravel), Item.getItemFromBlock(Blocks.cobblestone), Item.getItemFromBlock(Blocks.gravel), Item.getItemFromBlock(Blocks.iron_ore), Item.getItemFromBlock(Blocks.mossy_cobblestone)
+                    Item.getItemFromBlock(Blocks.COBBLESTONE), Item.getItemFromBlock(Blocks.GRAVEL), Item.getItemFromBlock(Blocks.COBBLESTONE), Item.getItemFromBlock(Blocks.GRAVEL), Item.getItemFromBlock(Blocks.IRON_ORE), Item.getItemFromBlock(Blocks.MOSSY_COBBLESTONE)
                 });
     }
 }

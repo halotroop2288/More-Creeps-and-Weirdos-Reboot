@@ -3,28 +3,25 @@ package fr.elias.morecreeps.client.render;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelAtom;
-import fr.elias.morecreeps.client.render.layers.LayerAtom;
 import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.entity.AtomEntity;
 
 public class CREEPSRenderAtom extends RenderLiving
 {
-    private ModelBase scaleAmount;
+    private Model scaleAmount;
     protected CREEPSModelAtom modelBipedMain;
 
     public CREEPSRenderAtom(CREEPSModelAtom creepsmodelatom, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelatom, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelatom, f);
         modelBipedMain = creepsmodelatom;
         scaleAmount = creepsmodelatom;
         this.addLayer(new LayerAtom(this));
@@ -42,7 +39,7 @@ public class CREEPSRenderAtom extends RenderLiving
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         scaleSlime((AtomEntity)entityliving, f);
     }
@@ -56,12 +53,12 @@ public class CREEPSRenderAtom extends RenderLiving
     public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
     {
         shadowSize = 0.0F;
-        doRender((EntityLivingBase)entity, d, d1, d2, f, f1);
+        doRender((LivingEntity)entity, d, d1, d2, f, f1);
     }
 
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
-		return new ResourceLocation(Reference.MOD_ID, 
+		return new ResourceLocation(Reference.MODID, 
 				Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_ATOM);
 	}
 }

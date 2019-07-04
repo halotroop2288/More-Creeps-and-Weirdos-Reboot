@@ -264,11 +264,11 @@ public class HotdogTrainingGUI extends Screen
         NonNullList<ItemStack> aitemstack = ((PlayerEntity)(playerentity)).inventory.mainInventory;
         int i = 0;
 
-        for (int j = 0; j < aitemstack.length; j++)
+        for (int j = 0; j < aitemstack.size(); j++)
         {
             ItemStack itemstack = aitemstack[j];
 
-            if (itemstack != null && itemstack.getItem() == Items.bone)
+            if (itemstack != null && itemstack.getItem() == Items.BONE)
             {
                 i += itemstack.getCount();
             }
@@ -280,7 +280,7 @@ public class HotdogTrainingGUI extends Screen
             boolean flag = false;
             label0:
 
-            for (int i1 = 0; i1 < aitemstack.length; i1++)
+            for (int i1 = 0; i1 < aitemstack.size(); i1++)
             {
                 ItemStack itemstack1 = aitemstack[i1];
 

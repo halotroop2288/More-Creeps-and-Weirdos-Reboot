@@ -312,7 +312,7 @@ public class LollimanEntity extends AnimalEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.grass || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
+        return (i1 == Blocks.grass || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
     }
 
     /**

@@ -318,7 +318,7 @@ public class BulletEntity extends Entity
                     }
                 }
 
-                if ((movingobjectposition.entityHit instanceof EntityLiving) && playerFire || !(movingobjectposition.entityHit instanceof FloobEntity) || playerFire)
+                if ((movingobjectposition.entityHit instanceof LivingEntity) && playerFire || !(movingobjectposition.entityHit instanceof FloobEntity) || playerFire)
                 {
                     if (!(movingobjectposition.entityHit instanceof RobotToddEntity) && !(movingobjectposition.entityHit instanceof RobotTedEntity) && CREEPSConfig.Blood)
                     {
@@ -357,8 +357,8 @@ public class BulletEntity extends Entity
 
                 if (CREEPSConfig.rayGunFire && blockHit == Blocks.glass)
                 {
-                    world.setBlockToAir(new BlockPos(hitX, hitY, hitZ));
-                    Blocks.glass.onBlockDestroyedByPlayer(world, new BlockPos(hitX, hitY, hitZ), world.getBlockState(new BlockPos(hitX, hitY, hitZ)));
+                    world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.AIR.getDefaultState());
+                    Blocks.GLASS.onBlockDestroyedByPlayer(world, new BlockPos(hitX, hitY, hitZ), world.getBlockState(new BlockPos(hitX, hitY, hitZ)));
                 }
 
                 setDead();

@@ -3,6 +3,7 @@ package fr.elias.morecreeps.common.entity;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -79,15 +80,15 @@ public class CavemanEntity extends MobEntity
         fat = rand.nextFloat() * 1.0F - rand.nextFloat() * 0.55F;
         modelsize = (1.25F + rand.nextFloat() * 1.0F) - rand.nextFloat() * 0.75F;
         modelsizebase = modelsize;
-        setSize(width * 0.8F + fat, height * 1.3F + fat);
+//        setSize(width * 0.8F + fat, height * 1.3F + fat);
         setCaveTexture();
-        this.targetTasks.addTask(0, new CavemanEntity.AIFindPlayerToAttack());
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        this.targetTasks.addTask(0, new CavemanEntity.AIFindPlayerToAttack());
+//        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
 
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
+    	super.registerAttributes();
     	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
     	
@@ -96,9 +97,10 @@ public class CavemanEntity extends MobEntity
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate(World world)
+    @Override
+    public void tick(World world)
     {
-        super.onUpdate();
+        super.tick();
 
         if (frozen > 0 && world.getBlockState(new BlockPos(MathHelper.floor(posX), MathHelper.floor(posY), MathHelper.floor(posZ))).getBlock() == Blocks.AIR)
         {
@@ -124,7 +126,10 @@ public class CavemanEntity extends MobEntity
 
             for (int i = 0; i < 4; i++)
             {
-                if (world.getBlockState(new BlockPos(houseX, houseY, houseZ)).getBlock() == Blocks.AIR || world.getBlockState(new BlockPos(houseX + 1, houseY, houseZ)).getBlock() == Blocks.AIR || world.getBlockState(new BlockPos(houseX + 2, houseY, houseZ + 4)) == Blocks.air || world.getBlockState(new BlockPos(houseX, houseY, houseZ + 2)).getBlock() == Blocks.air)
+                if (world.getBlockState(new BlockPos(houseX, houseY, houseZ)).getBlock() == Blocks.AIR ||
+                	world.getBlockState(new BlockPos(houseX + 1, houseY, houseZ)).getBlock() == Blocks.AIR ||
+                	world.getBlockState(new BlockPos(houseX + 2, houseY, houseZ + 4)).getBlock() == Blocks.AIR ||
+                	world.getBlockState(new BlockPos(houseX, houseY, houseZ + 2)).getBlock() == Blocks.AIR)
                 {
                     houseY--;
                 }
@@ -321,7 +326,7 @@ public class CavemanEntity extends MobEntity
         houseY = MathHelper.floor(posY);
         houseZ = MathHelper.floor(posZ);
 
-        if (world.getBlockState(new BlockPos(houseX, houseY - 1, houseZ)).getBlock() == Blocks.air)
+        if (world.getBlockState(new BlockPos(houseX, houseY - 1, houseZ)).getBlock() == Blocks.AIR)
         {
             houseY--;
         }
@@ -334,7 +339,7 @@ public class CavemanEntity extends MobEntity
             {
                 for (int i1 = 0; i1 < 3; i1++)
                 {
-                    if (world.getBlockState(new BlockPos(houseX + k, houseY + i1, houseZ + i)).getBlock() == Blocks.air)
+                    if (world.getBlockState(new BlockPos(houseX + k, houseY + i1, houseZ + i)).getBlock() == Blocks.AIR)
                     {
                         area++;
                     }
@@ -395,7 +400,7 @@ public class CavemanEntity extends MobEntity
         public void updateTask()
         {
         	LivingEntity target = CavemanEntity.this.getAttackTarget();
-        	float f = getDistanceToEntity(target);
+        	float f = getDistance(target);
         	attackEntity(target, f);
         }
         
@@ -418,7 +423,7 @@ public class CavemanEntity extends MobEntity
 
     public void updateRiderPosition()
     {
-        riddenByEntity.setPosition(posX, posY + getMountedYOffset() + riddenByEntity.getYOffset(), posZ);
+        getRidingEntity().setPosition(posX, posY + getMountedYOffset() + getRidingEntity().getYOffset(), posZ);
     }
 
     /**
@@ -433,11 +438,12 @@ public class CavemanEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    @Override
+    public void livingTick()
     {
         if (frozen < 1)
         {
-            super.onLivingUpdate();
+            super.livingTick();
         }
 
         if (handleWaterMovement())
@@ -455,9 +461,9 @@ public class CavemanEntity extends MobEntity
      * Takes a coordinate in and returns a weight to determine how likely this creature will try to path to the block.
      * Args: x, y, z
      */
-    public float func_180484_a(BlockPos bp)
+    public float getBlockPathWeight(BlockPos bp)
     {
-        if (world.getBlockState(bp.down()) == Blocks.gravel.getDefaultState() || world.getBlockState(bp.down()) == Blocks.stone.getDefaultState())
+        if (world.getBlockState(bp.down()) == Blocks.GRAVEL.getDefaultState() || world.getBlockState(bp.down()) == Blocks.STONE.getDefaultState())
         {
             return 10F;
         }
@@ -584,8 +590,12 @@ public class CavemanEntity extends MobEntity
         int j = MathHelper.floor(getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
-        IBlockState i1 = world.getBlockState(new BlockPos(i, j - 1, k));
-        return (i1 == Blocks.SNOW.getDefaultState() || i1 == Blocks.ICE.getDefaultState() || i1 == Blocks.SNOW.getDefaultState()) && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0;
+        BlockState i1 = world.getBlockState(new BlockPos(i, j - 1, k));
+        return (i1 == Blocks.SNOW.getDefaultState() ||
+        		i1 == Blocks.ICE.getDefaultState() ||
+        		i1 == Blocks.SNOW.getDefaultState())
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		;
     }
 
     /**

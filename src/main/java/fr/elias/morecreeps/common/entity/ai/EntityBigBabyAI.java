@@ -1,6 +1,6 @@
 package fr.elias.morecreeps.common.entity.ai;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import fr.elias.morecreeps.common.entity.BabyMummyEntity;
 import fr.elias.morecreeps.common.entity.BigBabyEntity;
@@ -15,15 +15,15 @@ public class EntityBigBabyAI extends EntityAIBase {
 	@Override
 	public boolean shouldExecute()
 	{
-		EntityLivingBase entitylivingbase = this.bbaby.getAttackTarget();
+		LivingEntity entitylivingbase = this.bbaby.getAttackTarget();
 		return entitylivingbase != null && entitylivingbase.isEntityAlive();
 	}
 	
 	public void updateTask()
     {
     	--bbaby.attackTime;
-        EntityLivingBase entitylivingbase = this.bbaby.getAttackTarget();
-        double d0 = this.bbaby.getDistanceSqToEntity(entitylivingbase);
+        LivingEntity entitylivingbase = this.bbaby.getAttackTarget();
+        double d0 = this.bbaby.getDistanceSq(entitylivingbase);
 
         if (d0 < 4.0D)
         {
@@ -39,11 +39,11 @@ public class EntityBigBabyAI extends EntityAIBase {
         {
             // ATTACK ENTITY GOES HERE
         	bbaby.attackEntity(entitylivingbase, (float)d0);
-            this.bbaby.getLookHelper().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
+            this.bbaby.getLookController().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
         }
         else
         {
-            this.bbaby.getNavigator().clearPathEntity();
+            this.bbaby.getNavigator().clearPath();
             this.bbaby.getMoveHelper().setMoveTo(entitylivingbase.posX, entitylivingbase.posY, entitylivingbase.posZ, 0.5D);
         }
     }

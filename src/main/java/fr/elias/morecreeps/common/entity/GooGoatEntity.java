@@ -65,12 +65,13 @@ public class GooGoatEntity extends SheepEntity
         this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-        this.targetTasks.addTask(2, new EntityGooGoat.AIAttackEntity(this, PlayerEntity.class, true));
+        this.targetTasks.addTask(2, new GooGoatEntity.AIAttackEntity(this, PlayerEntity.class, true));
     }
 
-    protected void applyEntityAttributes()
+    @Override
+    protected void registerAttributess()
     {
-        super.applyEntityAttributes();
+        super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(25);
         this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
         this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);

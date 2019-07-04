@@ -6,8 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -80,12 +80,12 @@ public class CREEPSRenderRobotTed extends RenderLiving
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         scaleSlime((RobotTedEntity)entityliving, f);
     }
 
-    /*protected int shouldRenderPass(EntityLiving entityliving, int i, float f)
+    /*protected int shouldRenderPass(LivingEntity entityliving, int i, float f)
     {
         return func_179_a((CREEPSEntityRobotTed)entityliving, i, f);
     }*/
@@ -130,7 +130,7 @@ public class CREEPSRenderRobotTed extends RenderLiving
             	GL11.glEnable(GL11.GL_ALPHA_TEST);
             }*/
 
-            float f9 = creepsentityrobotted.getBrightness(f1);
+            float f9 = creepsentityrobotted.getBrightness();
             int j = getColorMultiplier(creepsentityrobotted, f9, f1);
 
             if ((j >> 24 & 0xff) > 0 || creepsentityrobotted.hurtTime > 0 || creepsentityrobotted.deathTime > 0)
@@ -170,7 +170,7 @@ public class CREEPSRenderRobotTed extends RenderLiving
 //        passSpecialRender(creepsentityrobotted, d, d1, d2);
     }
 
-    public void doRender(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
+    public void doRender(LivingEntity entityliving, double d, double d1, double d2, float f, float f1)
     {
         doRenderTed((RobotTedEntity)entityliving, d, d1, d2, f, f1);
     }

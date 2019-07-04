@@ -1,22 +1,18 @@
 package fr.elias.morecreeps.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import fr.elias.morecreeps.client.render.layers.LayerBlackSoulEyes;
 import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.entity.BlackSoulEntity;
 
 public class CREEPSRenderBlackSoul extends RenderLiving
 {
-	ResourceLocation eyeglow = new ResourceLocation(Reference.MOD_ID, 
+	ResourceLocation eyeglow = new ResourceLocation(Reference.MODID, 
 			Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_BLACK_SOUL_EYES);
 	
     public CREEPSRenderBlackSoul(ModelBiped modelbiped, float f)
@@ -40,7 +36,7 @@ public class CREEPSRenderBlackSoul extends RenderLiving
         else
         {
         	this.bindTexture(eyeglow);
-            float f1 = (1.0F - creepsentityblacksoul.getBrightness(1.0F)) * 0.5F;
+            float f1 = (1.0F - creepsentityblacksoul.getBrightness()) * 0.5F;
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glDisable(GL11.GL_ALPHA_TEST);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -53,7 +49,7 @@ public class CREEPSRenderBlackSoul extends RenderLiving
     {
         GL11.glScalef(creepsentityblacksoul.modelsize, creepsentityblacksoul.modelsize, creepsentityblacksoul.modelsize);
     }
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         fattenup((BlackSoulEntity)entityliving, f);
     }

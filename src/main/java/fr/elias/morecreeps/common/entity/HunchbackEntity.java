@@ -160,7 +160,7 @@ public class HunchbackEntity extends MobEntity
                 moveForward = (float) (d * 0.5D);
                 world.playSound(playerentity, this.getPosition(), SoundsHandler.HUNCHBACK_HURT, SoundCategory.NEUTRAL, 2.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 setBeenAttacked();
-                this.setAttackTarget((LivingEntityBase) entity);
+                this.setAttackTarget((LivingEntity) entity);
                 super.attackEntityFrom(damagesource, i);
             }
         }
@@ -210,7 +210,7 @@ public class HunchbackEntity extends MobEntity
         {
             Entity entity1 = (Entity)world.loadedEntityList.get(i);
 
-            if (!(entity1 instanceof LivingEntity) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof PlayerEntity) || (entity1 instanceof EntityMob) || (entity1 instanceof HunchbackSkeletonEntity))
+            if (!(entity1 instanceof LivingEntity) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof PlayerEntity) || (entity1 instanceof MobEntity) || (entity1 instanceof HunchbackSkeletonEntity))
             {
                 continue;
             }

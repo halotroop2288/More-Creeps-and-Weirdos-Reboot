@@ -92,12 +92,12 @@ public class CastleKingEntity extends MobEntity
         double d1 = MathHelper.cos((rotationYaw * (float)Math.PI) / 180F);
         CREEPSFxSmoke creepsfxsmoke = new CREEPSFxSmoke(world, (posX + random.nextGaussian() * 0.5D) - random.nextGaussian() * 0.5D, ((posY - 1.0D) + random.nextGaussian() * 0.5D) - random.nextGaussian() * 0.5D, (posZ + random.nextGaussian() * 0.5D) - random.nextGaussian() * 0.5D, MoreCreepsReboot.partBlue, 0.55F, 0);
         creepsfxsmoke.renderDistanceWeight = 20D;
-        Minecraft.getMinecraft().effectRenderer.addEffect(creepsfxsmoke);
+        Minecraft.getInstance().effectRenderer.addEffect(creepsfxsmoke);
 
         if (intrudercheck-- < 0 && this.attackEntityAsMob(null))
         {
             intrudercheck = 25;
-            PlayerEntity playerentity = world.getClosestPlayerToEntity(this, 10D);
+            PlayerEntity playerentity = world.getClosestPlayer(this, 10D);
 
             if (playerentity != null && canEntityBeSeen(playerentity))
             {
@@ -313,7 +313,7 @@ public class CastleKingEntity extends MobEntity
 
         do
         {
-            if (i >= aitemstack.length)
+            if (i >= aitemstack.size())
             {
                 break;
             }

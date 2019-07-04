@@ -5,16 +5,20 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.lists.ItemList;
 
 public class FrisbeeEntity extends ThrowableEntity implements IProjectile
 {
-    private int field_20056_b;
-    private int field_20055_c;
-    private int field_20054_d;
-    private int field_20053_e;
-    public int field_20057_a;
+    private int xTileNBT;
+    private int yTileNBT;
+    private int zTileNBT;
+    private int inTileNBT;
+    public int shakeNBT;
     private LivingEntity livingentity;
     private int field_20050_h;
     private int field_20049_i;
@@ -24,8 +28,8 @@ public class FrisbeeEntity extends ThrowableEntity implements IProjectile
 
     public FrisbeeEntity(World world)
     {
-        super(world);
-        setSize(0.25F, 0.25F);
+        super(null, world);
+//        setSize(0.25F, 0.25F);
         initialVelocity = 1.0D;
         bounceFactor = 0.14999999999999999D;
         lifespan = 120;
@@ -36,7 +40,7 @@ public class FrisbeeEntity extends ThrowableEntity implements IProjectile
      */
     public boolean isInRangeToRenderDist(double d)
     {
-        double d1 = getEntityBoundingBox().getAverageEdgeLength() * 4D;
+        double d1 = getBoundingBox().getAverageEdgeLength() * 4D;
         d1 *= 64D;
         return d < d1 * d1;
     }
@@ -64,7 +68,7 @@ public class FrisbeeEntity extends ThrowableEntity implements IProjectile
 
     public void setThrowableHeading(double d, double d1, double d2, float f, float f1)
     {
-        float f2 = MathHelper.sqrt_double(d * d + d1 * d1 + d2 * d2);
+        float f2 = MathHelper.sqrt(d * d + d1 * d1 + d2 * d2);
         d /= f2;
         d1 /= f2;
         d2 /= f2;
@@ -77,7 +81,7 @@ public class FrisbeeEntity extends ThrowableEntity implements IProjectile
         motionX = d;
         motionY = d1;
         motionZ = d2;
-        float f3 = MathHelper.sqrt_double(d * d + d2 * d2);
+        float f3 = MathHelper.sqrt(d * d + d2 * d2);
         prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
         prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / Math.PI);
         field_20050_h = 0;
@@ -94,7 +98,7 @@ public class FrisbeeEntity extends ThrowableEntity implements IProjectile
 
         if (prevRotationPitch == 0.0F && prevRotationYaw == 0.0F)
         {
-            float f = MathHelper.sqrt_double(d * d + d2 * d2);
+            float f = MathHelper.sqrt(d * d + d2 * d2);
             prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
             prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f) * 180D) / Math.PI);
         }
@@ -143,7 +147,7 @@ public class FrisbeeEntity extends ThrowableEntity implements IProjectile
         motionY *= 0.999D;
         motionZ *= 0.97999999999999998D;
 
-        if (isCollidedVertically)
+        if (collidedVertically)
         {
             motionX *= 0.25D;
             motionZ *= 0.25D;
@@ -151,14 +155,14 @@ public class FrisbeeEntity extends ThrowableEntity implements IProjectile
 		if(onGround && lifespan--<0)
 		{
 			if(!world.isRemote)
-			this.dropItem(MoreCreepsReboot.frisbee, 1);
-			setDead();
+			this.entityDropItem(ItemList.frisbee, 1);
+			remove();
 		}
     }
 
     /*public void onCollideWithPlayer(EntityPlayer entityplayer)
     {
-        if (onGround && livingentity == entityplayer && field_20057_a <= 0 && !world.isRemote)
+        if (onGround && livingentity == entityplayer && shakeNBT <= 0 && !world.isRemote)
         {
             world.playSoundAtEntity(this, "random.pop", 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
             setDead();
@@ -170,28 +174,35 @@ public class FrisbeeEntity extends ThrowableEntity implements IProjectile
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    public void writeEntityToNBT(CompoundNBT nbttagcompound)
     {
-        nbttagcompound.setShort("xTile", (short)field_20056_b);
-        nbttagcompound.setShort("yTile", (short)field_20055_c);
-        nbttagcompound.setShort("zTile", (short)field_20054_d);
-        nbttagcompound.setByte("inTile", (byte)field_20053_e);
-        nbttagcompound.setByte("shake", (byte)field_20057_a);
+        nbttagcompound.putShort("xTile", (short)xTileNBT);
+        nbttagcompound.putShort("yTile", (short)yTileNBT);
+        nbttagcompound.putShort("zTile", (short)zTileNBT);
+        nbttagcompound.putByte("inTile", (byte)inTileNBT);
+        nbttagcompound.putByte("shake", (byte)shakeNBT);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    public void readEntityFromNBT(CompoundNBT nbttagcompound)
     {
-        field_20056_b = nbttagcompound.getShort("xTile");
-        field_20055_c = nbttagcompound.getShort("yTile");
-        field_20054_d = nbttagcompound.getShort("zTile");
-        field_20053_e = nbttagcompound.getByte("inTile") & 0xff;
-        field_20057_a = nbttagcompound.getByte("shake") & 0xff;
+        xTileNBT = nbttagcompound.getShort("xTile");
+        yTileNBT = nbttagcompound.getShort("yTile");
+        zTileNBT = nbttagcompound.getShort("zTile");
+        inTileNBT = nbttagcompound.getByte("inTile") & 0xff;
+        shakeNBT = nbttagcompound.getByte("shake") & 0xff;
     }
 	@Override
-	protected void onImpact(MovingObjectPosition p_70184_1_)
-	{
+	protected void onImpact(RayTraceResult result) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	protected void registerData() {
+		// TODO Auto-generated method stub
+		
 	}
 }

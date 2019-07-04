@@ -7,15 +7,19 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.platform.GlStateManager;
 
 import fr.elias.morecreeps.common.entity.GuineaPigEntity;
 
@@ -54,11 +58,11 @@ public class GuineaPigTrainingGUI extends Screen
         char c = '\260';
         char c1 = '\246';
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.renderEngine.bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
+        minecraft.renderEngine().bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
         int j = (width - c) / 2;
         int k = (height - c1) / 2;
         drawTexturedModalRect(j, k, 0, 0, (int)xSize_lo, (int)ySize_lo);
-        drawEntityOnScreen(j + 51, k + 75, 30, (float)(j + 51) - mouseX, (float)(k + 75 - 50) - mouseY, this.mc.thePlayer);
+        drawEntityOnScreen(j + 51, k + 75, 30, (float)(j + 51) - mouseX, (float)(k + 75 - 50) - mouseY, this.minecraft.player);
 
         /*GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
@@ -67,64 +71,64 @@ public class GuineaPigTrainingGUI extends Screen
         float f1 = 30F;
         GL11.glScalef(-f1, f1, f1);
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        float f2 = mc.thePlayer.renderYawOffset;
-        float f3 = mc.thePlayer.rotationYaw;
-        float f4 = mc.thePlayer.rotationPitch;
+        float f2 = minecraft.player.renderYawOffset;
+        float f3 = minecraft.player.rotationYaw;
+        float f4 = minecraft.player.rotationPitch;
         float f5 = (float)(j + 51) - xSize_lo;
         float f6 = (float)((k + 75) - 50) - ySize_lo;
         GL11.glRotatef(135F, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
         GL11.glRotatef(-135F, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-(float)Math.atan(f6 / 40F) * 20F, 1.0F, 0.0F, 0.0F);
-        mc.thePlayer.renderYawOffset = (float)Math.atan(f5 / 40F) * 20F;
-        mc.thePlayer.rotationYaw = (float)Math.atan(f5 / 40F) * 40F;
-        mc.thePlayer.rotationPitch = -(float)Math.atan(f6 / 40F) * 20F;
-        GL11.glTranslatef(0.0F, mc.thePlayer.yOffset, 0.0F);
-        RenderManager.instance.renderEntityWithPosYaw(mc.thePlayer, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
-        mc.thePlayer.renderYawOffset = f2;
-        mc.thePlayer.rotationYaw = f3;
-        mc.thePlayer.rotationPitch = f4;
+        minecraft.player.renderYawOffset = (float)Math.atan(f5 / 40F) * 20F;
+        minecraft.player.rotationYaw = (float)Math.atan(f5 / 40F) * 40F;
+        minecraft.player.rotationPitch = -(float)Math.atan(f6 / 40F) * 20F;
+        GL11.glTranslatef(0.0F, minecraft.player.yOffset, 0.0F);
+        RenderManager.instance.renderEntityWithPosYaw(minecraft.player, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+        minecraft.player.renderYawOffset = f2;
+        minecraft.player.rotationYaw = f3;
+        minecraft.player.rotationPitch = f4;
         GL11.glPopMatrix();
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);*/
     }
-    public static void drawEntityOnScreen(int p_147046_0_, int p_147046_1_, int p_147046_2_, float p_147046_3_, float p_147046_4_, EntityLivingBase p_147046_5_)
+    public static void drawEntityOnScreen(int p_147046_0_, int p_147046_1_, int p_147046_2_, float p_147046_3_, float p_147046_4_, LivingEntity livingentity)
     {
         GlStateManager.enableColorMaterial();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float)p_147046_0_, (float)p_147046_1_, 50.0F);
-        GlStateManager.scale((float)(-p_147046_2_), (float)p_147046_2_, (float)p_147046_2_);
-        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-        float f2 = p_147046_5_.renderYawOffset;
-        float f3 = p_147046_5_.rotationYaw;
-        float f4 = p_147046_5_.rotationPitch;
-        float f5 = p_147046_5_.prevRotationYawHead;
-        float f6 = p_147046_5_.rotationYawHead;
-        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.translatef((float)p_147046_0_, (float)p_147046_1_, 50.0F);
+        GlStateManager.scalef((float)(-p_147046_2_), (float)p_147046_2_, (float)p_147046_2_);
+        GlStateManager.rotatef(180.0F, 0.0F, 0.0F, 1.0F);
+        float f2 = livingentity.renderYawOffset;
+        float f3 = livingentity.rotationYaw;
+        float f4 = livingentity.rotationPitch;
+        float f5 = livingentity.prevRotationYawHead;
+        float f6 = livingentity.rotationYawHead;
+        GlStateManager.rotatef(135.0F, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
-        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-((float)Math.atan((double)(p_147046_4_ / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
-        p_147046_5_.renderYawOffset = (float)Math.atan((double)(p_147046_3_ / 40.0F)) * 20.0F;
-        p_147046_5_.rotationYaw = (float)Math.atan((double)(p_147046_3_ / 40.0F)) * 40.0F;
-        p_147046_5_.rotationPitch = -((float)Math.atan((double)(p_147046_4_ / 40.0F))) * 20.0F;
-        p_147046_5_.rotationYawHead = p_147046_5_.rotationYaw;
-        p_147046_5_.prevRotationYawHead = p_147046_5_.rotationYaw;
-        GlStateManager.translate(0.0F, 0.0F, 0.0F);
-        RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        GlStateManager.rotatef(-135.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotatef(-((float)Math.atan((double)(p_147046_4_ / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
+        livingentity.renderYawOffset = (float)Math.atan((double)(p_147046_3_ / 40.0F)) * 20.0F;
+        livingentity.rotationYaw = (float)Math.atan((double)(p_147046_3_ / 40.0F)) * 40.0F;
+        livingentity.rotationPitch = -((float)Math.atan((double)(p_147046_4_ / 40.0F))) * 20.0F;
+        livingentity.rotationYawHead = livingentity.rotationYaw;
+        livingentity.prevRotationYawHead = livingentity.rotationYaw;
+        GlStateManager.translatef(0.0F, 0.0F, 0.0F);
+        RenderManager rendermanager = Minecraft.getInstance().getRenderManager();
         rendermanager.setPlayerViewY(180.0F);
         rendermanager.setRenderShadow(false);
-        rendermanager.renderEntityWithPosYaw(p_147046_5_, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+        rendermanager.renderEntityWithPosYaw(livingentity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
         rendermanager.setRenderShadow(true);
-        p_147046_5_.renderYawOffset = f2;
-        p_147046_5_.rotationYaw = f3;
-        p_147046_5_.rotationPitch = f4;
-        p_147046_5_.prevRotationYawHead = f5;
-        p_147046_5_.rotationYawHead = f6;
+        livingentity.renderYawOffset = f2;
+        livingentity.rotationYaw = f3;
+        livingentity.rotationPitch = f4;
+        livingentity.prevRotationYawHead = f5;
+        livingentity.rotationYawHead = f6;
         GlStateManager.popMatrix();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableRescaleNormal();
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
     /**
@@ -147,17 +151,17 @@ public class GuineaPigTrainingGUI extends Screen
 
         if (guibutton.id == 1)
         {
-            mc.displayGuiScreen(null);
+            minecraft.displayGuiScreen(null);
             return;
         }
 
         if (guibutton.id == 0)
         {
-            Minecraft.getMinecraft().displayGuiScreen(new CREEPSGUIGuineaPig(guineapig));
+            Minecraft.getInstance().displayGuiScreen(new CREEPSGUIGuineaPig(guineapig));
         }
 
-        PlayerEntity entityplayersp = Minecraft.getMinecraft().thePlayer;
-        World world = Minecraft.getMinecraft().theWorld;
+        PlayerEntity entityplayersp = Minecraft.getInstance().player;
+        World world = Minecraft.getInstance().theWorld;
 
         if (guibutton.id == 2 && guineapig.skillattack < 5)
         {
@@ -252,8 +256,8 @@ public class GuineaPigTrainingGUI extends Screen
 
         if (guineapig.level < i)
         {
-            World world = Minecraft.getMinecraft().theWorld;
-            EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
+            World world = Minecraft.getInstance().world;
+            PlayerEntity entityplayersp = Minecraft.getInstance().player;
 
             if (i == 5)
             {
@@ -285,7 +289,7 @@ public class GuineaPigTrainingGUI extends Screen
 
     public boolean checkWheat()
     {
-        PlayerEntity entityplayersp = Minecraft.getMinecraft().thePlayer;
+        PlayerEntity entityplayersp = Minecraft.getInstance().player;
         Object obj = null;
         ItemStack aitemstack[] = ((PlayerEntity)(entityplayersp)).inventory.mainInventory;
         int i = 0;
@@ -328,7 +332,7 @@ public class GuineaPigTrainingGUI extends Screen
 
                     if (itemstack1.stackSize - 1 == 0)
                     {
-                        ((EntityPlayer)(entityplayersp)).inventory.mainInventory[i1] = null;
+                        ((PlayerEntity)(entityplayersp)).inventory.mainInventory[i1] = null;
                         continue label0;
                     }
 
@@ -394,29 +398,29 @@ public class GuineaPigTrainingGUI extends Screen
         byte byte0 = -16;
         int k = 0;
         drawWorldBackground(1);
-        drawCenteredString(fontRendererObj, (new StringBuilder()).append("\2476").append(String.valueOf(guineapig.name)).append("'s TRAINING").toString(), width / 2, height / 4 - 40, 0xffffff);
-        drawCenteredString(fontRendererObj, (new StringBuilder()).append("\247fGUINEA PIG LEVEL : \2473").append(String.valueOf(guineapig.level)).toString(), width / 2, height / 4 - 25, 0xffffff);
-        drawString(fontRendererObj, buildStat(guineapig.skillattack), (width / 2 - 107) + k, height / 4 + 38 + byte0, 0xff8d13);
-        drawString(fontRendererObj, buildStat(guineapig.skilldefend), width / 2 + 16 + k, height / 4 + 38 + byte0, 0xff8d13);
-        drawString(fontRendererObj, buildStat(guineapig.skillhealing), (width / 2 - 107) + k, height / 4 + 95 + byte0, 0xff8d13);
-        drawString(fontRendererObj, buildStat(guineapig.skillspeed), width / 2 + 16 + k, height / 4 + 95 + byte0, 0xff8d13);
-        EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
+        drawCenteredString(minecraft.fontRenderer, (new StringBuilder()).append("\2476").append(String.valueOf(guineapig.name)).append("'s TRAINING").toString(), width / 2, height / 4 - 40, 0xffffff);
+        drawCenteredString(minecraft.fontRenderer, (new StringBuilder()).append("\247fGUINEA PIG LEVEL : \2473").append(String.valueOf(guineapig.level)).toString(), width / 2, height / 4 - 25, 0xffffff);
+        drawString(minecraft.fontRenderer, buildStat(guineapig.skillattack), (width / 2 - 107) + k, height / 4 + 38 + byte0, 0xff8d13);
+        drawString(minecraft.fontRenderer, buildStat(guineapig.skilldefend), width / 2 + 16 + k, height / 4 + 38 + byte0, 0xff8d13);
+        drawString(minecraft.fontRenderer, buildStat(guineapig.skillhealing), (width / 2 - 107) + k, height / 4 + 95 + byte0, 0xff8d13);
+        drawString(minecraft.fontRenderer, buildStat(guineapig.skillspeed), width / 2 + 16 + k, height / 4 + 95 + byte0, 0xff8d13);
+        PlayerEntity entityplayersp = Minecraft.getInstance().player;
         Object obj = null;
-        ItemStack aitemstack[] = ((EntityPlayer)(entityplayersp)).inventory.mainInventory;
+        ItemStack aitemstack[] = ((PlayerEntity)(entityplayersp)).inventory.mainInventory;
         int l = 0;
 
         for (int i1 = 0; i1 < aitemstack.length; i1++)
         {
             ItemStack itemstack = aitemstack[i1];
 
-            if (itemstack != null && itemstack.getItem() == Items.wheat)
+            if (itemstack != null && itemstack.getItem() == Items.WHEAT)
             {
-                l += itemstack.stackSize;
+                itemstack.setCount(itemstack.getCount() + l);
             }
         }
 
-        drawCenteredString(fontRendererObj, (new StringBuilder()).append("\247fWHEAT REMAINING: \2473").append(String.valueOf(l)).toString(), width / 2 + 2 + k, height / 4 + 120 + byte0, 0xff8d13);
-        drawCenteredString(fontRendererObj, "\2476Each level costs five wheat", width / 2 + 2 + k, height / 4 + 140 + byte0, 0xff8d13);
+        drawCenteredString(minecraft.fontRenderer, (new StringBuilder()).append("\247fWHEAT REMAINING: \2473").append(String.valueOf(l)).toString(), width / 2 + 2 + k, height / 4 + 120 + byte0, 0xff8d13);
+        drawCenteredString(minecraft.fontRenderer, "\2476Each level costs five wheat", width / 2 + 2 + k, height / 4 + 140 + byte0, 0xff8d13);
         super.drawScreen(i, j, f);
         xSize_lo = i;
         ySize_lo = j;

@@ -4,11 +4,11 @@ import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.MobEntity;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import fr.elias.morecreeps.common.entity.BlorpEntity;
 
 public class EntityBlorpAI extends EntityAIBase {
@@ -28,8 +28,8 @@ public class EntityBlorpAI extends EntityAIBase {
 	public void updateTask()
     {
 		findPlayerToAttack();
-		EntityLivingBase entityToAttack = blorp.getAttackTarget();
-		double d0 = this.blorp.getDistanceSqToEntity(entityToAttack);
+		LivingEntity entityToAttack = blorp.getAttackTarget();
+		double d0 = this.blorp.getDistanceSq(entityToAttack);
 
         if (d0 < 4.0D)
         {
@@ -45,7 +45,7 @@ public class EntityBlorpAI extends EntityAIBase {
         {
             // ATTACK ENTITY GOES HERE
         	blorp.attackEntity(entityToAttack, (float)d0);
-            this.blorp.getLookHelper().setLookPositionWithEntity(entityToAttack, 10.0F, 10.0F);
+            this.blorp.getLookController().setLookPositionWithEntity(entityToAttack, 10.0F, 10.0F);
         }
         else
         {
@@ -56,11 +56,11 @@ public class EntityBlorpAI extends EntityAIBase {
     }
     protected Entity findPlayerToAttack()
     {
-        float f = blorp.getBrightness(1.0F);
+        float f = blorp.getBrightness();
 
         if (f < 0.0F || blorp.angry)
         {
-            EntityPlayer entityplayer = blorp.world.getClosestPlayerToEntity(blorp, blorp.attackrange);
+            PlayerEntity entityplayer = blorp.world.getClosestPlayer(blorp, blorp.attackrange);
 
             if (entityplayer != null)
             {
@@ -70,7 +70,7 @@ public class EntityBlorpAI extends EntityAIBase {
 
         if (rand.nextInt(10) == 0)
         {
-            EntityLivingBase entityliving = getClosestTarget(blorp, 6D);
+            LivingEntity entityliving = getClosestTarget(blorp, 6D);
             return entityliving;
         }
         else
@@ -78,26 +78,26 @@ public class EntityBlorpAI extends EntityAIBase {
             return null;
         }
     }
-    public EntityLivingBase getClosestTarget(Entity entity, double d)
+    public LivingEntity getClosestTarget(Entity entity, double d)
     {
         double d1 = -1D;
-        EntityLivingBase entityliving = null;
+        LivingEntity entityliving = null;
 
         for (int i = 0; i < blorp.world.loadedEntityList.size(); i++)
         {
             Entity entity1 = (Entity)blorp.world.loadedEntityList.get(i);
 
-            if (!(entity1 instanceof EntityLivingBase) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof EntityPlayer) || (entity1 instanceof EntityMob) || (entity1 instanceof EntityAnimal) && !(entity1 instanceof BlorpEntity))
+            if (!(entity1 instanceof LivingEntity) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof PlayerEntity) || (entity1 instanceof MobEntity) || (entity1 instanceof EntityAnimal) && !(entity1 instanceof BlorpEntity))
             {
                 continue;
             }
 
             double d2 = entity1.getDistanceSq(entity.posX, entity.posY, entity.posZ);
 
-            if ((d < 0.0D || d2 < d * d) && (d1 == -1D || d2 < d1) && ((EntityLivingBase)entity1).canEntityBeSeen(entity))
+            if ((d < 0.0D || d2 < d * d) && (d1 == -1D || d2 < d1) && ((LivingEntity)entity1).canEntityBeSeen(entity))
             {
                 d1 = d2;
-                entityliving = (EntityLivingBase)entity1;
+                entityliving = (LivingEntity)entity1;
             }
         }
 

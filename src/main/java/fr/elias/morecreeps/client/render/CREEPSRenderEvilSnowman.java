@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -29,7 +29,7 @@ public class CREEPSRenderEvilSnowman extends RenderLiving
         shadowSize = creepsentityevilsnowman.snowsize * 0.5F;
         GL11.glScalef(creepsentityevilsnowman.snowsize, creepsentityevilsnowman.snowsize, creepsentityevilsnowman.snowsize);
     }
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         preRenderScale((EvilSnowmanEntity)entityliving, f);
     }

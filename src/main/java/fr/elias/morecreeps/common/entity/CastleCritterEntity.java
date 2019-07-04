@@ -1,11 +1,22 @@
 package fr.elias.morecreeps.common.entity;
 
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 
 public class CastleCritterEntity extends MobEntity
@@ -18,20 +29,21 @@ public class CastleCritterEntity extends MobEntity
 
     public CastleCritterEntity(World world)
     {
-        super(world);
+        super(null, world);
         texture = "morecreeps:textures/entity/castlecritter.png";
-        setSize(0.6F, 0.6F);
+//        setSize(0.6F, 0.6F);
         attack = 1;
         attackrange = 16D;
         modelsize = 1.6F;
-        this.targetTasks.addTask(0, new CastleCritterEntity.AIAttackEntity());
+//        this.targetTasks.addTask(0, new CastleCritterEntity.AIAttackEntity());
     }
 
-    public void applyEntityAttributes()
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(6D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.4D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(6D);
+    	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
     	
     }
 
@@ -41,7 +53,7 @@ public class CastleCritterEntity extends MobEntity
      */
     public float getBlockPathWeight(BlockPos bp, World world)
     {
-        if (world.getBlockState(bp.down()).getBlock() == Blocks.double_stone_slab || world.getBlockState(bp.down()) == Blocks.stone_slab)
+        if (world.getBlockState(bp.down()).getBlock() == Blocks.SMOOTH_STONE_SLAB || world.getBlockState(bp.down()).getBlock() == Blocks.STONE_SLAB)
         {
             return 10F;
         }
@@ -55,18 +67,18 @@ public class CastleCritterEntity extends MobEntity
      */
     public boolean attackEntityFrom(DamageSource damagesource, float i)
     {
-        Entity entity = damagesource.getEntity();
+        Entity entity = damagesource.getTrueSource();
 
         if (super.attackEntityFrom(DamageSource.causeMobDamage(this), i))
         {
-            if (riddenByEntity == entity || ridingEntity == entity)
+            if (getPassengers() == entity || getRidingEntity() == entity)
             {
                 return true;
             }
 
-            if (entity != this && world.getDifficulty() != EnumDifficulty.PEACEFUL)
+            if (entity != this && world.getDifficulty() != Difficulty.PEACEFUL)
             {
-                this.setRevengeTarget((EntityLivingBase) entity);
+                this.setRevengeTarget((LivingEntity) entity);
             }
 
             return true;
@@ -86,18 +98,18 @@ public class CastleCritterEntity extends MobEntity
         {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
-            motionX = (d / (double)f1) * 0.20000000000000001D * (0.80000001192092896D + motionX * 0.20000000298023224D);
-            motionZ = (d1 / (double)f1) * 0.20000000000000001D * (0.75000001192092891D + motionZ * 0.20000000298023224D);
-            motionY = 0.10000000596246449D;
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
+            moveForward = (float) ((d / (double)f1) * 0.20000000000000001D * (0.80000001192092896D + getMotion().x * 0.20000000298023224D));
+            moveStrafing = (float) ((d1 / (double)f1) * 0.20000000000000001D * (0.75000001192092891D + getMotion().z * 0.20000000298023224D));
+            moveVertical = (float) 0.10000000596246449D;
             fallDistance = -25F;
 
             if (rand.nextInt(5) == 0)
             {
                 double d2 = -MathHelper.sin((rotationYaw * (float)Math.PI) / 180F);
                 double d3 = MathHelper.cos((rotationYaw * (float)Math.PI) / 180F);
-                motionX += d2 * 0.64999997615814209D;
-                motionZ += d3 * 0.64999997615814209D;
+                moveForward += d2 * 0.64999997615814209D;
+                moveStrafing += d3 * 0.64999997615814209D;
             }
         }
     }
@@ -105,17 +117,17 @@ public class CastleCritterEntity extends MobEntity
     {
         public AIAttackEntity()
         {
-            super(CastleCritterEntity.this, EntityPlayer.class, true);
+            super(CastleCritterEntity.this, PlayerEntity.class, true);
         }
         
         public boolean shouldExecute()
         {
-        	EntityLivingBase target = CastleCritterEntity.this.getAttackTarget();
+        	LivingEntity target = CastleCritterEntity.this.getAttackTarget();
         	return target != null && super.shouldExecute();
         }
         public void updateTask()
         {
-        	float f = CastleCritterEntity.this.getDistanceToEntity(CastleCritterEntity.this.getAttackTarget());
+        	float f = CastleCritterEntity.this.getDistance(CastleCritterEntity.this.getAttackTarget());
         	CastleCritterEntity.this.attackEntity(CastleCritterEntity.this.getAttackTarget(), f);
         }
     }
@@ -124,50 +136,44 @@ public class CastleCritterEntity extends MobEntity
      */
     public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0;
+        return i1 != Blocks.COBBLESTONE
+        		&& i1 != Blocks.OAK_LOG
+        		&& i1 != Blocks.OAK_PLANKS
+        		&& i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0
+        		;
     }
 
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound()
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	World world = Minecraft.getInstance().world;
+    	
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.6F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.6F - modelsize) * 2.0F);
         }
-    }
-
-    /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeEntityToNBT(nbttagcompound);
-    }
-
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readEntityFromNBT(nbttagcompound);
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
         if (rand.nextInt(5) == 0)
         {
-            return "morecreeps:castlecritter";
+            return SoundsHandler.CASTLE_CRITTER;
         }
         else
         {
@@ -178,17 +184,19 @@ public class CastleCritterEntity extends MobEntity
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
-        return "morecreeps:castlecritterhurt";
+        return SoundsHandler.CASTLE_CRITTER_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    @Override
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:castlecritterdeath";
+        return SoundsHandler.CASTLE_CRITTER_DEATH;
     }
 
     /**
@@ -200,12 +208,12 @@ public class CastleCritterEntity extends MobEntity
     	{
             if (rand.nextInt(10) == 0)
             {
-                dropItem(Items.porkchop, rand.nextInt(3) + 1);
+                entityDropItem(Items.PORKCHOP, rand.nextInt(3) + 1);
             }
 
             if (rand.nextInt(10) == 0)
             {
-                dropItem(Items.bone, rand.nextInt(3) + 1);
+                entityDropItem(Items.BONE, rand.nextInt(3) + 1);
             }
     	}
 

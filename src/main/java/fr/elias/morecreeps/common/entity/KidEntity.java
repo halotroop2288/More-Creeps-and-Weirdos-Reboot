@@ -3,13 +3,16 @@ package fr.elias.morecreeps.common.entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class KidEntity extends AnimalEntity
@@ -28,7 +31,7 @@ public class KidEntity extends AnimalEntity
         attackrange = 16D;
         checktimer = 0;
         modelsize = 0.6F;
-        setEntitySize(width * modelsize, height * modelsize);
+        setEntitySize(width * modelsize, getHeight() * modelsize);
         ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new KidEntity.AIAttackEntity());
@@ -38,9 +41,9 @@ public class KidEntity extends AnimalEntity
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
 
-    public void setEntitySize(float width, float height)
+    public void setEntitySize(float width, float getHeight())
     {
-    	setSize(width, height);
+    	setSize(width, getHeight());
     }
     
     public void applyEntityAttributes()
@@ -75,7 +78,7 @@ public class KidEntity extends AnimalEntity
      */
     public double getYOffset()
     {
-        if (ridingEntity instanceof EntityPlayer)
+        if (ridingEntity instanceof PlayerEntity)
         {
             float f = 0.6F - modelsize;
 
@@ -131,7 +134,7 @@ public class KidEntity extends AnimalEntity
         if (ridingEntity != null && checktimer-- < 0)
         {
             checktimer = 60;
-            List list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(8D, 8D, 8D));
+            List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(8D, 8D, 8D));
 
             for (int i = 0; i < list.size(); i++)
             {
@@ -151,7 +154,7 @@ public class KidEntity extends AnimalEntity
      */
     public float func_180484_a(BlockPos bp, World world)
     {
-        if (world.getBlockState(bp.down()).getBlock() == Blocks.sand || world.getBlockState(bp.down()).getBlock() == Blocks.gravel)
+        if (world.getBlockState(bp.down()).getBlock() == Blocks.SAND || world.getBlockState(bp.down()).getBlock() == Blocks.GRAVEL)
         {
             return 10F;
         }
@@ -166,7 +169,7 @@ public class KidEntity extends AnimalEntity
      */
     public boolean interact(PlayerEntity entityplayer)
     {
-        if (!(getAttackTarget() instanceof EntityPlayer))
+        if (!(getAttackTarget() instanceof PlayerEntity))
         {
             rotationYaw = entityplayer.rotationYaw;
             Object obj = entityplayer;
@@ -203,7 +206,7 @@ public class KidEntity extends AnimalEntity
      */
     public boolean attackEntityFrom(DamageSource damagesource, float i)
     {
-        Entity entity = damagesource.getEntity();
+        Entity entity = damagesource.getTrueSource();
         setRevengeTarget((LivingEntity) entity);
         return super.attackEntityFrom(damagesource, i);
     }
@@ -235,12 +238,12 @@ public class KidEntity extends AnimalEntity
 		
 		public void updateTask()
 		{
-			float f = KidEntity.this.getDistanceToEntity(getAttackTarget());
+			float f = KidEntity.this.getDistance(getAttackTarget());
 			if(f < 256F)
 			{
 				attackEntity(KidEntity.this.getAttackTarget(), f);
-				KidEntity.this.getLookHelper().setLookPositionWithEntity(KidEntity.this.getAttackTarget(), 10.0F, 10.0F);
-				KidEntity.this.getNavigator().clearPathEntity();
+				KidEntity.this.getLookController().setLookPositionWithEntity(KidEntity.this.getAttackTarget(), 10.0F, 10.0F);
+				KidEntity.this.getNavigator().clearPath();
 				KidEntity.this.getMoveHelper().setMoveTo(KidEntity.this.getAttackTarget().posX, KidEntity.this.getAttackTarget().posY, KidEntity.this.getAttackTarget().posZ, 0.5D);
 			}
 			if(f < 1F)
@@ -255,12 +258,12 @@ public class KidEntity extends AnimalEntity
      */
     public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.grass || i1 == Blocks.sand || i1 == Blocks.dirt || i1 == Blocks.gravel) && i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0;// && l > 6;
+        return (i1 == Blocks.GRASS_BLOCK || i1 == Blocks.SAND || i1 == Blocks.DIRT || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.double_stone_slab && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0;// && l > 6;
     }
 
     /**
@@ -299,7 +302,7 @@ public class KidEntity extends AnimalEntity
      */
     protected String getLivingSound()
     {
-        if (getAttackTarget() instanceof EntityPlayer)
+        if (getAttackTarget() instanceof PlayerEntity)
         {
             return null;
         }
@@ -307,7 +310,7 @@ public class KidEntity extends AnimalEntity
         if (rand.nextInt(5) == 0)
         {
             int i = MathHelper.floor_double(posX);
-            int j = MathHelper.floor_double(getEntityBoundingBox().minY);
+            int j = MathHelper.floor_double(getBoundingBox().minY);
             int k = MathHelper.floor_double(posZ);
             Block l = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
             Block i1 = world.getBlockState(new BlockPos(i, j, k)).getBlock();
@@ -353,12 +356,12 @@ public class KidEntity extends AnimalEntity
     	{
             if (rand.nextInt(10) == 0)
             {
-                dropItem(Items.porkchop, rand.nextInt(3) + 1);
+                dropItem(Items.PORKCHOP, rand.nextInt(3) + 1);
             }
 
             if (rand.nextInt(10) == 0)
             {
-                dropItem(Items.wheat_seeds, rand.nextInt(3) + 1);
+                dropItem(Items.WHEAT_SEEDS, rand.nextInt(3) + 1);
             }
     	}
 

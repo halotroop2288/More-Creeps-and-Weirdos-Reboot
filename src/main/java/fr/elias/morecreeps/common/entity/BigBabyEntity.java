@@ -1,18 +1,30 @@
 package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.Reference;
 import fr.elias.morecreeps.common.entity.ai.EntityBigBabyAI;
+import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class BigBabyEntity extends MobEntity
 {
@@ -23,7 +35,7 @@ public class BigBabyEntity extends MobEntity
     public float hammerswing;
     public ResourceLocation texture;
     public int attackTime;
-    public float height = getheight();
+    public float height = getHeight();
     public float width = getWidth();
     public float length = getWidth();
 
@@ -32,35 +44,38 @@ public class BigBabyEntity extends MobEntity
         super(null, world);
         texture = new ResourceLocation(Reference.MODID, 
         		Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_BIGBABY0);
-        setSize(width * 5.25F, height * 5.55F);
+//        setSize(width * 5.25F, height * 5.55F);
         skinDirection = 1;
         skinTimer = 0;
         skin = 0;
         modelsize = 6.5F;
         hammerswing = 0.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityBigBabyAI(this));
-        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0D, false));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(0, new EntityAISwimming(this));
+//        this.tasks.addTask(1, new EntityBigBabyAI(this));
+//        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0D, false));
+//        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
+//        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(8, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(3, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
-    public void applyEntityAttributes()
+    
+    @Override
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(80D);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.4D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(80D);
+    	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
+    	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3D);
     }
 
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate()
+    @Override
+    public void tick()
     {
-        super.onUpdate();
+        super.tick();
 
         if (hammerswing < 0.0F)
         {
@@ -76,7 +91,7 @@ public class BigBabyEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    public void livingTick()
     {
         if (skinTimer++ > 60)
         {
@@ -98,10 +113,10 @@ public class BigBabyEntity extends MobEntity
                 skin = 0;
             }
 
-            texture = new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_ENTITES + (new StringBuilder()).append(Reference.TEXTURE_BIGBABY).append(String.valueOf(skin)).append(".png").toString());
+            texture = new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + (new StringBuilder()).append(Reference.TEXTURE_BIGBABY).append(String.valueOf(skin)).append(".png").toString());
         }
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     /**
@@ -113,23 +128,21 @@ public class BigBabyEntity extends MobEntity
         {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
-            motionX = (d / (double)f1) * 0.20000000000000001D * (0.850000011920929D + motionX * 0.20000000298023224D);
-            motionZ = (d1 / (double)f1) * 0.20000000000000001D * (0.80000001192092896D + motionZ * 0.20000000298023224D);
-            motionY = 0.14400000596246448D;
+            float f1 = MathHelper.sqrt(d * d + d1 * d1);
+            setMotion((d / (double)f1) * 0.20000000000000001D * (0.850000011920929D + getMotion().x * 0.20000000298023224D), // motionX
+            		0.14400000596246448D, // motionY
+            		(d1 / (double)f1) * 0.20000000000000001D * (0.80000001192092896D + getMotion().z * 0.20000000298023224D)); // motionZ
             fallDistance = -25F;
 
             if ((double)f < 6D && (double)f > 3D && rand.nextInt(5) == 0)
             {
                 double d2 = -MathHelper.sin((rotationYaw * (float)Math.PI) / 180F);
                 double d3 = MathHelper.cos((rotationYaw * (float)Math.PI) / 180F);
-                motionX += d2 * 0.25D;
-                motionZ += d3 * 0.25D;
-                motionY += 0.15000000596046448D;
+                setMotion(getMotion().x + d2 * 0.25D, getMotion().y + d3 * 0.25D, getMotion().z +  0.15000000596046448D);
             }
         }
 
-        if ((double)f < (double)modelsize * 0.69999999999999996D + 1.5D && entity.getEntityBoundingBox().maxY > getEntityBoundingBox().minY && entity.getEntityBoundingBox().minY < getEntityBoundingBox().maxY && rand.nextInt(10) == 0)
+        if ((double)f < (double)modelsize * 0.69999999999999996D + 1.5D && entity.getBoundingBox().maxY > getBoundingBox().minY && entity.getBoundingBox().minY < getBoundingBox().maxY && rand.nextInt(10) == 0)
         {
             if (hammerswing == 0.0F)
             {
@@ -147,17 +160,17 @@ public class BigBabyEntity extends MobEntity
     public boolean attackEntityFrom(DamageSource damagesource, float i, World world)
     {
         Entity entity = damagesource.getTrueSource();
-        texture = new ResourceLocation(Reference.MOD_ID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_BIGBABYBOP);
+        texture = new ResourceLocation(Reference.MODID, Reference.TEXTURE_PATH_ENTITES + Reference.TEXTURE_BIGBABYBOP);
         skinTimer = 45;
 
         if (super.attackEntityFrom(DamageSource.causeMobDamage(this), i))
         {
-            if (riddenByEntity == entity || ridingEntity == entity)
+            if (getPassengers() == entity || getRidingEntity() == entity)
             {
                 return true;
             }
 
-            if (entity != this && world.getDifficulty() != EnumDifficulty.PEACEFUL)
+            if (entity != this && world.getDifficulty() != Difficulty.PEACEFUL)
             {
             	this.setRevengeTarget((LivingEntity) entity);
             }
@@ -173,16 +186,18 @@ public class BigBabyEntity extends MobEntity
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
-    public boolean interact(PlayerEntity entityplayer, World world)
+    @Override
+    public boolean processInteract(PlayerEntity playerentity, Hand hand)
     {
-        ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+    	World world = Minecraft.getInstance().world;
+        ItemStack itemstack = playerentity.inventory.getCurrentItem();
 
-        if (itemstack != null && itemstack.getItem() == MoreCreepsReboot.babyjarempty)
+        if (itemstack != null && itemstack.getItem() == ItemList.baby_jar_empty)
         {
             if (modelsize < 1.0F)
             {
-                setDead();
-                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, new ItemStack(MoreCreepsReboot.babyjarfull));
+                setHealth(0);
+                playerentity.inventory.setInventorySlotContents(playerentity.inventory.currentItem, new ItemStack(ItemList.baby_jar_full));
                 MoreCreepsReboot.proxy.addChatMessage("Now turn that Baby into a Schlump on the floor");
                 world.playSound(this, "morecreeps:babytakehome", 1.0F, 1.0F);
             }
@@ -206,12 +221,14 @@ public class BigBabyEntity extends MobEntity
      */
     public boolean getCanSpawnHere(World world)
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
-        int l = world.getBlockLightOpacity(getPosition());
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
+        int l = world.getLight(getPosition());
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && rand.nextInt(50) == 0 && world.canSeeSky(new BlockPos(i, j, k)) && l > 6;
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+        		&& rand.nextInt(50) == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && l > 6;
     }
 
     /**
@@ -225,66 +242,74 @@ public class BigBabyEntity extends MobEntity
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(World world)
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+    	World world = Minecraft.getInstance().world;
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (6.5F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (6.5F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
-        return "morecreeps:bigbaby";
+        return SoundsHandler.BIG_BABY;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    protected SoundEvent getHurtSound()
     {
-        return "morecreeps:bigbabyhurt";
+        return SoundsHandler.BIG_BABY_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:bigbabyhurt";
+        return SoundsHandler.BIG_BABY_HURT;
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    public void writeAdditional(CompoundNBT compound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(compound);
+        compound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void readAdditional(CompoundNBT compound)
     {
-        super.readEntityFromNBT(nbttagcompound);
-        modelsize = nbttagcompound.getFloat("ModelSize");
+        super.readAdditional(compound);
+        modelsize = compound.getFloat("ModelSize");
     }
 
     /**
      * Called when the mob's health reaches 0.
      */
-    public void onDeath(DamageSource damagesource, World world)
+    @Override
+    public void onDeath(DamageSource damagesource)
     {
+    	World world = Minecraft.getInstance().world;
     	if(!world.isRemote)
     	{
-            dropItem(Items.porkchop, rand.nextInt(6) + 5);
+            entityDropItem(Items.PORKCHOP, rand.nextInt(6) + 5);
     	}
         super.onDeath(damagesource);
     }

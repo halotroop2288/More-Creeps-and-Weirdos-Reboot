@@ -9,7 +9,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
-import fr.elias.morecreeps.common.entity.CREEPSEntityBullet;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class ItemGun extends Item

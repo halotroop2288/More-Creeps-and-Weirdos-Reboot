@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -31,12 +31,12 @@ public class CREEPSRenderRocketGiraffe extends RenderLiving
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         fattenup((RocketGiraffeEntity)entityliving, f);
     }
 
-    public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
+    public void doRenderLiving(LivingEntity entityliving, double d, double d1, double d2, float f, float f1)
     {
         super.doRender(entityliving, d, d1, d2, f, f1);
         float f2 = 1.6F;
@@ -93,7 +93,7 @@ public class CREEPSRenderRocketGiraffe extends RenderLiving
      */
     public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
     {
-        doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
+        doRenderLiving((LivingEntity)entity, d, d1, d2, f, f1);
     }
 
     protected ResourceLocation getEntityTexture(RocketGiraffeEntity entity)

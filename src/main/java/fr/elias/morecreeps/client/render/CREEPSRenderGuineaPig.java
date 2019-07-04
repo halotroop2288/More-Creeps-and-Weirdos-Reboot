@@ -2,14 +2,10 @@ package fr.elias.morecreeps.client.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -26,7 +22,7 @@ public class CREEPSRenderGuineaPig extends RenderLiving
         super(Minecraft.getMinecraft().getRenderManager(), modelbase, f);
     }
 
-    public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
+    public void doRenderLiving(LivingEntity entityliving, double d, double d1, double d2, float f, float f1)
     {
         super.doRender(entityliving, d, d1, d2, f, f1);
         float f2 = 1.6F;
@@ -105,14 +101,14 @@ public class CREEPSRenderGuineaPig extends RenderLiving
     {
         GL11.glScalef(creepsentityguineapig.modelsize, creepsentityguineapig.modelsize, creepsentityguineapig.modelsize);
     }
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         fattenup((GuineaPigEntity)entityliving, f);
     }
     
     public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
     {
-        doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
+        doRenderLiving((LivingEntity)entity, d, d1, d2, f, f1);
     }
 
     protected ResourceLocation getEntityTexture(GuineaPigEntity entity)

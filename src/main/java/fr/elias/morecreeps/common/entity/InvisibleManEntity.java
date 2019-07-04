@@ -3,14 +3,19 @@ package fr.elias.morecreeps.common.entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class InvisibleManEntity extends MobEntity
@@ -37,7 +42,7 @@ public class InvisibleManEntity extends MobEntity
         // this.tasks.addTask(4, new EntityAILookIdle(this));
         // this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
         // if(angerLevel > 0)
-        // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
     }
     @Override
     public void registerAttributes()
@@ -86,12 +91,12 @@ public class InvisibleManEntity extends MobEntity
 		
 		public void updateTask()
 		{
-			float f = InvisibleManEntity.this.getDistanceToEntity(getAttackTarget());
+			float f = InvisibleManEntity.this.getDistance(getAttackTarget());
 			if(f < 256F)
 			{
 				attackEntity(InvisibleManEntity.this.getAttackTarget(), f);
-				InvisibleManEntity.this.getLookHelper().setLookPositionWithEntity(InvisibleManEntity.this.getAttackTarget(), 10.0F, 10.0F);
-				InvisibleManEntity.this.getNavigator().clearPathEntity();
+				InvisibleManEntity.this.getLookController().setLookPositionWithEntity(InvisibleManEntity.this.getAttackTarget(), 10.0F, 10.0F);
+				InvisibleManEntity.this.getNavigator().clearPath();
 				InvisibleManEntity.this.getMoveHelper().setMoveTo(InvisibleManEntity.this.getAttackTarget().posX, InvisibleManEntity.this.getAttackTarget().posY, InvisibleManEntity.this.getAttackTarget().posZ, 0.5D);
 			}
 			if(f < 1F)
@@ -134,12 +139,12 @@ public class InvisibleManEntity extends MobEntity
      */
     public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return i1 != Blocks.sand && i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
+        return i1 != Blocks.sand && i1 != Blocks.cobblestone && i1 != Blocks.log && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
     }
 
     /**
@@ -169,9 +174,9 @@ public class InvisibleManEntity extends MobEntity
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
             float f1 = MathHelper.sqrt_double(d * d + d1 * d1);
-            motionX = (d / (double)f1) * 0.20000000000000001D * 0.80000001192092896D + motionX * 0.20000000298023224D;
-            motionZ = (d1 / (double)f1) * 0.20000000000000001D * 0.80000001192092896D + motionZ * 0.20000000298023224D;
-            motionY = 0.20000000596246448D;
+            moveForward = (float) ((d / (double)f1) * 0.20000000000000001D * 0.80000001192092896D + getMotion().x * 0.20000000298023224D);
+            moveStrafing = (float) ((d1 / (double)f1) * 0.20000000000000001D * 0.80000001192092896D + getMotion().z * 0.20000000298023224D);
+            moveVertical = (float) 0.20000000596246448D;
         }
     }
 
@@ -186,9 +191,9 @@ public class InvisibleManEntity extends MobEntity
 
     public boolean canAttackEntity22(Entity entity, float i)
     {
-        if (entity instanceof EntityPlayer)
+        if (entity instanceof PlayerEntity)
         {
-            List list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().expand(25D, 25D, 25D));
+            List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(25D, 25D, 25D));
 
             for (int j = 0; j < list.size(); j++)
             {
@@ -209,7 +214,7 @@ public class InvisibleManEntity extends MobEntity
 
     private void becomeAngryAt(Entity entity)
     {
-    	setRevengeTarget((EntityLivingBase) entity);
+    	setRevengeTarget((LivingEntity) entity);
         angerLevel += rand.nextInt(40);
         texture = "morecreeps:textures/entity/invisiblemanmad.png";
     }
@@ -276,13 +281,10 @@ public class InvisibleManEntity extends MobEntity
 
     static
     {
-        defaultHeldItem = new ItemStack(Items.stick, 1);
+        defaultHeldItem = new ItemStack(Items.STICK, 1);
         dropItems = (new Item[]
                 {
-                    Items.stick, Items.stick, Items.stick, Items.stick, Items.apple, Items.bread, Items.bread, Items.cake, Items.stick, Items.cake,
-                    Items.stick, Items.stick, Items.stick, Items.stick, Items.stick, Items.stick, Items.stick, Items.stick, Items.stick, Items.stick,
-                    Items.stick, Items.stick, Items.stick, Items.stick, Items.gold_ingot, Items.stick, Items.stick, Items.stick, Items.apple, Items.apple,
-                    Items.stick
+                    Items.CAKE, Items.STICK, Items.STICK,Items.APPLE,
                 });
     }
 }

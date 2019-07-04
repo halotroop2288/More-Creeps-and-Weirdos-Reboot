@@ -1,10 +1,14 @@
 package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.item.Items;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class CamelJockeyEntity extends MobEntity
@@ -39,7 +43,7 @@ public class CamelJockeyEntity extends MobEntity
         super(world);
         bone = false;
         texture = "morecreeps:textures/entity/jockey.png";
-        setSize(width * 0.6F, height * 0.6F);
+//        setSize(width * 0.6F, height * 0.6F);
         attackrange = 16D;
         hungry = false;
         findwater = false;
@@ -55,9 +59,9 @@ public class CamelJockeyEntity extends MobEntity
     public void applyEntityAttributes()
     {
     	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(health);
-    	this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(speed);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(strength);
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
+    	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(speed);
+    	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(strength);
     }
 
     /**
@@ -148,7 +152,7 @@ public class CamelJockeyEntity extends MobEntity
      */
     public float func_180484_a(BlockPos bp, World world)
     {
-        if (world.getBlockState(bp.down()).getBlock() == Blocks.sand || world.getBlockState(bp.down()).getBlock() == Blocks.gravel)
+        if (world.getBlockState(bp.down()).getBlock() == Blocks.SAND || world.getBlockState(bp.down()).getBlock() == Blocks.GRAVEL)
         {
             return 10F;
         }
@@ -163,7 +167,7 @@ public class CamelJockeyEntity extends MobEntity
      */
     public boolean attackEntityFrom(DamageSource damagesource, int i)
     {
-        Entity entity = damagesource.getEntity();
+        Entity entity = damagesource.getTrueSource();
         hungry = false;
 
         if (super.attackEntityFrom(DamageSource.causeMobDamage(this), i))
@@ -173,7 +177,7 @@ public class CamelJockeyEntity extends MobEntity
                 return true;
             }
 
-            if (entity != this && world.getDifficulty().getDifficultyId() > 0)
+            if (entity != this && world.getDifficulty().getId() > 0)
             {
                 this.attackEntityAsMob(entity);
             }
@@ -202,7 +206,7 @@ public class CamelJockeyEntity extends MobEntity
             fallDistance = -25F;
         }
 
-        if ((double)f < 2D && entity.getEntityBoundingBox().maxY > this.getEntityBoundingBox().minY && entity.getEntityBoundingBox().minY < this.getEntityBoundingBox().maxY && !(entity instanceof CamelEntity))
+        if ((double)f < 2D && entity.getBoundingBox().maxY > this.getBoundingBox().minY && entity.getBoundingBox().minY < this.getBoundingBox().maxY && !(entity instanceof CamelEntity))
         {
             //attackTime = 20;
             entity.attackEntityFrom(DamageSource.causeMobDamage(this), attack);
@@ -214,9 +218,9 @@ public class CamelJockeyEntity extends MobEntity
      */
     public boolean getCanSpawnHere()
     {
-        int i = MathHelper.floor_double(posX);
-        int j = MathHelper.floor_double(this.getEntityBoundingBox().minY);
-        int k = MathHelper.floor_double(posZ);
+        int i = MathHelper.floor(posX);
+        int j = MathHelper.floor(this.getBoundingBox().minY);
+        int k = MathHelper.floor(posZ);
         int l = world.getBlockLightOpacity(getPosition());
         Block i1 = world.getBlockState(new BlockPos(getPosition())).getBlock();
 
@@ -226,7 +230,7 @@ public class CamelJockeyEntity extends MobEntity
         }
         else
         {
-            return (i1 == Blocks.sand || i1 == Blocks.dirt || i1 == Blocks.gravel) && i1 != Blocks.cobblestone && world.getCollidingBoundingBoxes(this, getEntityBoundingBox()).size() == 0 && world.checkBlockCollision(getEntityBoundingBox()) && world.canBlockSeeSky(getPosition()) && l > 6;
+            return (i1 == Blocks.sand || i1 == Blocks.dirt || i1 == Blocks.gravel) && i1 != Blocks.cobblestone && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.checkBlockCollision(getBoundingBox()) && world.canBlockSeeSky(getPosition()) && l > 6;
         }
     }
 
@@ -301,12 +305,12 @@ public class CamelJockeyEntity extends MobEntity
     {
         if (rand.nextInt(10) == 0)
         {
-            dropItem(Items.porkchop, rand.nextInt(3) + 1);
+            entityDropItem(Items.PORKCHOP, rand.nextInt(3) + 1);
         }
 
         if (rand.nextInt(10) == 0)
         {
-            dropItem(Items.reeds, rand.nextInt(3) + 1);
+            entityDropItem(Items.SUGAR_CANE, rand.nextInt(3) + 1);
         }
 
         super.onDeath(damagesource);

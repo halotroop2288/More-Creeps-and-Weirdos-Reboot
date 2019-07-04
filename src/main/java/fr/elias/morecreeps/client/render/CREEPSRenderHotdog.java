@@ -1,20 +1,17 @@
 package fr.elias.morecreeps.client.render;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelHotdog;
-import fr.elias.morecreeps.common.entity.CREEPSEntityHorseHead;
 import fr.elias.morecreeps.common.entity.HotdogEntity;
 
 public class CREEPSRenderHotdog extends RenderLiving
@@ -23,11 +20,11 @@ public class CREEPSRenderHotdog extends RenderLiving
 
     public CREEPSRenderHotdog(CREEPSModelHotdog creepsmodelhotdog, float f)
     {
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelhotdog, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelhotdog, f);
         modelBipedMain = creepsmodelhotdog;
     }
 
-    public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, float f, float f1)
+    public void doRenderLiving(LivingEntity entityliving, double d, double d1, double d2, float f, float f1)
     {
         super.doRender(entityliving, d, d1, d2, f, f1);
         float f2 = 1.6F;
@@ -110,11 +107,11 @@ public class CREEPSRenderHotdog extends RenderLiving
      */
     public void doRender(Entity entity, double d, double d1, double d2, float f, float f1)
     {
-        doRenderLiving((EntityLiving)entity, d, d1, d2, f, f1);
+        doRenderLiving((LivingEntity)entity, d, d1, d2, f, f1);
 
         if (((HotdogEntity)entity).firepower > 0)
         {
-            burnDog((EntityLiving)entity, d, d1, d2, 3F);
+            burnDog((LivingEntity)entity, d, d1, d2, 3F);
         }
     }
 
@@ -123,7 +120,7 @@ public class CREEPSRenderHotdog extends RenderLiving
         GL11.glScalef(creepsentityhotdog.dogsize, creepsentityhotdog.dogsize, creepsentityhotdog.dogsize + 0.25F);
     }
 
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         fattenup((HotdogEntity)entityliving, f);
     }
@@ -132,7 +129,7 @@ public class CREEPSRenderHotdog extends RenderLiving
     {
         int i = 0;
         GL11.glDisable(GL11.GL_LIGHTING);
-        int j = Blocks.fire.getBlockColor();
+        int j = Blocks.FIRE.getBlockColor();
         int k = (j & 0xf) << 4;
         int l = j & 0xf0;
         float f1 = (float)k / 256F;
@@ -141,15 +138,15 @@ public class CREEPSRenderHotdog extends RenderLiving
         float f4 = ((float)l + 15.99F) / 256F;
         GL11.glPushMatrix();
         GL11.glTranslatef((float)d, (float)d1, (float)d2);
-        float f5 = entity.width;
+        float f5 = entity.getWidth();
         GL11.glScalef(f5 * 0.3F, f5 * 0.5F, f5 * 0.5F);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(Minecraft.getMinecraft().getTextureMapBlocks().locationBlocksTexture);
+        Minecraft.getInstance().getTextureManager().bindTexture(Minecraft.getInstance().getTextureMapBlocks().locationBlocksTexture);
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
         float f6 = 1.0F;
         float f7 = 0.5F;
         float f8 = -0.75F;
-        float f9 = entity.height / entity.width;
+        float f9 = entity.getHeight() / entity.getWidth();
         GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
         GL11.glTranslatef(0.0F, 0.0F, -0.2F + (float)(int)f9 * 0.102F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

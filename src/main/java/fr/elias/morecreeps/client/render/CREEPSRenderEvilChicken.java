@@ -1,13 +1,10 @@
 package fr.elias.morecreeps.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.util.MathHelper;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 import org.lwjgl.opengl.GL11;
 
@@ -22,7 +19,7 @@ public class CREEPSRenderEvilChicken extends RenderLiving
     public CREEPSRenderEvilChicken(CREEPSModelEvilChicken creepsmodelevilchicken, float f)
     {
     	
-        super(Minecraft.getMinecraft().getRenderManager(), creepsmodelevilchicken, f);
+        super(Minecraft.getInstance().getRenderManager(), creepsmodelevilchicken, f);
         modelBipedMain = creepsmodelevilchicken;
     }
 
@@ -30,7 +27,7 @@ public class CREEPSRenderEvilChicken extends RenderLiving
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         EvilChickenEntity creepsentityevilchicken = (EvilChickenEntity)entityliving;
         modelBipedMain.modelsize = creepsentityevilchicken.modelsize;
@@ -51,9 +48,9 @@ public class CREEPSRenderEvilChicken extends RenderLiving
     /**
      * Defines what float the third param in setRotationAngles of ModelBase is
      */
-    protected float handleRotationFloat(EntityLivingBase p_77044_1_, float p_77044_2_)
+    protected float handleRotationFloat(LivingEntity livingentity, float f)
     {
-        return this.func_180569_a((EvilChickenEntity)p_77044_1_, p_77044_2_);
+        return this.func_180569_a((EvilChickenEntity)livingentity, f);
     }
 
     protected ResourceLocation getEntityTexture(EvilChickenEntity entity)

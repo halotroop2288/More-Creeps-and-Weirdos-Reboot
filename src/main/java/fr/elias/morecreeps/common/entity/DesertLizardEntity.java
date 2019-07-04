@@ -1,6 +1,8 @@
 package fr.elias.morecreeps.common.entity;
 
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -8,9 +10,14 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class DesertLizardEntity extends MobEntity
@@ -27,7 +34,7 @@ public class DesertLizardEntity extends MobEntity
     {
         super(null, world);
         texture = lizardTextures[rand.nextInt(lizardTextures.length)];
-        setSize(2.0F, 1.5F);
+//        setSize(2.0F, 1.5F);
         fireballTime = rand.nextInt(300) + 250;
         modelsize = 1.0F;
         // this.targetTasks.addTask(0, new DesertLizardEntity.AIAttackEntity());
@@ -43,19 +50,19 @@ public class DesertLizardEntity extends MobEntity
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeAdditional(CompoundNBT nbttagcompound)
+    public void writeAdditional(CompoundNBT compound)
     {
-        super.writeAdditional(nbttagcompound);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(compound);
+        compound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readAdditional(CompoundNBT nbttagcompound)
+    public void readAdditional(CompoundNBT compound)
     {
-        super.readAdditional(nbttagcompound);
-        modelsize = nbttagcompound.getFloat("ModelSize");
+        super.readAdditional(compound);
+        modelsize = compound.getFloat("ModelSize");
     }
 
     /**
@@ -67,10 +74,11 @@ public class DesertLizardEntity extends MobEntity
         int j = MathHelper.floor(getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.sand || i1 == Blocks.gravel) && i1 != Blocks.cobblestone && i1 != Blocks.log
-                && i1 != Blocks.double_stone_slab && i1 != Blocks.stone_slab && i1 != Blocks.planks && i1 != Blocks.wool
-                && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
-                && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0; // && l > 10;
+        return (i1 == Blocks.SAND || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG
+                && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+//                && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
+                && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(5) == 0 // && l > 10
+        ;
     }
 
     /**
@@ -89,7 +97,7 @@ public class DesertLizardEntity extends MobEntity
     public void livingTick()
     {
         World world = Minecraft.getInstance().world;
-        PlayerEntity player = Minecraft.getInstance().world;
+        PlayerEntity player = Minecraft.getInstance().player;
         if (fireballTime-- < 1) {
             fireballTime = rand.nextInt(300) + 250;
             double d = 64D;
@@ -100,31 +108,29 @@ public class DesertLizardEntity extends MobEntity
 
                 if (d1 < d * d && d1 > 10D) {
                     double d2 = targetedEntity.posX - posX;
-                    double d3 = (targetedEntity.getBoundingBox().minY + (double) (targetedEntity.height / 2.0F))
-                            - (posY + (double) (height / 2.0F));
-                    double d4 = (targetedEntity.posZ - posZ) + 0.5D;
-                    renderYawOffset = rotationYaw = (-(float)Math.atan2(d2, d4) * 180F) / (float)Math.PI;
-                    world.playSound(this, "morecreeps:desertlizardfireball", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
-                    DesertLizardFireballEntity creepsentitydesertlizardfireball = new DesertLizardFireballEntity(world, this, d2, d3, d4);
+                    double d3 = (targetedEntity.posZ - posZ) + 0.5D;
+                    renderYawOffset = rotationYaw = (-(float)Math.atan2(d2, d3) * 180F) / (float)Math.PI;
+                    world.playSound(player, this.getPosition(), SoundsHandler.DESERT_LIZARD_FIREBALL, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    DesertLizardFireballEntity creepsentitydesertlizardfireball = new DesertLizardFireballEntity(world);
                     double d5 = 4D;
-                    Vec3 vec3d = getLook(1.0F);
-                    creepsentitydesertlizardfireball.posX = posX + vec3d.xCoord * d5;
-                    creepsentitydesertlizardfireball.posY = posY + (double)(height / 2.0F) + 0.5D;
-                    creepsentitydesertlizardfireball.posZ = posZ + vec3d.zCoord * d5;
-                    world.spawnEntityInWorld(creepsentitydesertlizardfireball);
+                    Vec3d vec3d = getLook(1.0F);
+                    creepsentitydesertlizardfireball.posX = posX + vec3d.x * d5;
+                    creepsentitydesertlizardfireball.posY = posY + (double)(getHeight() / 2.0F) + 0.5D;
+                    creepsentitydesertlizardfireball.posZ = posZ + vec3d.z * d5;
+                    world.addEntity(creepsentitydesertlizardfireball);
                 }
             }
         }
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(World world)
+    public void playAmbientSound(World world)
     {
-        String s = getLivingSound();
+    	SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
@@ -135,25 +141,25 @@ public class DesertLizardEntity extends MobEntity
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    protected SoundEvent getAmbientSound()
     {
-        return "morecreeps:desertlizard";
+        return SoundsHandler.DESERT_LIZARD;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
-        return "morecreeps:desertlizardhurt";
+        return SoundsHandler.DESERT_LIZARD_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:desertlizarddeath";
+        return SoundsHandler.DESERT_LIZARD_DEATH;
     }
 
     
@@ -163,23 +169,23 @@ public class DesertLizardEntity extends MobEntity
         {
             double d = entity.posX - posX;
             double d1 = entity.posZ - posZ;
-            float f2 = MathHelper.sqrt_double(d * d + d1 * d1);
-            motionX = (d / (double)f2) * 0.5D * 0.8000000019209289D + motionX * 0.20000000098023224D;
-            motionZ = (d1 / (double)f2) * 0.5D * 0.70000000192092893D + motionZ * 0.20000000098023224D;
-            motionY = 0.40000000196046448D;
+            float f2 = MathHelper.sqrt(d * d + d1 * d1);
+            moveForward = (float) ((d / (double)f2) * 0.5D * 0.8000000019209289D + getMotion().x * 0.20000000098023224D);
+            moveStrafing = (float) ((d1 / (double)f2) * 0.5D * 0.70000000192092893D + getMotion().z * 0.20000000098023224D);
+            moveVertical = (float) 0.40000000196046448D;
         }
     }
     class AIAttackEntity extends EntityAINearestAttackableTarget
     {
         public AIAttackEntity()
         {
-            super(DesertLizardEntity.this, EntityPlayer.class, true);
+            super(DesertLizardEntity.this, PlayerEntity.class, true);
         }
         
         public void updateTask()
         {
         	LivingEntity target = DesertLizardEntity.this.getAttackTarget();
-        	float f = getDistanceToEntity(target);
+        	float f = getDistance(target);
         	attackEntity(target, f);
         }
         
@@ -198,11 +204,11 @@ public class DesertLizardEntity extends MobEntity
     	{
             if (rand.nextInt(5) == 0)
             {
-                dropItem(Items.cooked_porkchop, rand.nextInt(3) + 1);
+                entityDropItem(Items.COOKED_PORKCHOP, rand.nextInt(3) + 1);
             }
             else
             {
-                dropItem(Item.getItemFromBlock(Blocks.sand), rand.nextInt(3) + 1);
+                entityDropItem(Blocks.SAND), rand.nextInt(3) + 1);
             }
     	}
 

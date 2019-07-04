@@ -12,7 +12,7 @@ public class CREEPSFxAtoms extends EntityFX
     public CREEPSFxAtoms(World world, double d, double d1, double d2, Item item, float f)
     {
         super(world, d, d1, d2, 0.0D, 0.0D, 0.0D);
-        this.particleIcon = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getParticleIcon(item);
+        this.particleIcon = Minecraft.getInstance().getRenderItem().getItemModelMesher().getParticleIcon(item);
         setSize(0.4F, 0.4F);
         particleRed = 1.0F;
         particleBlue = 1.0F;

@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
-import fr.elias.morecreeps.common.entity.EntityFoam;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class ItemExtinguisher extends Item

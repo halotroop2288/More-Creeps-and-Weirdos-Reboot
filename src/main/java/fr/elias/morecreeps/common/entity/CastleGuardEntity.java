@@ -1,11 +1,19 @@
 package fr.elias.morecreeps.common.entity;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class CastleGuardEntity extends MobEntity
 {
@@ -19,6 +27,7 @@ public class CastleGuardEntity extends MobEntity
     public boolean attacked;
     public float hammerswing;
     public float modelsize;
+	private int randomSoundDelay;
     static final String guardTextures[] =
     {
         "/mob/creeps/castleguard1.png", "/mob/creeps/castleguard2.png", "/mob/creeps/castleguard3.png", "/mob/creeps/castleguard4.png", "/mob/creeps/castleguard5.png"
@@ -67,9 +76,12 @@ public class CastleGuardEntity extends MobEntity
      */
     public boolean getCanSpawnHere(World world)
     {
-    	AxisAlignedBB x = this.getEntityBoundingBox();
+    	AxisAlignedBB x = this.getBoundingBox();
     	
-        return world.getDifficulty().getDifficultyId() > 0 && world.checkNoEntityCollision(getEntityBoundingBox()) && world.getCollidingBoundingBoxes(this,  x).size() == 0;
+        return world.getDifficulty().getId() > 0
+        		&& world.checkNoEntityCollision(getBoundingBox())
+//        		&& world.getCollidingBoundingBoxes(this,  x).size() == 0
+        		;
     }
 
     /**
@@ -83,24 +95,25 @@ public class CastleGuardEntity extends MobEntity
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void writeAdditional(CompoundNBT nbttagcompound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setShort("Anger", (short)angerLevel);
-        nbttagcompound.setBoolean("Attacked", attacked);
-        nbttagcompound.setString("BaseTexture", basetexture);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(nbttagcompound);
+        nbttagcompound.putShort("Anger", (short)angerLevel);
+        nbttagcompound.putBoolean("Attacked", attacked);
+        nbttagcompound.putString("BaseTexture", basetexture);
+        nbttagcompound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    public void readAdditional(CompoundNBT nbttagcompound)
     {
-        super.readEntityFromNBT(nbttagcompound);
+        super.readAdditional(nbttagcompound);
         angerLevel = nbttagcompound.getShort("Anger");
-        nbttagcompound.setBoolean("Attacked", attacked);
-        nbttagcompound.setString("BaseTexture", basetexture);
+        nbttagcompound.putBoolean("Attacked", attacked);
+        nbttagcompound.putString("BaseTexture", basetexture);
         modelsize = nbttagcompound.getFloat("ModelSize");
         texture = basetexture;
     }
@@ -110,9 +123,9 @@ public class CastleGuardEntity extends MobEntity
      */
     public boolean attackEntityFrom(DamageSource damagesource, int i)
     {
-        Entity entity = damagesource.getEntity();
+        Entity entity = damagesource.getTrueSource();
 
-        if (entity instanceof EntityPlayer)
+        if (entity instanceof PlayerEntity)
         {
             attacked = true;
         }
@@ -129,10 +142,10 @@ public class CastleGuardEntity extends MobEntity
         {
             double d = entity.posX - posX;
             double d2 = entity.posZ - posZ;
-            float f1 = MathHelper.sqrt_double(d * d + d2 * d2);
-            motionX = (d / (double)f1) * 0.20000000000000001D * (0.58000001192092898D + motionX * 0.20000000298023224D);
-            motionZ = (d2 / (double)f1) * 0.20000000000000001D * (0.52200000119209289D + motionZ * 0.20000000298023224D);
-            motionY = 0.19500000596246447D;
+            float f1 = MathHelper.sqrt(d * d + d2 * d2);
+            moveForward = (float) ((d / (double)f1) * 0.20000000000000001D * (0.58000001192092898D + getMotion().x * 0.20000000298023224D));
+            moveStrafing = (float) ((d2 / (double)f1) * 0.20000000000000001D * (0.52200000119209289D + getMotion().z * 0.20000000298023224D));
+            moveVertical = (float) 0.19500000596246447D;
             fallDistance = -25F;
         }
 
@@ -140,12 +153,12 @@ public class CastleGuardEntity extends MobEntity
         {
             double d1 = -MathHelper.sin((rotationYaw * (float)Math.PI) / 180F);
             double d3 = MathHelper.cos((rotationYaw * (float)Math.PI) / 180F);
-            motionX += d1 * 0.10999999940395355D;
-            motionZ += d3 * 0.10999999940395355D;
-            motionY += 0.023000000044703484D;
+            moveForward += d1 * 0.10999999940395355D;
+            moveStrafing += d3 * 0.10999999940395355D;
+            moveVertical += 0.023000000044703484D;
         }
 
-        if ((double)f < 2.2999999999999998D - (1.0D - (double)modelsize) && entity.getEntityBoundingBox().maxY > entity.getEntityBoundingBox().minY && entity.getEntityBoundingBox().minY < entity.getEntityBoundingBox().maxY && !(entity instanceof CastleGuardEntity))
+        if ((double)f < 2.2999999999999998D - (1.0D - (double)modelsize) && entity.getBoundingBox().maxY > entity.getBoundingBox().minY && entity.getBoundingBox().minY < entity.getBoundingBox().maxY && !(entity instanceof CastleGuardEntity))
         {
             if (hammerswing == 0.0F)
             {
@@ -157,7 +170,8 @@ public class CastleGuardEntity extends MobEntity
         }
     }
 
-    private void becomeAngryAt(Entity entity)
+    @SuppressWarnings("unused")
+	private void becomeAngryAt(Entity entity)
     {
         this.attackEntity(entity, 1);
         angerLevel = 400 + rand.nextInt(400);
@@ -167,29 +181,33 @@ public class CastleGuardEntity extends MobEntity
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(World world)
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+    	World world = Minecraft.getInstance().world;
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSoundAtEntity(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    protected SoundEvent getAmbientSound()
     {
         if (attacked && rand.nextInt(5) == 0)
         {
-            return "morecreeps:castleguardmad";
+            return SoundsHandler.CASTLE_GUARD_MAD;
         }
 
         if (rand.nextInt(12) == 0)
         {
-            return "morecreeps:castleguard";
+            return SoundsHandler.CASTLE_GUARD;
         }
         else
         {
@@ -200,17 +218,17 @@ public class CastleGuardEntity extends MobEntity
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    protected SoundEvent getHurtSound()
     {
-        return "morecreeps:castleguardhurt";
+        return SoundsHandler.CASTLE_GUARD_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:castleguarddeath";
+        return SoundsHandler.CASTLE_GUARD_DEATH;
     }
 
     /**
@@ -222,7 +240,7 @@ public class CastleGuardEntity extends MobEntity
 
         if (rand.nextInt(3) == 0)
         {
-            dropItem(MoreCreepsReboot.donut, rand.nextInt(2) + 1);
+            entityDropItem(ItemList.donut, rand.nextInt(2) + 1);
         }
     }
 }

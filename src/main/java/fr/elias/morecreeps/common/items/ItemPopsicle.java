@@ -1,6 +1,6 @@
 package fr.elias.morecreeps.common.items;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,7 +28,7 @@ public class ItemPopsicle extends Item
     /**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
-    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+    public ItemStack onItemRightClick(ItemStack itemstack, World world, PlayerEntity entityplayer)
     {
         entityplayer.swingItem();
         world.playSoundAtEntity(entityplayer, "morecreeps:lick", 1.0F, 1.0F);

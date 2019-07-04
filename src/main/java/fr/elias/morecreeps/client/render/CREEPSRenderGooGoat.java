@@ -1,18 +1,15 @@
 package fr.elias.morecreeps.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
 import fr.elias.morecreeps.client.models.CREEPSModelGooGoat;
-import fr.elias.morecreeps.client.render.layers.LayerGooGoat;
 import fr.elias.morecreeps.common.entity.LetterGEntity;
-import fr.elias.morecreeps.common.entity.EntityGooGoat;
+import fr.elias.morecreeps.common.entity.GooGoatEntity;
 
 public class CREEPSRenderGooGoat extends RenderLiving
 {
@@ -27,7 +24,7 @@ public class CREEPSRenderGooGoat extends RenderLiving
         this.addLayer(new LayerGooGoat(this));
     }
 
-    /*protected int func_179_a(CREEPSEntityGooGoat creepsentitygoogoat, int i, float f)
+    /*protected int func_179_a(CREEPSGooGoatEntity creepsentitygoogoat, int i, float f)
     {
         if (i == 0)
         {
@@ -49,7 +46,7 @@ public class CREEPSRenderGooGoat extends RenderLiving
     /**
      * sets the scale for the slime based on getSlimeSize in EntitySlime
      */
-    protected void scaleSlime(EntityGooGoat creepsentitygoogoat, float f)
+    protected void scaleSlime(GooGoatEntity creepsentitygoogoat, float f)
     {
         GL11.glEnable(GL11.GL_NORMALIZE);
         GL11.glEnable(GL11.GL_BLEND);
@@ -61,23 +58,23 @@ public class CREEPSRenderGooGoat extends RenderLiving
      * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
      * entityLiving, partialTickTime
      */
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
-        scaleSlime((EntityGooGoat)entityliving, f);
+        scaleSlime((GooGoatEntity)entityliving, f);
     }
 
     /*protected int shouldRenderPass(EntityLiving entityliving, int i, float f)
     {
-        return func_179_a((CREEPSEntityGooGoat)entityliving, i, f);
+        return func_179_a((CREEPSGooGoatEntity)entityliving, i, f);
     }*/
 
-    protected ResourceLocation getEntityTexture(EntityGooGoat entity)
+    protected ResourceLocation getEntityTexture(GooGoatEntity entity)
     {
 		return new ResourceLocation(entity.texture);
 	}
 
 	protected ResourceLocation getEntityTexture(Entity entity) {
 
-		return getEntityTexture((EntityGooGoat) entity);
+		return getEntityTexture((GooGoatEntity) entity);
 	}
 }

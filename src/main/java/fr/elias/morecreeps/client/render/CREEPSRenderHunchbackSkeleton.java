@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -27,7 +27,7 @@ public class CREEPSRenderHunchbackSkeleton extends RenderLiving
         GL11.glScalef(creepsentityhunchbackskeleton.modelsize, creepsentityhunchbackskeleton.modelsize, creepsentityhunchbackskeleton.modelsize);
     }
 
-    protected void preRenderCallback(EntityLivingBase entityliving, float f)
+    protected void preRenderCallback(LivingEntity entityliving, float f)
     {
         fattenup((HunchbackSkeletonEntity)entityliving, f);
     }

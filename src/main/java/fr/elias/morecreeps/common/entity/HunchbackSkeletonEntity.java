@@ -8,6 +8,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class HunchbackSkeletonEntity extends MobEntity
@@ -30,10 +33,10 @@ public class HunchbackSkeletonEntity extends MobEntity
         modelsize = 1.0F;
         ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, EntityPlayer.class, 0.45D, true));
+        this.tasks.addTask(1, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.45D, true));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.5D));
         this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
@@ -93,9 +96,10 @@ public class HunchbackSkeletonEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate()
+    @Override
+    public void livingTick()
     {
-        super.onLivingUpdate();
+        super.livingTick();
 
         if (rand.nextInt(2) == 0)
         {
@@ -122,7 +126,7 @@ public class HunchbackSkeletonEntity extends MobEntity
         {
             smoke();
             health = 0;
-            setDead();
+            setHealth(0);
         }
     }
 
@@ -153,17 +157,17 @@ public class HunchbackSkeletonEntity extends MobEntity
         {
             Entity entity1 = (Entity)world.loadedEntityList.get(i);
 
-            if (!(entity1 instanceof EntityLiving) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.ridingEntity || (entity1 instanceof EntityPlayer) || (entity1 instanceof GuineaPigEntity) || (entity1 instanceof SnowDevilEntity) || (entity1 instanceof HunchbackSkeletonEntity) || (entity1 instanceof HunchbackEntity))
+            if (!(entity1 instanceof LivingEntity) || entity1 == entity || entity1 == entity.riddenByEntity || entity1 == entity.getRidingEntity() || (entity1 instanceof PlayerEntity) || (entity1 instanceof GuineaPigEntity) || (entity1 instanceof SnowDevilEntity) || (entity1 instanceof HunchbackSkeletonEntity) || (entity1 instanceof HunchbackEntity))
             {
                 continue;
             }
 
             double d2 = entity1.getDistanceSq(entity.posX, entity.posY, entity.posZ);
 
-            if ((d < 0.0D || d2 < d * d) && (d1 == -1D || d2 < d1) && ((EntityLiving)entity1).canEntityBeSeen(entity))
+            if ((d < 0.0D || d2 < d * d) && (d1 == -1D || d2 < d1) && ((LivingEntity)entity1).canEntityBeSeen(entity))
             {
                 d1 = d2;
-                entityliving = (EntityLiving)entity1;
+                entityliving = (LivingEntity)entity1;
             }
         }
 
@@ -190,9 +194,9 @@ public class HunchbackSkeletonEntity extends MobEntity
             	ArrowEntity entityarrow = new ArrowEntity(world, this, 1.0F);
                 entityarrow.posY += 1.3999999761581421D;
                 double d2 = entity.posY - 0.20000000298023224D - entityarrow.posY;
-                float f1 = MathHelper.sqrt_double(d * d + d1 * d1) * 0.2F;
-                world.playSoundAtEntity(this, "random.bow", 1.0F, 1.0F / (rand.nextFloat() * 0.4F + 0.8F));
-                world.spawnEntityInWorld(entityarrow);
+                float f1 = MathHelper.sqrt(d * d + d1 * d1) * 0.2F;
+                world.playSound(this, "random.bow", 1.0F, 1.0F / (rand.nextFloat() * 0.4F + 0.8F));
+                world.addEntity(entityarrow);
                 entityarrow.setThrowableHeading(d, d2 + (double)f1, d1, 0.6F, 12F);
             
 
@@ -210,7 +214,7 @@ public class HunchbackSkeletonEntity extends MobEntity
                 double d = rand.nextGaussian() * 0.02D;
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d2 = rand.nextGaussian() * 0.02D;
-                world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height) + (double)i, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d1, d2);
+                world.addParticle(ParticleTypes.EXPLOSION, (posX + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), posY + (double)(rand.nextFloat() * getHeight()) + (double)i, (posZ + (double)(rand.nextFloat() * getWidth() * 2.0F)) - (double)getWidth(), d, d1, d2);
             }
         }
     }
@@ -238,7 +242,7 @@ public class HunchbackSkeletonEntity extends MobEntity
      */
     protected int getDropItemId()
     {
-        return Item.getIdFromItem(Items.arrow);
+        return Item.getIdFromItem(Items.ARROW);
     }
 
     /**
@@ -250,18 +254,18 @@ public class HunchbackSkeletonEntity extends MobEntity
         {
             if (rand.nextInt(2) == 0)
             {
-                dropItem(Items.arrow, rand.nextInt(3));
+                dropItem(Items.ARROW, rand.nextInt(3));
             }
 
             if (rand.nextInt(2) == 0)
             {
-                dropItem(Items.bone, rand.nextInt(2));
+                dropItem(Items.BONE, rand.nextInt(2));
             }
         }
     }
 
     /**
-     * Returns the item that this EntityLiving is holding, if any.
+     * Returns the item that this LivingEntity is holding, if any.
      */
     public ItemStack getHeldItem()
     {
@@ -278,6 +282,6 @@ public class HunchbackSkeletonEntity extends MobEntity
 
     static
     {
-        defaultHeldItem = new ItemStack(Items.bow, 1);
+        defaultHeldItem = new ItemStack(Items.BOW, 1);
     }
 }

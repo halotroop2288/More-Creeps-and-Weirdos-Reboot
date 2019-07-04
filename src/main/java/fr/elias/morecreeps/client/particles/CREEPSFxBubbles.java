@@ -15,7 +15,7 @@ public class CREEPSFxBubbles extends EntityFX
     public CREEPSFxBubbles(World world, double d, double d1, double d2, BasicParticleType CREEPS_RED, float f)
     {
         super(world, d, d1, d2, 0.0D, 0.0D, 0.0D);
-        this.particleIcon = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getParticleIcon(CREEPS_RED);
+        this.particleIcon = Minecraft.getInstance().getRenderItem().getItemModelMesher().getParticleIcon(CREEPS_RED);
         setSize(0.5F, 0.5F);
         particleRed = 1.0F;
         particleBlue = 1.0F;

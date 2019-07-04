@@ -34,7 +34,7 @@ public class SoundsHandler extends SoundEvents
 	CHEW,
 	CHICKEN_EAT,
 	DESERT_LIZARD, DESERT_LIZARD_DEATH,	DESERT_LIZARD_FIREBALL, DESERT_LIZARD_HURT,
-	DIG_BUG_CALL, DIG_BUG_EAT, DIG_BUG_FULL, DIG_BUG_HURT, DIG_BUG_DEATH,
+	DIG_BUG_DIG, DIG_BUG_CALL, DIG_BUG_EAT, DIG_BUG_FULL, DIG_BUG_HURT, DIG_BUG_DEATH,
 	DISCO_MOLE, DISCO_MOLE_DEATH, DISCO_MOLE_HURT,
 	ARMY_GEM, EARTH_GEM, FIRE_GEM, HEALING_GEM, HORSE_HEAD_GEM, MINING_GEM, MINING_GEM_BAD, SKY_GEM, SKY_GEM_DOWN, SKY_GEM_UP,
 	EVIL_CREATURE, EVIL_CREATURE_DEATH, EVIL_CREATURE_HURT, EVIL_CREATURE_JUMP,
@@ -196,6 +196,7 @@ public class SoundsHandler extends SoundEvents
 		DESERT_LIZARD_FIREBALL = registerSound("mob.desert_lizard.fireball");
 		
 		// Dig bug
+		DIG_BUG_DIG = registerSound("mob.dig_bug.dig");
 		DIG_BUG_CALL = registerSound("mob.dig_bug.call");
 		DIG_BUG_DEATH = registerSound("mob.dig_bug.death");
 		DIG_BUG_EAT = registerSound("mob.dig_bug.eat");

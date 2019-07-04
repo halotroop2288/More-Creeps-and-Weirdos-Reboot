@@ -2,9 +2,14 @@ package fr.elias.morecreeps.proxy;
 
 import java.util.Random;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -181,6 +186,7 @@ import fr.elias.morecreeps.common.entity.TombstoneEntity;
 import fr.elias.morecreeps.common.entity.TowelEntity;
 import fr.elias.morecreeps.common.entity.TrophyEntity;
 import fr.elias.morecreeps.common.entity.ZebraEntity;
+import fr.elias.morecreeps.common.lists.ItemList;
 
 public class ClientProxy extends CommonProxy
 {
@@ -214,10 +220,10 @@ public class ClientProxy extends CommonProxy
 		RenderingRegistry.registerEntityRenderingHandler(FloobEntity.class, new CREEPSRenderFloob(new CREEPSModelFloob(), 0.5F));
 		RenderingRegistry.registerEntityRenderingHandler(FloobShipEntity.class, new CREEPSRenderFloobShip(new CREEPSModelFloobShip(), 0.5F));
 		RenderingRegistry.registerEntityRenderingHandler(LetterGEntity.class, new CREEPSRenderG(new CREEPSModelG(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(EntityGooGoat.class, new CREEPSRenderGooGoat(new CREEPSModelGooGoat(), 0.5F));
+		RenderingRegistry.registerEntityRenderingHandler(GooGoatEntity.class, new CREEPSRenderGooGoat(new CREEPSModelGooGoat(), 0.5F));
 		RenderingRegistry.registerEntityRenderingHandler(GuineaPigEntity.class, new CREEPSRenderGuineaPig(new CREEPSModelGPig(), new CREEPSModelGPig(0.5F), 0.5F));
 		RenderingRegistry.registerEntityRenderingHandler(HippoEntity.class, new CREEPSRenderHippo(new CREEPSModelHippo(), 0.5F));
-		RenderingRegistry.registerEntityRenderingHandler(CREEPSEntityHorseHead.class, new CREEPSRenderHorseHead(new CREEPSModelHorseHead(), 0.5F));
+		RenderingRegistry.registerEntityRenderingHandler(HorseHeadEntity.class, new CREEPSRenderHorseHead(new CREEPSModelHorseHead(), 0.5F));
 		RenderingRegistry.registerEntityRenderingHandler(HotdogEntity.class, new CREEPSRenderHotdog(new CREEPSModelHotdog(), 0.5F));
 		RenderingRegistry.registerEntityRenderingHandler(HunchbackEntity.class, new CREEPSRenderHunchback(new CREEPSModelHunchback(), 0.5F));
 		RenderingRegistry.registerEntityRenderingHandler(KidEntity.class, new CREEPSRenderKid(new CREEPSModelKid(), 0.5F));
@@ -234,21 +240,21 @@ public class ClientProxy extends CommonProxy
 		RenderingRegistry.registerEntityRenderingHandler(RockMonsterEntity.class, new CREEPSRenderRockMonster(new CREEPSModelRockMonster(), 0.5F));
 		RenderingRegistry.registerEntityRenderingHandler(SchlumpEntity.class, new CREEPSRenderSchlump(new CREEPSModelSchlump(), 0.5F));
 		
-		RenderingRegistry.registerEntityRenderingHandler(ShrinkEntity.class, new RenderSnowball(Minecraft.getInstance().getRenderManager(), MoreCreepsReboot.shrinkshrink, Minecraft.getInstance().getRenderManager()));
+		RenderingRegistry.registerEntityRenderingHandler(ShrinkEntity.class, new RenderSnowball(Minecraft.getInstance().getRenderManager(), ItemList.shrink_shrink, Minecraft.getInstance().getRenderManager()));
 		RenderingRegistry.registerEntityRenderingHandler(RayEntity.class,
-				new RenderSnowball(Minecraft.getInstance().getRenderManager(), MoreCreepsReboot.rayray,
+				new RenderSnowball(Minecraft.getInstance().getRenderManager(), ItemList.ray_ray,
 						Minecraft.getInstance().getRenderManager()));
 		RenderingRegistry.registerEntityRenderingHandler(GrowEntity.class,
-				new RenderSnowball(Minecraft.getInstance().getRenderManager(), MoreCreepsReboot.shrinkshrink,
+				new RenderSnowball(Minecraft.getInstance().getRenderManager(), ItemList.shrink_shrink,
 						Minecraft.getInstance().getRenderManager()));
 		RenderingRegistry.registerEntityRenderingHandler(MoneyEntity.class,
-				new RenderSnowball(Minecraft.getInstance().getRenderManager(), MoreCreepsReboot.money,
+				new RenderSnowball(Minecraft.getInstance().getRenderManager(), ItemList.money,
 						Minecraft.getInstance().getRenderManager()));
 		RenderingRegistry.registerEntityRenderingHandler(GooDonutEntity.class,
-				new RenderSnowball(Minecraft.getInstance().getRenderManager(), MoreCreepsReboot.goodonut,
+				new RenderSnowball(Minecraft.getInstance().getRenderManager(), ItemList.goo_donut,
 						Minecraft.getInstance().getRenderManager()));
 		RenderingRegistry.registerEntityRenderingHandler(FrisbeeEntity.class,
-				new RenderSnowball(Minecraft.getInstance().getRenderManager(), MoreCreepsReboot.frisbee,
+				new RenderSnowball(Minecraft.getInstance().getRenderManager(), ItemList.frisbee,
 						Minecraft.getInstance().getRenderManager()));
 
 		RenderingRegistry.registerEntityRenderingHandler(SneakySalEntity.class,
@@ -409,7 +415,7 @@ public class ClientProxy extends CommonProxy
         }
 	}
 	
-	public void barf(World world, EntityPlayer player)
+	public void barf(World world, PlayerEntity player)
 	{
         double d = -MathHelper.sin((player.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((player.rotationYaw * (float)Math.PI) / 180F);
@@ -450,11 +456,11 @@ public class ClientProxy extends CommonProxy
 		}
 	}
 	
-	public void dirt(World world, EntityPlayer player, Random random, int l, int i1, int k)
+	public void dirt(World world, PlayerEntity player, Random random, int l, int i1, int k)
 	{
         for (int j1 = 0; j1 < 15; j1++)
         {
-            CREEPSFxDirt creepsfxdirt = new CREEPSFxDirt(world, (int)(player.posX + (double)l + random.nextGaussian() * 0.02D), (int)(player.posY + (double)k), (int)(player.posZ + (double)i1 + random.nextGaussian() * 0.02D), Item.getItemFromBlock(Blocks.dirt));
+            CREEPSFxDirt creepsfxdirt = new CREEPSFxDirt(world, (int)(player.posX + (double)l + random.nextGaussian() * 0.02D), (int)(player.posY + (double)k), (int)(player.posZ + (double)i1 + random.nextGaussian() * 0.02D), Item.getItemFromBlock(Blocks.DIRT));
             Minecraft.getInstance().effectRenderer.addEffect(creepsfxdirt);
         }
 	}
@@ -463,7 +469,7 @@ public class ClientProxy extends CommonProxy
 		CREEPSFxDirt creepsfxdirt2 = new CREEPSFxDirt(world, dbug.posX, dbug.posY + (double)k2, dbug.posZ, Item.getItemFromBlock(Blocks.dirt));
 		Minecraft.getInstance().effectRenderer.addEffect(creepsfxdirt2);
 	}
-	public void foam(World world, EntityPlayer player)
+	public void foam(World world, PlayerEntity player)
 	{
         double d = -MathHelper.sin((player.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((player.rotationYaw * (float)Math.PI) / 180F);
@@ -493,7 +499,7 @@ public class ClientProxy extends CommonProxy
             Minecraft.getInstance().effectRenderer.addEffect(creepsfxfoam);
         }
 	}
-	public void smoke(World world, EntityPlayer player, Random random)
+	public void smoke(World world, PlayerEntity player, Random random)
 	{
         double d = -MathHelper.sin((player.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((player.rotationYaw * (float)Math.PI) / 180F);
@@ -531,7 +537,7 @@ public class ClientProxy extends CommonProxy
 	}
 	public void smokeRay(World world, Entity entity, byte b0)
 	{
-		CREEPSFxSmoke creepsfxsmoke = new CREEPSFxSmoke(world, entity.posX, entity.posY, entity.posZ, Items.egg, b0, 0.5F);
+		CREEPSFxSmoke creepsfxsmoke = new CREEPSFxSmoke(world, entity.posX, entity.posY, entity.posZ, Items.EGG, b0, 0.5F);
 		 Minecraft.getInstance().effectRenderer.addEffect(creepsfxsmoke);
 	}
 	public void shrinkParticle(World world, Entity entity)
@@ -551,21 +557,21 @@ public class ClientProxy extends CommonProxy
 	}
 	public void addChatMessage(String s)
 	{
-		Minecraft.getInstance().thePlayer.addChatMessage(new ChatComponentText(s));
+		Minecraft.getInstance().player.addChatMessage(new ChatComponentText(s));
 	}
 	public void playSoundEffectAtPlayer(World world, String s, float volume, float pitch)
 	{
-		EntityPlayer player = Minecraft.getInstance().thePlayer;
+		PlayerEntity player = Minecraft.getInstance().thePlayer;
 		world.playSoundEffect(player.posX, player.posY, player.posZ, s, volume, pitch);
 	}
-	public void bubble(World world, EntityLivingBase entity)
+	public void bubble(World world, LivingEntity entity)
 	{
         double d = -MathHelper.sin((entity.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((entity.rotationYaw * (float)Math.PI) / 180F);
         CREEPSFxBubbles creepsfxbubbles = new CREEPSFxBubbles(world, entity.posX + d * 0.5D, entity.posY + 0.75D, entity.posZ + d1 * 0.5D, MoreCreepsReboot.partBubble, 0.7F);
         Minecraft.getInstance().effectRenderer.addEffect(creepsfxbubbles);
 	}
-	public void bubbleDoghouse(World world, EntityLivingBase entity)
+	public void bubbleDoghouse(World world, LivingEntity entity)
 	{
         double d = -MathHelper.sin((entity.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((entity.rotationYaw * (float)Math.PI) / 180F);

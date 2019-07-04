@@ -171,7 +171,7 @@ public class FoamEntity extends Entity implements IProjectile
             double d = rand.nextGaussian() * 0.10000000000000001D;
             double d1 = rand.nextGaussian() * 0.10000000000000001D;
             double d2 = rand.nextGaussian() * 0.10000000000000001D;
-            world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, posX + (double)(rand.nextFloat() * 2.0F), posY, posZ + (double)(rand.nextFloat() * 2.0F), d, d1, d2);
+            world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, posX + (double)(rand.nextFloat() * 2.0F), posY, posZ + (double)(rand.nextFloat() * 2.0F), d, d1, d2);
         }
 
         if (aoLightValueScratchXYNN == 100)
@@ -297,10 +297,10 @@ public class FoamEntity extends Entity implements IProjectile
                 motionX = (float)(movingobjectposition.getHitVec().x - posX);
                 motionY = (float)(movingobjectposition.getHitVec().y - posY);
                 motionZ = (float)(movingobjectposition.getHitVec().z - posZ);
-                float f1 = MathHelper.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
-                posX -= (motionX / (double)f1) * 0.05000000074505806D;
-                posY -= (motionY / (double)f1) * 0.05000000074505806D;
-                posZ -= (motionZ / (double)f1) * 0.05000000074505806D;
+                float f1 = MathHelper.sqrt(getMotion().x * getMotion().x + getMotion().y * getMotion().y + getMotion().z * getMotion().z);
+                posX -= (getMotion().x / (double)f1) * 0.05000000074505806D;
+                posY -= (getMotion().y / (double)f1) * 0.05000000074505806D;
+                posZ -= (getMotion().z / (double)f1) * 0.05000000074505806D;
                 aoLightValueZPos = true;
 
                 for (int l = -2; l < 2; l++)
@@ -309,9 +309,9 @@ public class FoamEntity extends Entity implements IProjectile
                     {
                         for (int j1 = -2; j1 < 2; j1++)
                         {
-                            if (world.getBlockState(new BlockPos(hitX + l, hitY + j1, hitZ + i1)).getBlock() == Blocks.fire)
+                            if (world.getBlockState(new BlockPos(hitX + l, hitY + j1, hitZ + i1)).getBlock() == Blocks.FIRE)
                             {
-                                world.setBlockToAir(new BlockPos(hitX + l, hitY + j1, hitZ + i1));
+                                world.setBlockState(new BlockPos(hitX + l, hitY + j1, hitZ + i1), Blocks.AIR.getDefaultState());
                             }
                         }
                     }

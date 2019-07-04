@@ -2,25 +2,19 @@ package fr.elias.morecreeps.common.entity;
 
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import fr.elias.morecreeps.client.particles.CREEPSFxBubbles;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.Reference;
-import fr.elias.morecreeps.common.entity.ai.EntityBlorpAI;
+import fr.elias.morecreeps.common.advancements.ModAdvancementList;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class BubbleScumEntity extends BaseCreepsCreatureEntity
@@ -66,7 +60,7 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
     {
         super(null, world);
         texture = Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "bubblescum.png";
-        setSize(0.6F, 0.6F);
+//        setSize(0.6F, 0.6F);
         rideable = false;
         pigstack = 0;
         level = 1;
@@ -79,12 +73,12 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
         fallDistance = -5F;
         tossed = false;
         modelsize = 1.0F;
-        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.tasks.addTask(1, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(4, new EntityAILookIdle(this));
-        this.targetTasks.addTask(5, new EntityAIHurtByTarget(this, true, new Class[0]));
+//        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+//        this.tasks.addTask(1, new EntityAISwimming(this));
+//        this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 1.0D));
+//        this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
+//        this.tasks.addTask(4, new EntityAILookIdle(this));
+//        this.targetTasks.addTask(5, new EntityAIHurtByTarget(this, true, new Class[0]));
     }
     public void applyEntityAttributes()
     {
@@ -152,7 +146,7 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
             confetti();
             tossed = false;
             world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
-            player.addStat(MoreCreepsReboot.ten_bubble, 1);
+            player.addStat(ModAdvancementList.ten_bubble, 1);
         }
 
         if (f > 25F && tossed)
@@ -160,7 +154,7 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
             confetti();
             tossed = false;
             world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
-            player.addStat(MoreCreepsReboot.twenty_five_bubble, 1);
+            player.addStat(ModAdvancementList.twenty_five_bubble, 1);
         }
 
         if (f > 50F && tossed)
@@ -168,7 +162,7 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
             confetti();
             tossed = false;
             world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
-            player.addStat(MoreCreepsReboot.fifty_bubble, 1);
+            player.addStat(ModAdvancementList.fifty_bubble, 1);
         }
 
         if (f > 100F && tossed)
@@ -176,7 +170,7 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
             confetti();
             tossed = false;
             world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
-            player.addStat(MoreCreepsReboot.one_hundred_bubble, 1);
+            player.addStat(ModAdvancementList.one_hundred_bubble, 1);
         }
 
         if (rand.nextInt(3) == 0)
@@ -215,12 +209,15 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
     /**
      * Checks if the entity's current position is a valid location to spawn this entity.
      */
+    @SuppressWarnings("unused")
     public boolean getCanSpawnHere(World world)
     {
         int i = MathHelper.floor(posX);
         int j = MathHelper.floor(getBoundingBox().minY);
         int k = MathHelper.floor(posZ);
-        return world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && rand.nextInt(5) == 0;
+        return
+//        		world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 &&
+        		rand.nextInt(5) == 0;
     }
 
     /**
@@ -305,13 +302,14 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
                 {
                     rotationYaw = ((Entity)obj).rotationYaw;
                     ((Entity)obj).fallDistance = -5F;
-                    ((Entity)obj).addPassenger(null);
+                    ((Entity)obj).removePassengers();
                     double d = -MathHelper.sin((playerentity.rotationYaw * (float)Math.PI) / 180F);
                     double d1 = MathHelper.cos((playerentity.rotationYaw * (float)Math.PI) / 180F);
                     double d2 = -MathHelper.sin((playerentity.rotationPitch / 180F) * (float)Math.PI);
-                    ((Entity)obj).motionX = 1.0D * d;
-                    ((Entity)obj).motionZ = 1.0D * d1;
-                    ((Entity)obj).motionY = 1.0D * d2;
+                    ((Entity)obj).setMotion(d, d1, d2);
+//                    ((Entity)obj).motionX = 1.0D * d;
+//                    ((Entity)obj).motionZ = 1.0D * d1;
+//                    ((Entity)obj).motionY = 1.0D * d2;
                     tossed = true;
                     world.playSound(playerentity, this.getPosition(), SoundsHandler.BUBBLE_SCUM_PUT_DOWN, SoundCategory.HOSTILE, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 }
@@ -324,7 +322,8 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected SoundEvent getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
         if (getRidingEntity() == null)
         {
@@ -346,7 +345,8 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected SoundEvent getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
         return SoundsHandler.BUBBLE_SCUM_HURT;
     }
@@ -354,6 +354,7 @@ public class BubbleScumEntity extends BaseCreepsCreatureEntity
     /**
      * Returns the sound this mob makes on death.
      */
+    @Override
     protected SoundEvent getDeathSound()
     {
         return SoundsHandler.BUBBLE_SCUM_DEATH;

@@ -24,7 +24,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import fr.elias.morecreeps.client.gui.CREEPSGUIZebraname;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.advancements.ModAdvancementList;
 import fr.elias.morecreeps.common.lists.ItemList;
@@ -81,7 +80,7 @@ public class ZebraEntity extends LivingEntity
         tamed = false;
         tamedcookies = rand.nextInt(7) + 1;
         modelsize = 2.0F;
-        setSize(width * modelsize, height * modelsize);
+        setSize(width * modelsize, getHeight() * modelsize);
         tasks.addTask(0, new EntityAISwimming(this));
         tasks.addTask(1, new EntityAIBreakDoor(this));
         tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 0.061D));
@@ -407,7 +406,7 @@ public class ZebraEntity extends LivingEntity
                 tamed = true;
 
                 if (world.isRemote){
-            		if (!Minecraft.getMinecraft().thePlayer.getStatFileWriter().hasAdvancementUnlocked(ModAdvancementList.zebra))
+            		if (!Minecraft.getInstance().thePlayer.getStatFileWriter().hasAdvancementUnlocked(ModAdvancementList.zebra))
             		{
                     	confetti();
                     	world.playSound(playerentity, playerentity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
@@ -541,7 +540,7 @@ public class ZebraEntity extends LivingEntity
             double d = rand.nextGaussian() * 0.02D;
             double d2 = rand.nextGaussian() * 0.02D;
             double d4 = rand.nextGaussian() * 0.02D;
-            world.addParticle(ParticleTypes.HEART, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + 0.5D + (double)(rand.nextFloat() * height), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d2, d4);
+            world.addParticle(ParticleTypes.HEART, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + 0.5D + (double)(rand.nextFloat() * getHeight()), (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d, d2, d4);
         }
 
         for (int j = 0; j < 4; j++)
@@ -551,7 +550,7 @@ public class ZebraEntity extends LivingEntity
                 double d1 = rand.nextGaussian() * 0.02D;
                 double d3 = rand.nextGaussian() * 0.02D;
                 double d5 = rand.nextGaussian() * 0.02D;
-                world.addParticle(ParticleTypes.EXPLOSION, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * height) + (double)j, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d1, d3, d5);
+                world.addParticle(ParticleTypes.EXPLOSION, (posX + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, posY + (double)(rand.nextFloat() * getHeight()) + (double)j, (posZ + (double)(rand.nextFloat() * width * 2.0F)) - (double)width, d1, d3, d5);
             }
         }
     }

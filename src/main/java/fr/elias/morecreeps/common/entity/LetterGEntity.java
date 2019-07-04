@@ -34,7 +34,7 @@ public class LetterGEntity extends MobEntity
     {
         super(null, world);
         texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES+ "g.png");
-        setSize(width * 2.0F, height * 2.5F);
+//        setSize(width * 2.0F, height * 2.5F);
         modelsize = 2.0F;
         // ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         // this.tasks.addTask(0, new EntityAISwimming(this));
@@ -47,12 +47,12 @@ public class LetterGEntity extends MobEntity
         // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
     }
     
-    protected void applyEntityAttributes()
+    protected void registerAttributes()
     {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(80);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.45D);
-        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2D);
+        super.registerAttributes();
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(80);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
+        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2D);
     }
 
     /**
@@ -62,7 +62,7 @@ public class LetterGEntity extends MobEntity
     public void writeAdditional(CompoundNBT nbttagcompound)
     {
         super.writeAdditional(nbttagcompound);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        nbttagcompound.putFloat("ModelSize", modelsize);
     }
 
     /**

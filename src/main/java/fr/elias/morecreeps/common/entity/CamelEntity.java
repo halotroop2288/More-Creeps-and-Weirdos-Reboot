@@ -79,12 +79,12 @@ public class CamelEntity extends MobEntity
         modelsize = 1.75F;
     }
     
-    public void applyEntityAttributes()
+    public void registerAttributes()
     {
-    	super.applyEntityAttributes();
-    	this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30D);
+    	super.registerAttributes();
+    	this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30D);
     	this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.45D);
-    	this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2D);
+    	this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2D);
     }
 
     /**
@@ -322,7 +322,7 @@ public class CamelEntity extends MobEntity
             double d = entity.posX - posX;
             double d2 = entity.posZ - posZ;
             float f1 = MathHelper.sqrt(d * d + d2 * d2);
-            moveForward= (float) ((d / (double)f1) * 0.20000000000000001D * (0.850000011920929D + moveForward * 0.20000000298023224D));
+            moveForward = (float) ((d / (double)f1) * 0.20000000000000001D * (0.850000011920929D + moveForward * 0.20000000298023224D));
             moveStrafing = (float) ((d2 / (double)f1) * 0.20000000000000001D * (0.80000001192092896D + moveStrafing * 0.20000000298023224D));
             moveVertical = (float) 0.10000000596246449D;
             fallDistance = -25F;

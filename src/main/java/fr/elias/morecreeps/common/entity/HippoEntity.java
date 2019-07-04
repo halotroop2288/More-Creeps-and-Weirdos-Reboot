@@ -80,7 +80,7 @@ public class HippoEntity extends MobEntity
 
     public float func_180484_a(BlockPos bp, World world)
     {
-        if (world.getBlockState(bp.down()).getBlock() == Blocks.water || world.getBlockState(bp.down()) == Blocks.flowing_water)
+        if (world.getBlockState(bp.down()).getBlock() == Blocks.water || world.getBlockState(bp.down()) == Blocks.WATER)
         {
             return 10F;
         }
@@ -225,7 +225,7 @@ public class HippoEntity extends MobEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canSeeSky(new BlockPos(i, j, k)) && rand.nextInt(35) == 0; //&& l > 7;
+        return (i1 == Blocks.GRASS || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL && world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0 && world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(35) == 0; //&& l > 7;
     }
 
     /**
