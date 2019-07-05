@@ -2,15 +2,24 @@ package fr.elias.morecreeps.common.entity;
 
 import java.util.List;
 
+import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -21,12 +30,12 @@ public class KidEntity extends AnimalEntity
     protected int attack;
     public float modelsize;
     public int checktimer;
-    public String texture;
+    public ResourceLocation texture;
 
     public KidEntity(World world)
     {
         super(null, world);
-        texture = "morecreeps:textures/entity/kid.png";
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "kid.png");
         attack = 1;
         attackrange = 16D;
         checktimer = 0;
@@ -117,8 +126,12 @@ public class KidEntity extends AnimalEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void livingTick(World world)
+    @SuppressWarnings("rawtypes")
+    @Override
+	public void livingTick()
     {
+    	World world = Minecraft.getInstance().world;
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
         super.livingTick();
 
         if (modelsize > 1.0F)
@@ -128,7 +141,7 @@ public class KidEntity extends AnimalEntity
 
         if (handleWaterMovement())
         {
-            motionY = 0.15999999642372131D;
+            moveVertical = 0.15999999642372131F;
         }
 
         if (getRidingEntity() != null && checktimer-- < 0)
@@ -142,7 +155,7 @@ public class KidEntity extends AnimalEntity
 
                 if (entity instanceof LollimanEntity)
                 {
-                    world.playSound(this, "morecreeps:kidfind", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+                    world.playSound(playerentity, this.getPosition(), SoundsHandler.KID_FIND, SoundCategory.NEUTRAL, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
                 }
             }
         }
@@ -167,12 +180,12 @@ public class KidEntity extends AnimalEntity
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
-    public boolean interact(PlayerEntity entityplayer)
+    public boolean interact(PlayerEntity playerentity)
     {
         if (!(getAttackTarget() instanceof PlayerEntity))
         {
-            rotationYaw = entityplayer.rotationYaw;
-            Object obj = entityplayer;
+            rotationYaw = playerentity.rotationYaw;
+            Object obj = playerentity;
 
             if (getRidingEntity() != obj)
             {
@@ -186,11 +199,10 @@ public class KidEntity extends AnimalEntity
                 rotationYaw = ((Entity)obj).rotationYaw;
                 ((Entity)obj).fallDistance = -25F;
                 ((Entity)obj).removePassengers();
-                double d = -MathHelper.sin((entityplayer.rotationYaw * (float)Math.PI) / 180F);
-                double d1 = MathHelper.cos((entityplayer.rotationYaw * (float)Math.PI) / 180F);
-                ((Entity)obj).motionX = d * 0.60000002384185791D;
-                ((Entity)obj).motionZ = d1 * 0.60000002384185791D;
-                world.playSound(this, "morecreeps:kiddown", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+                double d = -MathHelper.sin((playerentity.rotationYaw * (float)Math.PI) / 180F);
+                double d1 = MathHelper.cos((playerentity.rotationYaw * (float)Math.PI) / 180F);
+                ((Entity)obj).setMotion(d * 0.60000002384185791D, getMotion().y, d1 * 0.60000002384185791D);
+                world.playSound(playerentity, this.getPosition(), SoundsHandler.KID_DOWN, SoundCategory.NEUTRAL, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
             }
         }
         else
@@ -228,7 +240,8 @@ public class KidEntity extends AnimalEntity
         }
     }
 
-    class AIAttackEntity extends EntityAIBase
+    @SuppressWarnings("rawtypes")
+	class AIAttackEntity extends Brain
     {
 		@Override
 		public boolean shouldExecute()
@@ -263,7 +276,7 @@ public class KidEntity extends AnimalEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.GRASS_BLOCK || i1 == Blocks.SAND || i1 == Blocks.DIRT || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.double_stone_slab && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+        return (i1 == Blocks.GRASS_BLOCK || i1 == Blocks.SAND || i1 == Blocks.DIRT || i1 == Blocks.GRAVEL) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
 //        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
         		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0;// && l > 6;
     }
@@ -271,38 +284,41 @@ public class KidEntity extends AnimalEntity
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    public void writeAdditional(CompoundNBT compound)
     {
-        super.writeEntityToNBT(nbttagcompound);
-        nbttagcompound.setFloat("ModelSize", modelsize);
+        super.writeAdditional(compound);
+        compound.putFloat("ModelSize", modelsize);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    public void readAdditional(CompoundNBT compound)
     {
-        super.readEntityFromNBT(nbttagcompound);
-        modelsize = nbttagcompound.getFloat("ModelSize");
+        super.readAdditional(compound);
+        modelsize = compound.getFloat("ModelSize");
     }
 
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound()
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.NEUTRAL, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (0.6F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
         if (getAttackTarget() instanceof PlayerEntity)
         {
@@ -319,34 +335,35 @@ public class KidEntity extends AnimalEntity
 
             if (i1 == Blocks.SNOW || l == Blocks.SNOW || l == Blocks.ICE)
             {
-                return "morecreeps:kidcold";
+                return SoundsHandler.KID_COLD;
             }
         }
 
         if (getRidingEntity() != null)
         {
-            return "morecreeps:kidride";
+            return SoundsHandler.KID_RIDE;
         }
         else
         {
-            return "morecreeps:kid";
+            return SoundsHandler.KID;
         }
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
-        return "morecreeps:kidhurt";
+        return SoundsHandler.KID_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:kiddeath";
+        return SoundsHandler.KID_DEATH;
     }
 
     /**
@@ -379,8 +396,8 @@ public class KidEntity extends AnimalEntity
     }
 
 	@Override
-	public EntityAgeable createChild(EntityAgeable ageable)
+	public AgeableEntity createChild(AgeableEntity ageable)
 	{
-		return new KidEntity(world);
+		return new KidEntity(world); // Uhhhmmmm????? Baby kids? Implications????
 	}
 }

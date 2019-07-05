@@ -25,7 +25,7 @@ public class ItemRayGun extends Item
      */
     public ItemStack onItemRightClick(ItemStack itemstack, World world, PlayerEntity entityplayer)
     {
-        world.playSoundAtEntity(entityplayer, "morecreeps:raygun", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+        world.playSoundAtEntity(entityplayer, "morecreeps:raygun", 0.5F, 0.4F / (rand.nextFloat() * 0.4F + 0.8F));
         if (!world.isRemote)
         {
             RayEntity creepsentityray = new RayEntity(world, entityplayer);

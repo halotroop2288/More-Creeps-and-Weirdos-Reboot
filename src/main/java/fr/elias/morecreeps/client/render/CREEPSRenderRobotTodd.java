@@ -3,6 +3,7 @@ package fr.elias.morecreeps.client.render;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
@@ -17,7 +18,7 @@ import fr.elias.morecreeps.common.entity.RobotToddEntity;
 public class CREEPSRenderRobotTodd extends RenderLiving
 {
     public static Random rand = new Random();
-    private ModelBase scaleAmount;
+    private Model scaleAmount;
     protected CREEPSModelRobotTodd modelBipedMain;
     public float sparkle;
 

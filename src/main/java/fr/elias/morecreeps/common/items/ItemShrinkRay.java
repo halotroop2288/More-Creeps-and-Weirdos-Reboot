@@ -5,9 +5,12 @@ import java.util.Random;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import fr.elias.morecreeps.common.MoreCreepsReboot;
 import fr.elias.morecreeps.common.entity.ShrinkEntity;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class ItemShrinkRay extends Item
 {
@@ -15,9 +18,7 @@ public class ItemShrinkRay extends Item
 
     public ItemShrinkRay()
     {
-        super();
-        maxStackSize = 1;
-        setMaxDamage(128);
+        super(new Item.Properties().maxDamage(128).maxStackSize(1).group(MoreCreepsReboot.creepsTab));
     }
 
     /**
@@ -25,7 +26,7 @@ public class ItemShrinkRay extends Item
      */
     public ItemStack onItemRightClick(ItemStack itemstack, World world, PlayerEntity entityplayer)
     {
-        world.playSoundAtEntity(entityplayer, "morecreeps:shrinkray", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+        world.playSound(entityplayer, entityplayer.getPosition(), SoundsHandler.SHRINK_RAY, SoundCategory.PLAYERS, 0.5F, 0.4F / (rand.nextFloat() * 0.4F + 0.8F));
 
         if (!world.isRemote)
         {

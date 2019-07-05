@@ -10,6 +10,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.entity.HorseHeadEntity;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class ItemHorseHeadGem extends Item
@@ -41,7 +42,7 @@ public class ItemHorseHeadGem extends Item
         {
             double d = -MathHelper.sin((playerentity.rotationYaw * (float)Math.PI) / 180F);
             double d1 = MathHelper.cos((playerentity.rotationYaw * (float)Math.PI) / 180F);
-            CREEPSEntityHorseHead creepsentityhorsehead = new CREEPSEntityHorseHead(world);
+            HorseHeadEntity creepsentityhorsehead = new HorseHeadEntity(world);
             creepsentityhorsehead.setLocationAndAngles(playerentity.posX + d * 1.0D, playerentity.posY + 1.0D, playerentity.posZ + d1 * 1.0D, playerentity.rotationYaw, 0.0F);
             world.addEntity(creepsentityhorsehead);
         }

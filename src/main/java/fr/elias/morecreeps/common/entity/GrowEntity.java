@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
@@ -11,6 +12,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -22,6 +24,7 @@ import net.minecraft.world.World;
 import fr.elias.morecreeps.client.config.CREEPSConfig;
 import fr.elias.morecreeps.client.particles.CREEPSFxSmoke;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.lists.ItemList;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class GrowEntity extends ItemEntity implements IProjectile
@@ -61,14 +64,14 @@ public class GrowEntity extends ItemEntity implements IProjectile
 
     public GrowEntity(World world)
     {
-        super(world);
+        super(null, world);
         hitX = -1;
         hitY = -1;
         hitZ = -1;
         blockHit = Blocks.AIR;
         aoLightValueZPos = false;
         aoLightValueScratchXYNN = 0;
-        setSize(0.0325F, 0.01125F);
+//        setSize(0.0325F, 0.01125F);
         playerFire = false;
         shrinksize = 1.0F;
         vibrate = 1;
@@ -98,9 +101,11 @@ public class GrowEntity extends ItemEntity implements IProjectile
         }
 
         setPosition(posX, posY, posZ);
-        motionX = -MathHelper.sin((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI);
-        motionZ = MathHelper.cos((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI);
-        motionY = -MathHelper.sin((rotationPitch / 180F) * (float)Math.PI);
+        setMotion(
+        		-MathHelper.sin((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI),
+        		-MathHelper.sin((rotationPitch / 180F) * (float)Math.PI),
+        		MathHelper.cos((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI)
+        		);
         float f1 = 1.0F;
 
         if (livingentity instanceof PlayerEntity)
@@ -115,14 +120,14 @@ public class GrowEntity extends ItemEntity implements IProjectile
             }
         }
 
-        if (Math.abs(livingentity.motionX) > 0.10000000000000001D || Math.abs(livingentity.motionY) > 0.10000000000000001D || Math.abs(livingentity.motionZ) > 0.10000000000000001D)
+        if (Math.abs(livingentity.getMotion().x) > 0.10000000000000001D || Math.abs(livingentity.getMotion().y) > 0.10000000000000001D || Math.abs(livingentity.getMotion().z) > 0.10000000000000001D)
         {
             f1 *= 2.0F;
         }
 
         if (livingentity.onGround);
 
-        setThrowableHeading(motionX, motionY, motionZ, (float)(2.5D + ((double)world.rand.nextFloat() - 0.5D)), f1);
+        setThrowableHeading(getMotion().x, getMotion().y, getMotion().z, (float)(2.5D + ((double)world.rand.nextFloat() - 0.5D)), f1);
     }
 
     /**
@@ -148,9 +153,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
         d *= f;
         d1 *= f;
         d2 *= f;
-        motionX = d;
-        motionY = d1;
-        motionZ = d2;
+        setMotion(d, d1, d2);
         float f3 = MathHelper.sqrt(d * d + d2 * d2);
         prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
         prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / Math.PI);
@@ -169,8 +172,12 @@ public class GrowEntity extends ItemEntity implements IProjectile
     /**
      * Called to update the entity's position/logic.
      */
-    public void tick(World world)
+    @SuppressWarnings("rawtypes")
+	@Override
+    public void tick()
     {
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	World world = Minecraft.getInstance().world;
         super.tick();
 
         if (aoLightValueScratchXYNN == 5)
@@ -180,9 +187,9 @@ public class GrowEntity extends ItemEntity implements IProjectile
 
         if (prevRotationPitch == 0.0F && prevRotationYaw == 0.0F)
         {
-            float f = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
-            prevRotationYaw = rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
-            prevRotationPitch = rotationPitch = (float)((Math.atan2(motionY, f) * 180D) / Math.PI);
+            float f = MathHelper.sqrt(getMotion().x * getMotion().x + getMotion().z * getMotion().z);
+            prevRotationYaw = rotationYaw = (float)((Math.atan2(getMotion().x, getMotion().z) * 180D) / Math.PI);
+            prevRotationPitch = rotationPitch = (float)((Math.atan2(getMotion().y, f) * 180D) / Math.PI);
         }
 
         if (aoLightValueZPos)
@@ -192,8 +199,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
             if (i != blockHit)
             {
                 aoLightValueZPos = false;
-                motionX *= rand.nextFloat() * 0.2F;
-                motionZ *= rand.nextFloat() * 0.2F;
+                setMotion(getMotion().x * rand.nextFloat() * 0.2F, getMotion().y, getMotion().z * rand.nextFloat() * 0.2F);
                 aoLightValueScratchXYZNNP = 0;
                 aoLightValueScratchXYNN = 0;
             }
@@ -215,18 +221,18 @@ public class GrowEntity extends ItemEntity implements IProjectile
         }
 
         Vec3d vec3d = new Vec3d(posX, posY, posZ);
-        Vec3d vec3d1 = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
+        Vec3d vec3d1 = new Vec3d(posX + getMotion().x, posY + getMotion().y, posZ + getMotion().z);
         RayTraceResult movingobjectposition = world.rayTraceBlocks(vec3d, vec3d1);
         vec3d = new Vec3d(posX, posY, posZ);
-        vec3d1 = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
+        vec3d1 = new Vec3d(posX + getMotion().x, posY + getMotion().y, posZ + getMotion().z);
 
         if (movingobjectposition != null)
         {
-            vec3d1 = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+            vec3d1 = new Vec3d(movingobjectposition.getHitVec().x, movingobjectposition.getHitVec().y, movingobjectposition.getHitVec().z);
         }
 
         Entity entity = null;
-        List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().addCoord(motionX, motionY, motionZ).expand(1.0D, 1.0D, 1.0D));
+        List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().addCoord(getMotion().x, getMotion().y, getMotion().z).expand(1.0D, 1.0D, 1.0D));
         double d = 0.0D;
 
         for (int j = 0; j < list.size(); j++)
@@ -235,7 +241,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
 
             if (!entity1.canBeCollidedWith() || (entity1 == lightValueOwn || lightValueOwn != null && entity1 == lightValueOwn.getRidingEntity()) && aoLightValueScratchXYNN < 5 || aoLightValueScratchXYZNNN)
             {
-                if (motionZ != 0.0D || !((motionX == 0.0D) & (motionY == 0.0D)))
+                if (getMotion().z != 0.0D || !((getMotion().x == 0.0D) & (getMotion().y == 0.0D)))
                 {
                     continue;
                 }
@@ -253,7 +259,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
                 continue;
             }
 
-            double d2 = vec3d.distanceTo(movingobjectposition1.hitVec);
+            double d2 = vec3d.distanceTo(movingobjectposition1.getHitVec());
 
             if (d2 < d || d == 0.0D)
             {
@@ -344,7 +350,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
                     if ((movingobjectposition.hitInfo instanceof EvilChickenEntity) && ((EvilChickenEntity)movingobjectposition.hitInfo).modelsize < 5F)
                     {
                         ((EvilChickenEntity)movingobjectposition.hitInfo).modelsize += 0.2F;
-                        ((EvilChickenEntity)movingobjectposition.hitInfo).getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2D + 0.015D);
+                        ((EvilChickenEntity)movingobjectposition.hitInfo).getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D + 0.015D);
                     }
 
                     if ((movingobjectposition.hitInfo instanceof BumEntity) && ((BumEntity)movingobjectposition.hitInfo).modelsize < 4F)
@@ -386,7 +392,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
                     if ((movingobjectposition.hitInfo instanceof BlorpEntity) && ((BlorpEntity)movingobjectposition.hitInfo).blorpsize < (float)CREEPSConfig.sblorpmaxsize)
                     {
                         ((BlorpEntity)movingobjectposition.hitInfo).blorpsize += 0.25F;
-                        setSize(((BlorpEntity)movingobjectposition.hitInfo).blorpsize + 1.0F, ((BlorpEntity)movingobjectposition.hitInfo).blorpsize * 2.0F + 2.0F);
+//                        setSize(((BlorpEntity)movingobjectposition.hitInfo).blorpsize + 1.0F, ((BlorpEntity)movingobjectposition.hitInfo).blorpsize * 2.0F + 2.0F);
                     }
 
                     if ((movingobjectposition.hitInfo instanceof CamelEntity) && ((CamelEntity)movingobjectposition.hitInfo).modelsize < 5F)
@@ -497,7 +503,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
                     if (flag)
                     {
                         smoke();
-                        world.playSound(this, this.getPosition(), SoundsHandler.SHRINK_KILL, SoundCategory.NEUTRAL, 1.0F, 1.0F / (rand.nextFloat() * 0.1F + 0.95F));
+                        world.playSound(playerentity, this.getPosition(), SoundsHandler.SHRINK_KILL, SoundCategory.NEUTRAL, 1.0F, 1.0F / (rand.nextFloat() * 0.1F + 0.95F));
                         setDead();
                     }
                 }
@@ -512,17 +518,19 @@ public class GrowEntity extends ItemEntity implements IProjectile
                 hitY = movingobjectposition.getBlockPos().getY();
                 hitZ = movingobjectposition.getBlockPos().getZ();
                 blockHit = world.getBlockState(new BlockPos(hitX, hitY, hitZ)).getBlock();
-                motionX = (float)(movingobjectposition.hitVec.xCoord - posX);
-                motionY = (float)(movingobjectposition.hitVec.yCoord - posY);
-                motionZ = (float)(movingobjectposition.hitVec.zCoord - posZ);
-                float f1 = MathHelper.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
-                posX -= (motionX / (double)f1) * 0.05000000074505806D;
-                posY -= (motionY / (double)f1) * 0.05000000074505806D;
-                posZ -= (motionZ / (double)f1) * 0.05000000074505806D;
+                setMotion(
+                		(float)(movingobjectposition.getHitVec().x - posX),
+                		(float)(movingobjectposition.getHitVec().y - posY),
+                		(float)(movingobjectposition.getHitVec().z - posZ)
+                		);
+                float f1 = MathHelper.sqrt(getMotion().x * getMotion().x + getMotion().y * getMotion().y + getMotion().z * getMotion().z);
+                posX -= (getMotion().x / (double)f1) * 0.05000000074505806D;
+                posY -= (getMotion().y / (double)f1) * 0.05000000074505806D;
+                posZ -= (getMotion().z / (double)f1) * 0.05000000074505806D;
                 aoLightValueZPos = true;
                 setDead();
 
-                if (blockHit == Blocks.ice)
+                if (blockHit == Blocks.ICE)
                 {
                     world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.WATER.getDefaultState());
                 }
@@ -530,7 +538,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
                 setDead();
             }
 
-            world.playSound(this, this.getPosition(), SoundsHandler.RAY_GUN, SoundCategory.NEUTRAL, 0.2F, 1.0F / (rand.nextFloat() * 0.1F + 0.95F));
+            world.playSound(playerentity, this.getPosition(), SoundsHandler.RAY_GUN, SoundCategory.NEUTRAL, 0.2F, 1.0F / (rand.nextFloat() * 0.1F + 0.95F));
             setDead();
         }
 
@@ -538,13 +546,13 @@ public class GrowEntity extends ItemEntity implements IProjectile
         if(world.isRemote)
         	MoreCreepsReboot.proxy.growParticle(world, this);
 
-        posX += motionX;
-        posY += motionY;
-        posZ += motionZ;
-        float f2 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
-        rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
+        posX += getMotion().x;
+        posY += getMotion().y;
+        posZ += getMotion().z;
+        float f2 = MathHelper.sqrt(getMotion().x * getMotion().x + getMotion().z * getMotion().z);
+        rotationYaw = (float)((Math.atan2(getMotion().x, getMotion().z) * 180D) / Math.PI);
 
-        for (rotationPitch = (float)((Math.atan2(motionY, f2) * 180D) / Math.PI); rotationPitch - prevRotationPitch < -180F; prevRotationPitch -= 360F) { }
+        for (rotationPitch = (float)((Math.atan2(getMotion().y, f2) * 180D) / Math.PI); rotationPitch - prevRotationPitch < -180F; prevRotationPitch -= 360F) { }
 
         for (; rotationPitch - prevRotationPitch >= 180F; prevRotationPitch += 360F) { }
 
@@ -568,7 +576,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
             for (int l = 0; l < 4; l++)
             {
                 float f7 = 0.25F;
-                world.spawnParticle(ParticleTypes.BUBBLE, posX - motionX * (double)f7, posY - motionY * (double)f7, posZ - motionZ * (double)f7, motionX, motionY, motionZ);
+                world.addParticle(ParticleTypes.BUBBLE, posX - getMotion().x * (double)f7, posY - getMotion().y * (double)f7, posZ - getMotion().z * (double)f7, getMotion().x, getMotion().y, getMotion().z);
             }
 
             f3 = 0.8F;
@@ -576,35 +584,37 @@ public class GrowEntity extends ItemEntity implements IProjectile
             setDead();
         }
 
-        motionX *= f3;
-        motionZ *= f3;
+        setMotion(getMotion().x * f3, getMotion().y, getMotion().z * f3);
         setPosition(posX, posY, posZ);
     }
 
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void writeAdditional(CompoundNBT compound)
     {
-        nbttagcompound.setShort("xTile", (short)hitX);
-        nbttagcompound.setShort("yTile", (short)hitY);
-        nbttagcompound.setShort("zTile", (short)hitZ);
-        nbttagcompound.setByte("inGround", (byte)(aoLightValueZPos ? 1 : 0));
+        compound.putShort("xTile", (short)hitX);
+        compound.putShort("yTile", (short)hitY);
+        compound.putShort("zTile", (short)hitZ);
+        compound.putByte("inGround", (byte)(aoLightValueZPos ? 1 : 0));
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound nbttagcompound)
+    @Override
+    public void readAdditional(CompoundNBT compound)
     {
-        hitX = nbttagcompound.getShort("xTile");
-        hitY = nbttagcompound.getShort("yTile");
-        hitZ = nbttagcompound.getShort("zTile");
-        aoLightValueZPos = nbttagcompound.getByte("inGround") == 1;
+        hitX = compound.getShort("xTile");
+        hitY = compound.getShort("yTile");
+        hitZ = compound.getShort("zTile");
+        aoLightValueZPos = compound.getByte("inGround") == 1;
     }
 
-    public void blast(World world)
+    public void blast()
     {
+    	World world = Minecraft.getInstance().world;
     	if(world.isRemote)
     		MoreCreepsReboot.proxy.shrinkParticle(world, this);
     }
@@ -615,7 +625,7 @@ public class GrowEntity extends ItemEntity implements IProjectile
     public void setDead()
     {
         blast();
-        super.setDead();
+        super.remove();
         lightValueOwn = null;
     }
 
@@ -637,6 +647,9 @@ public class GrowEntity extends ItemEntity implements IProjectile
     }
     public ItemStack getEntityItem()
     {
-    	return new ItemStack(MoreCreepsReboot.shrinkshrink, 1, 0);
+    	return new ItemStack(ItemList.shrink_shrink, 1);
     }
+
+	@Override
+	public void shoot(double x, double y, double z, float velocity, float inaccuracy) {}
 }

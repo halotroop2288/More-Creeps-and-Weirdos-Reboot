@@ -9,6 +9,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.entity.BulletEntity;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class ItemGun extends Item
@@ -36,7 +37,7 @@ public class ItemGun extends Item
             double d3 = 0.0D;
             double d4 = 0.012999999999999999D;
             double d5 = 4D;
-            CREEPSEntityBullet creepsentitybullet = new CREEPSEntityBullet(world);
+            BulletEntity creepsentitybullet = new BulletEntity(world);
 
             if (creepsentitybullet != null)
             {

@@ -16,7 +16,7 @@ public class EntityBabyMummyAI extends EntityAIBase
 	public boolean shouldExecute()
 	{
 		LivingEntity entitylivingbase = this.bmummy.getAttackTarget();
-		return entitylivingbase != null && entitylivingbase.isEntityAlive();
+		return entitylivingbase != null && entitylivingbase.isAlive();
 	}
 	
 	public void updateTask()

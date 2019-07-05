@@ -2,6 +2,7 @@ package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -78,8 +79,13 @@ public class BlorpEntity extends AnimalEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate(World world, Random rand, PlayerEntity playerentity)
+    @Override
+    public void livingTick()
     {
+    	World world = Minecraft.getInstance().world;
+    	Random rand;
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	
         if (blorpsize > 2.0F)
         {
             ignoreFrustumCheck = true;

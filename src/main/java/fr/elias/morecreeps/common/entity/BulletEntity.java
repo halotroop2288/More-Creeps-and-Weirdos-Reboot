@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -197,6 +198,8 @@ public class BulletEntity extends Entity
     @Override
     public void tick()
     {
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	World world = Minecraft.getInstance().world;
         super.tick();
 
         if (aoLightValueScratchXYNN == 100)
@@ -249,7 +252,7 @@ public class BulletEntity extends Entity
 
         if (movingobjectposition != null)
         {
-            vec3d1 = new Vec3d(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
+            vec3d1 = new Vec3d(movingobjectposition.getHitVec().x, movingobjectposition.getHitVec().y, movingobjectposition.getHitVec().z);
         }
 
         Entity entity = null;
@@ -340,9 +343,9 @@ public class BulletEntity extends Entity
                 hitY = movingobjectposition.getBlockPos().getY();
                 hitZ = movingobjectposition.getBlockPos().getZ();
                 blockHit = world.getBlockState(new BlockPos(hitX, hitY, hitZ)).getBlock();
-                motionX = (float)(movingobjectposition.hitVec.xCoord - posX);
-                motionY = (float)(movingobjectposition.hitVec.yCoord - posY);
-                motionZ = (float)(movingobjectposition.hitVec.zCoord - posZ);
+                motionX = (float)(movingobjectposition.getHitVec().x - posX);
+                motionY = (float)(movingobjectposition.getHitVec().y - posY);
+                motionZ = (float)(movingobjectposition.getHitVec().z - posZ);
                 float f1 = MathHelper.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
                 posX -= (motionX / (double)f1) * 0.05000000074505806D;
                 posY -= (motionY / (double)f1) * 0.05000000074505806D;
@@ -355,7 +358,7 @@ public class BulletEntity extends Entity
                     world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.WATER.getDefaultState());
                 }
 
-                if (CREEPSConfig.rayGunFire && blockHit == Blocks.glass)
+                if (CREEPSConfig.rayGunFire && blockHit == Blocks.GLASS)
                 {
                     world.setBlockState(new BlockPos(hitX, hitY, hitZ), Blocks.AIR.getDefaultState());
                     Blocks.GLASS.onPlayerDestroy(world, new BlockPos(hitX, hitY, hitZ), world.getBlockState(new BlockPos(hitX, hitY, hitZ)));

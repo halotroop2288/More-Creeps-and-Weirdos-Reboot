@@ -665,7 +665,7 @@ public class EvilScientistEntity extends MobEntity
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
         int j1 = world.countEntities(EvilScientistEntity.class);
-        return i1 != Blocks.COBBLESTONE && i1 != Blocks.log && i1 != Blocks.STONE_SLAB && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+        return i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG && i1 != Blocks.STONE_SLAB && i1 != Blocks.SMOOTH_STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
 //        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
         		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(45) == 0 && /*l > 10 &&*/ j1 < 3;
     }

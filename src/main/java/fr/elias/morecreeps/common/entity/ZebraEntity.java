@@ -111,7 +111,7 @@ public class ZebraEntity extends LivingEntity
      */
     public float getBlockPathWeight(int i, int j, int k)
     {
-        if (world.getBlockState(new BlockPos(i, j - 1, k)).getBlock() == Blocks.leaves || world.getBlockState(new BlockPos(i, j - 1, k)).getBlock() == Blocks.grass)
+        if (world.getBlockState(new BlockPos(i, j - 1, k)).getBlock() == Blocks.OAK_LEAVES || world.getBlockState(new BlockPos(i, j - 1, k)).getBlock() == Blocks.GRASS_BLOCK)
         {
             return 10F;
         }

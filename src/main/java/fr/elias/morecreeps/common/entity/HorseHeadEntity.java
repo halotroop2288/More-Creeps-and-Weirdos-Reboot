@@ -377,6 +377,6 @@ public class HorseHeadEntity extends AnimalEntity
 	@Override
 	public AgeableEntity createChild(AgeableEntity ageable)
 	{
-		return new CREEPSEntityHorseHead(world);
+		return new HorseHeadEntity(world);
 	}
 }

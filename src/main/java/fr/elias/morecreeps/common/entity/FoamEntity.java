@@ -62,7 +62,7 @@ public class FoamEntity extends Entity implements IProjectile
         blockHit = Blocks.AIR;
         aoLightValueZPos = false;
         aoLightValueScratchXYNN = 0;
-        setSize(0.00325F, 0.001125F);
+//        setSize(0.00325F, 0.001125F);
         playerFire = false;
     }
 
@@ -91,9 +91,11 @@ public class FoamEntity extends Entity implements IProjectile
         }
 
         setPosition(posX, posY, posZ);
-        motionX = -MathHelper.sin((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI);
-        motionZ = MathHelper.cos((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI);
-        motionY = -MathHelper.sin((rotationPitch / 180F) * (float)Math.PI);
+        setMotion(
+        		-MathHelper.sin((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI), // motionX
+        		-MathHelper.sin((rotationPitch / 180F) * (float)Math.PI), // motionY
+        		MathHelper.cos((rotationYaw / 180F) * (float)Math.PI) * MathHelper.cos((rotationPitch / 180F) * (float)Math.PI) // motionZ
+        		);
         float f1 = 1.0F;
 
         if (entityliving instanceof PlayerEntity)
@@ -108,14 +110,14 @@ public class FoamEntity extends Entity implements IProjectile
             }
         }
 
-        if (Math.abs(entityliving.motionX) > 0.10000000000000001D || Math.abs(entityliving.motionY) > 0.10000000000000001D || Math.abs(entityliving.motionZ) > 0.10000000000000001D)
+        if (Math.abs(entityliving.getMotion().x) > 0.10000000000000001D || Math.abs(entityliving.getMotion().y) > 0.10000000000000001D || Math.abs(entityliving.getMotion().z) > 0.10000000000000001D)
         {
             f1 *= 2.0F;
         }
 
         if (entityliving.onGround);
 
-        setThrowableHeading(motionX, motionY, motionZ, (float)(2.380000114440918D + ((double)world.rand.nextFloat() - 0.5D)), f1);
+        setThrowableHeading(getMotion().x, getMotion().y, getMotion().z, (float)(2.380000114440918D + ((double)world.rand.nextFloat() - 0.5D)), f1);
     }
 
     /**
@@ -141,9 +143,7 @@ public class FoamEntity extends Entity implements IProjectile
         d *= f;
         d1 *= f;
         d2 *= f;
-        motionX = d;
-        motionY = d1;
-        motionZ = d2;
+        setMotion(d, d1, d2);
         float f3 = MathHelper.sqrt(d * d + d2 * d2);
         prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
         prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / Math.PI);
@@ -162,6 +162,7 @@ public class FoamEntity extends Entity implements IProjectile
     /**
      * Called to update the entity's position/logic.
      */
+    @Override
     public void tick(PlayerEntity playerentity)
     {
         super.tick();
@@ -171,7 +172,7 @@ public class FoamEntity extends Entity implements IProjectile
             double d = rand.nextGaussian() * 0.10000000000000001D;
             double d1 = rand.nextGaussian() * 0.10000000000000001D;
             double d2 = rand.nextGaussian() * 0.10000000000000001D;
-            world.spawnParticle(ParticleTypes.EXPLOSION_NORMAL, posX + (double)(rand.nextFloat() * 2.0F), posY, posZ + (double)(rand.nextFloat() * 2.0F), d, d1, d2);
+            world.addParticle(ParticleTypes.EXPLOSION, posX + (double)(rand.nextFloat() * 2.0F), posY, posZ + (double)(rand.nextFloat() * 2.0F), d, d1, d2);
         }
 
         if (aoLightValueScratchXYNN == 100)
@@ -181,9 +182,9 @@ public class FoamEntity extends Entity implements IProjectile
 
         if (prevRotationPitch == 0.0F && prevRotationYaw == 0.0F)
         {
-            float f = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
-            prevRotationYaw = rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
-            prevRotationPitch = rotationPitch = (float)((Math.atan2(motionY, f) * 180D) / Math.PI);
+            float f = MathHelper.sqrt(getMotion().x * getMotion().x + getMotion().z * getMotion().z);
+            prevRotationYaw = rotationYaw = (float)((Math.atan2(getMotion().x, getMotion().z) * 180D) / Math.PI);
+            prevRotationPitch = rotationPitch = (float)((Math.atan2(getMotion().y, f) * 180D) / Math.PI);
         }
 
         if (aoLightValueZPos)
@@ -217,10 +218,10 @@ public class FoamEntity extends Entity implements IProjectile
         }
 
         Vec3d vec3d = new Vec3d(posX, posY, posZ);
-        Vec3d vec3d1 = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
+        Vec3d vec3d1 = new Vec3d(posX + getMotion().x, posY + getMotion().y, posZ + getMotion().z);
         RayTraceResult movingobjectposition = world.rayTraceBlocks(vec3d, vec3d1);
         vec3d = new Vec3d(posX, posY, posZ);
-        vec3d1 = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
+        vec3d1 = new Vec3d(posX + getMotion().x, posY + getMotion().y, posZ + getMotion().z);
 
         if (movingobjectposition != null)
         {
@@ -229,7 +230,7 @@ public class FoamEntity extends Entity implements IProjectile
 
         Entity entity = null;
         @SuppressWarnings("rawtypes")
-		List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().addCoord(motionX, motionY, motionZ).expand(1.0D, 1.0D, 1.0D));
+		List list = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().addCoord(getMotion().x, getMotion().y, getMotion().z).expand(1.0D, 1.0D, 1.0D));
         double d3 = 0.0D;
 
         for (int k = 0; k < list.size(); k++)
@@ -238,7 +239,7 @@ public class FoamEntity extends Entity implements IProjectile
 
             if (!entity1.canBeCollidedWith() || (entity1 == shootingEntity || shootingEntity != null && entity1 == shootingEntity.getRidingEntity()) && aoLightValueScratchXYNN < 5 || aoLightValueScratchXYZNNN)
             {
-                if (motionZ != 0.0D || !((motionX == 0.0D) & (motionY == 0.0D)))
+                if (getMotion().z != 0.0D || !((getMotion().x == 0.0D) & (getMotion().y == 0.0D)))
                 {
                     continue;
                 }
@@ -256,7 +257,7 @@ public class FoamEntity extends Entity implements IProjectile
                 continue;
             }
 
-            double d4 = vec3d.distanceTo(movingobjectposition1.hitVec);
+            double d4 = vec3d.distanceTo(movingobjectposition1.getHitVec());
 
             if (d4 < d3 || d3 == 0.0D)
             {
@@ -324,13 +325,13 @@ public class FoamEntity extends Entity implements IProjectile
             setDead();
         }
 
-        posX += motionX;
-        posY += motionY;
-        posZ += motionZ;
-        float f2 = MathHelper.sqrt(motionX * motionX + motionZ * motionZ);
-        rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / Math.PI);
+        posX += getMotion().x;
+        posY += getMotion().y;
+        posZ += getMotion().z;
+        float f2 = MathHelper.sqrt(getMotion().x * getMotion().x + getMotion().z * getMotion().z);
+        rotationYaw = (float)((Math.atan2(getMotion().x, getMotion().z) * 180D) / Math.PI);
 
-        for (rotationPitch = (float)((Math.atan2(motionY, f2) * 180D) / Math.PI); rotationPitch - prevRotationPitch < -180F; prevRotationPitch -= 360F) { }
+        for (rotationPitch = (float)((Math.atan2(getMotion().y, f2) * 180D) / Math.PI); rotationPitch - prevRotationPitch < -180F; prevRotationPitch -= 360F) { }
 
         for (; rotationPitch - prevRotationPitch >= 180F; prevRotationPitch += 360F) { }
 
@@ -348,7 +349,7 @@ public class FoamEntity extends Entity implements IProjectile
             for (int k1 = 0; k1 < 4; k1++)
             {
                 float f7 = 0.25F;
-                world.addParticle(ParticleTypes.BUBBLE, posX - motionX * (double)f7, posY - motionY * (double)f7, posZ - motionZ * (double)f7, motionX, motionY, motionZ);
+                world.addParticle(ParticleTypes.BUBBLE, posX - getMotion().x * (double)f7, posY - getMotion().y * (double)f7, posZ - getMotion().z * (double)f7, getMotion().x, getMotion().y, getMotion().z);
             }
 
             f3 = 0.8F;
@@ -356,15 +357,14 @@ public class FoamEntity extends Entity implements IProjectile
             setDead();
         }
 
-        motionX *= f3;
-        motionZ *= f3;
+        setMotion(getMotion().x * f3, getMotion().y, getMotion().z * f3);
         setPosition(posX, posY, posZ);
     }
 
 
-    public static DamageSource causeFoamDamage(EntityFoam creepsentityfoam, Entity entity)
+    public static DamageSource causeFoamDamage(FoamEntity foam, Entity entity)
     {
-        return (new EntityDamageSourceIndirect("foam", creepsentityfoam, entity)).setFireDamage().setProjectile();
+        return (new EntityDamageSourceIndirect("foam", foam, entity)).setFireDamage().setProjectile();
     }
 
     public void blast()
@@ -385,7 +385,7 @@ public class FoamEntity extends Entity implements IProjectile
     public void setDead()
     {
         blast();
-        super.setDead();
+        super.remove();
         shootingEntity = null;
     }
 
@@ -425,8 +425,8 @@ public class FoamEntity extends Entity implements IProjectile
 	}
 
 	@Override
-	public IPacket<?> createSpawnPacket() {
-		// TODO Auto-generated method stub
+	public IPacket<?> createSpawnPacket()
+	{
 		return null;
 	}
 }

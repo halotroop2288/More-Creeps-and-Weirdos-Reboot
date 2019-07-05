@@ -9,7 +9,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -187,6 +191,7 @@ import fr.elias.morecreeps.common.entity.TowelEntity;
 import fr.elias.morecreeps.common.entity.TrophyEntity;
 import fr.elias.morecreeps.common.entity.ZebraEntity;
 import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.lists.ParticleList;
 
 public class ClientProxy extends CommonProxy
 {
@@ -506,7 +511,7 @@ public class ClientProxy extends CommonProxy
         CREEPSFxSmoke creepsfxsmoke = new CREEPSFxSmoke(world, ((player.posX + random.nextGaussian() * 0.25D) - random.nextGaussian() * 0.25D) + d * 1.0D, ((player.posY - 0.5D) + random.nextGaussian() * 0.5D) - random.nextGaussian() * 0.5D, ((player.posZ + random.nextGaussian() * 0.25D) - random.nextGaussian() * 0.25D) + d1 * 1.0D, MoreCreepsReboot.partBubble, 0.05F, 0.0F);
         Minecraft.getInstance().effectRenderer.addEffect(creepsfxsmoke);
 	}
-	public void smokeHorseHead(World world, CREEPSEntityHorseHead horsehead, Random rand)
+	public void smokeHorseHead(World world, HorseHeadEntity horsehead, Random rand)
 	{
 		CREEPSFxSmoke creepsfxsmoke = new CREEPSFxSmoke(world, horsehead.posX, (horsehead.posY - 0.5D) + rand.nextGaussian() * 0.20000000000000001D, horsehead.posZ, MoreCreepsReboot.instance.partWhite, 0.25F, 0.0F);
 		Minecraft.getInstance().effectRenderer.addEffect(creepsfxsmoke);
@@ -557,25 +562,25 @@ public class ClientProxy extends CommonProxy
 	}
 	public void addChatMessage(String s)
 	{
-		Minecraft.getInstance().player.addChatMessage(new ChatComponentText(s));
+		Minecraft.getInstance().player.sendMessage(new StringTextComponent(s));
 	}
-	public void playSoundEffectAtPlayer(World world, String s, float volume, float pitch)
+	public void playSoundEffectAtPlayer(World world, SoundEvent s, float volume, float pitch)
 	{
 		PlayerEntity player = Minecraft.getInstance().player;
-		world.playSoundEffect(player.posX, player.posY, player.posZ, s, volume, pitch);
+		world.playSound(player, player.getPosition(), s, SoundCategory.NEUTRAL, volume, pitch); // Relevant sound category?
 	}
 	public void bubble(World world, LivingEntity entity)
 	{
         double d = -MathHelper.sin((entity.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((entity.rotationYaw * (float)Math.PI) / 180F);
-        CREEPSFxBubbles creepsfxbubbles = new CREEPSFxBubbles(world, entity.posX + d * 0.5D, entity.posY + 0.75D, entity.posZ + d1 * 0.5D, MoreCreepsReboot.partBubble, 0.7F);
+        CREEPSFxBubbles creepsfxbubbles = new CREEPSFxBubbles(world, entity.posX + d * 0.5D, entity.posY + 0.75D, entity.posZ + d1 * 0.5D, ParticleList.CREEPS_BUBBLE, 0.7F);
         Minecraft.getInstance().effectRenderer.addEffect(creepsfxbubbles);
 	}
 	public void bubbleDoghouse(World world, LivingEntity entity)
 	{
         double d = -MathHelper.sin((entity.rotationYaw * (float)Math.PI) / 180F);
         double d1 = MathHelper.cos((entity.rotationYaw * (float)Math.PI) / 180F);
-        CREEPSFxBubbles creepsfxbubbles = new CREEPSFxBubbles(world, entity.posX + d * 0.10000000000000001D, entity.posY + 2D, (entity.posZ - 0.75D) + d1 * 0.5D, MoreCreepsReboot.partWhite, 1.2F);
+        CREEPSFxBubbles creepsfxbubbles = new CREEPSFxBubbles(world, entity.posX + d * 0.10000000000000001D, entity.posY + 2D, (entity.posZ - 0.75D) + d1 * 0.5D, ParticleList.CREEPS_WHITE, 1.2F);
         Minecraft.getInstance().effectRenderer.addEffect(creepsfxbubbles);
 	}
 	public void pee(World world, double posX, double posY, double posZ, float rotationYaw, float modelsize)
@@ -585,7 +590,7 @@ public class ClientProxy extends CommonProxy
 
         for (int i = 0; i < 25; i++)
         {
-            CREEPSFxPee creepsfxpee = new CREEPSFxPee(world, posX + d * 0.20000000000000001D, (posY + 0.75D) - (double)((1.0F - modelsize) * 0.8F), posZ + d1 * 0.20000000000000001D, Item.getItemFromBlock(Blocks.cobblestone));
+            CREEPSFxPee creepsfxpee = new CREEPSFxPee(world, posX + d * 0.20000000000000001D, (posY + 0.75D) - (double)((1.0F - modelsize) * 0.8F), posZ + d1 * 0.20000000000000001D, Blocks.COBBLESTONE);
             creepsfxpee.motionX += d * 0.23999999463558197D;
             creepsfxpee.motionZ += d1 * 0.23999999463558197D;
             Minecraft.getInstance().effectRenderer.addEffect(creepsfxpee);

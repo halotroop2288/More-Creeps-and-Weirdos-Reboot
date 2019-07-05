@@ -32,7 +32,7 @@ public class EvilSnowmanEntity extends MobEntity
         texture = "morecreeps:textures/entity/evilsnowman.png";
 //        setSize(0.7F, 1.5F);
         snowsize = 1.0F;
-        isImmuneToFire = true;
+//        isImmuneToFire = true;
 //        ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
 //        this.tasks.addTask(0, new EntityAISwimming(this));
 //        this.tasks.addTask(4, new EvilSnowmanEntity.AIAttackTarget());

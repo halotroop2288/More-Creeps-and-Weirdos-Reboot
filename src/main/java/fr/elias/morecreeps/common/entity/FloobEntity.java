@@ -2,24 +2,30 @@ package fr.elias.morecreeps.common.entity;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.Reference;
+import fr.elias.morecreeps.common.advancements.ModAdvancementList;
 import fr.elias.morecreeps.common.lists.ItemList;
+import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
 public class FloobEntity extends MobEntity
 {
-    private boolean foundplayer;
-    private boolean stolen;
     protected Entity playerToAttack;
 
     /**
@@ -27,23 +33,18 @@ public class FloobEntity extends MobEntity
      */
     protected boolean hasAttacked;
     protected ItemStack heldObj;
-    private double goX;
-    private double goZ;
-    private float distance;
     public int itemnumber;
     public int stolenamount;
     public int rayTime;
     private Entity targetedEntity;
     public float modelsize;
-    public String texture;
+    public ResourceLocation texture;
 
     public FloobEntity(World world)
     {
         super(null, world);
-        texture = "morecreeps:textures/entity/floob.png";
-        stolen = false;
+        texture = new ResourceLocation(Reference.MODID + Reference.TEXTURE_PATH_ENTITES + "floob.png");
         hasAttacked = false;
-        foundplayer = false;
         heldObj = new ItemStack(ItemList.ray_gun, 1);
         rayTime = rand.nextInt(50) + 50;
         // isImmuneToFire = true;
@@ -89,8 +90,11 @@ public class FloobEntity extends MobEntity
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
      * use this to react to sunlight and start to burn.
      */
-    public void livingTick(World world)
+    @Override
+    public void livingTick()
     {
+    	PlayerEntity player = Minecraft.getInstance().player;
+    	World world = Minecraft.getInstance().world;
         if (this.getAttackTarget() instanceof FloobEntity)
         {
         	this.setAttackTarget(null);
@@ -129,7 +133,7 @@ public class FloobEntity extends MobEntity
                     double d3 = (targetedEntity.getBoundingBox().minY + (double)(targetedEntity.getHeight() / 2.0F)) - (posY + (double)(getHeight() / 2.0F));
                     double d4 = targetedEntity.posZ - posZ;
                     renderYawOffset = rotationYaw = (-(float)Math.atan2(d2, d4) * 180F) / (float)Math.PI;
-                    world.playSound(this, "morecreeps:raygun", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                    world.playSound(player, this.getPosition(), SoundsHandler.RAY_GUN, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                     RayEntity creepsentityray = new RayEntity(world, this);
 
                     if (creepsentityray != null && getHealth() > 0)
@@ -165,38 +169,45 @@ public class FloobEntity extends MobEntity
     /**
      * Plays living's sound at its position
      */
-    public void playLivingSound(World world)
+    @Override
+    public void playAmbientSound()
     {
-        String s = getLivingSound();
+    	PlayerEntity playerentity = Minecraft.getInstance().player;
+    	World world = Minecraft.getInstance().world;
+    	
+        SoundEvent s = getAmbientSound();
 
         if (s != null)
         {
-            world.playSound(this, s, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
+            world.playSound(playerentity, this.getPosition(), s, SoundCategory.HOSTILE, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F + (1.0F - modelsize) * 2.0F);
         }
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound()
+    @Override
+    protected SoundEvent getAmbientSound()
     {
-        return "morecreeps:floob";
+        return SoundsHandler.FLOOB;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound()
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damagesourceIn)
     {
-        return "morecreeps:floobhurt";
+        return SoundsHandler.FLOOB_HURT;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound()
+    @Override
+    protected SoundEvent getDeathSound()
     {
-        return "morecreeps:floobdeath";
+        return SoundsHandler.FLOOB_DEATH;
     }
 
     /**
@@ -254,24 +265,24 @@ public class FloobEntity extends MobEntity
         {
             MoreCreepsReboot.floobcount++;
 
-            if (!((PlayerEntityMP)player).getStatFile().hasAchievementUnlocked(MoreCreepsReboot.achievefloobkill))
+            if (!((ServerPlayerEntity)player).getStats().hasAchievementUnlocked(ModAdvancementList.floobkill))
             {
-                world.playSound(player, "morecreeps:achievement", 1.0F, 1.0F);
-                player.addStat(MoreCreepsReboot.achievefloobkill, 1);
+                world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
+                player.addStat(ModAdvancementList.floobkill, 1);
                 confetti();
             }
 
-            if (!((PlayerEntityMP)player).getStatFile().hasAchievementUnlocked(MoreCreepsReboot.achievefloobicide) && MoreCreepsReboot.floobcount >= 20)
+            if (!((ServerPlayerEntity)player).getStats().hasAchievementUnlocked(ModAdvancementList.floobicide) && MoreCreepsReboot.floobcount >= 20)
             {
-                world.playSound(player, "morecreeps:achievement", 1.0F, 1.0F);
-                player.addStat(MoreCreepsReboot.achievefloobicide, 1);
+            	world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
+                player.addStat(ModAdvancementList.floobicide, 1);
                 confetti();
             }
         }
 
         if (rand.nextInt(6) == 0)
         {
-            dropItem(MoreCreepsReboot.raygun, 1);
+            entityDropItem(ItemList.ray_gun, 1);
         }
 
         super.onDeath(damagesource);

@@ -7,6 +7,7 @@ import java.util.function.ToIntFunction;
 import com.mojang.datafixers.types.Type;
 
 import fr.elias.morecreeps.common.Reference;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -18,6 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class EntityTypes extends EntityType
 {
 
+	@SuppressWarnings("unchecked")
 	public EntityTypes(IFactory factoryIn, EntityClassification classificationIn, boolean serializableIn,
 			boolean summonableIn, boolean immuneToFireIn, Type dataFixerType, EntitySize sizeIn,
 			Predicate velocityUpdateSupplier, ToIntFunction trackingRangeSupplier, ToIntFunction updateIntervalSupplier,
@@ -27,7 +29,8 @@ public class EntityTypes extends EntityType
 		// TODO Auto-generated constructor stub
 	}
 
-	public static final EntityType ARMY_GUY_ARM, ARMY_GUY;
+	public static final EntityType ARMY_GUY_ARM,
+	public static final EntityType ARMY_GUY;
 	public static final EntityType ATOM;
 	public static final EntityType BABY_MUMMY;
 	public static final EntityType BASE;
@@ -95,7 +98,7 @@ public class EntityTypes extends EntityType
 	public static final EntityType TROPHY;
 	public static final EntityType ZEBRA;
 
-	private static EntityType registerSound(String name)
+	private static EntityType registerEntity(String name)
 	{
 		ResourceLocation location = new ResourceLocation(Reference.MODID, name);
 		EntityType event = new Entity(location);

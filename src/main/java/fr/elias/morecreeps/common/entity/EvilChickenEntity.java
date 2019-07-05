@@ -35,7 +35,7 @@ public class EvilChickenEntity extends MobEntity
         field_755_h = 1.0F;
         texture = "morecreeps:textures/entity/evilchicken.png";
         timeUntilNextEgg = rand.nextInt(300) + 50;
-        isImmuneToFire = true;
+//        isImmuneToFire = true;
         modelsize = 1.5F;
 //        this.tasks.addTask(0, new EntityAISwimming(this));
 //        this.tasks.addTask(2, new EntityAIAttackOnCollide(this, PlayerEntity.class, 0.3D, false));

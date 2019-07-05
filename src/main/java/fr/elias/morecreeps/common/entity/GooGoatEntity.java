@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import fr.elias.morecreeps.common.MoreCreepsReboot;
+import fr.elias.morecreeps.common.advancements.ModAdvancementList;
 import fr.elias.morecreeps.common.lists.ItemList;
 import fr.elias.morecreeps.common.util.handlers.SoundsHandler;
 
@@ -380,29 +381,29 @@ public class GooGoatEntity extends SheepEntity
 
         if (obj instanceof PlayerEntity)
         {
-            MoreCreepsReboot.goatcount++;
+        	ModAdvancementList.goatcount++;
             boolean flag = false;
             ServerPlayerEntity player = (ServerPlayerEntity) obj;
 
-            if (!player.getStatFile().hasAdvancementUnlocked(MoreCreepsReboot.gookill))
+            if (!player.getStatFile().hasAdvancementUnlocked(ModAdvancementList.gookill))
             {
                 flag = true;
-                player.addStat(MoreCreepsReboot.gookill, 1);
-                confetti();
+                player.addStat(ModAdvancementList.gookill, 1);
+                confetti(world);
             }
 
-            if (!player.getStatFile().hasAdvancementUnlocked(MoreCreepsReboot.gookill10) && MoreCreepsReboot.goatcount >= 10)
+            if (!player.getStatFile().hasAdvancementUnlocked(ModAdvancementList.gookill10) && ModAdvancementList.goatcount >= 10)
             {
                 flag = true;
-                player.addStat(MoreCreepsReboot.gookill10, 1);
-                confetti();
+                player.addStat(ModAdvancementList.gookill10, 1);
+                confetti(world);
             }
 
-            if (!player.getStatFile().hasAdvancementUnlocked(MoreCreepsReboot.gookill25) && MoreCreepsReboot.goatcount >= 25)
+            if (!player.getStatFile().hasAdvancementUnlocked(ModAdvancementList.gookill25) && ModAdvancementList.goatcount >= 25)
             {
                 flag = true;
-                player.addStat(MoreCreepsReboot.gookill25, 1);
-                confetti();
+                player.addStat(ModAdvancementList.gookill25, 1);
+                confetti(world);
             }
 
             if (flag)

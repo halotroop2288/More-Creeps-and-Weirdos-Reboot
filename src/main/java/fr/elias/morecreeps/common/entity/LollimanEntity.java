@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -76,8 +77,9 @@ public class LollimanEntity extends AnimalEntity
     }
 
     @SuppressWarnings("rawtypes")
-	protected void updateAITasks(World world, PlayerEntity playerentity)
+	protected void updateAITasks()
     {
+    	World world = Minecraft.getInstance().world;
         if (kidcheck++ > 25 && !kidmounted)
         {
             kidcheck = 0;
@@ -93,15 +95,16 @@ public class LollimanEntity extends AnimalEntity
                     continue;
                 }
 
-                world.playSound(this, "morecreeps:lollimantakeoff", 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                PlayerEntity player = world.getClosestPlayer(this, 4D);
+                
+                world.playSound(player, this.getPosition(), SoundsHandler.LOLLIMAN_TAKE_OFF, SoundCategory.NEUTRAL, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                 //smallconfetti();
 
                 //Actually not stable
-                PlayerEntity playerentity = world.getClosestPlayer(this, 4D);
-                if (!((PlayerEntity)playerentity).getStats.hasAdvancementUnlocked(ModAdvancementList.lolliman))
+//                if (!((PlayerEntity)playerentity).hasAdvancementUnlocked(ModAdvancementList.lolliman))
                 {
-                    world.playSound(playerentity, playerentity.getPosition(), "morecreeps:achievement", 1.0F, 1.0F);
-                    playerentity.addStat(ModAdvancementList.lolliman, 1);
+                    world.playSound(player, player.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
+                    player.addStat(ModAdvancementList.lolliman, 1);
                     confetti();
                 }
 
@@ -312,7 +315,7 @@ public class LollimanEntity extends AnimalEntity
         int k = MathHelper.floor(posZ);
         //int l = world.getFullBlockLightValue(i, j, k);
         Block i1 = world.getBlockState(new BlockPos(i, j - 1, k)).getBlock();
-        return (i1 == Blocks.grass || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
+        return (i1 == Blocks.GRASS_BLOCK || i1 == Blocks.DIRT) && i1 != Blocks.COBBLESTONE && i1 != Blocks.OAK_LOG /*&& i1 != Blocks.double_stone_slab*/ && i1 != Blocks.STONE_SLAB && i1 != Blocks.OAK_PLANKS && i1 != Blocks.WHITE_WOOL
 //        		&& world.getCollidingBoundingBoxes(this, getBoundingBox()).size() == 0
         		&& world.canBlockSeeSky(new BlockPos(i, j, k)) && rand.nextInt(15) == 0; //&& l > 7;
     }

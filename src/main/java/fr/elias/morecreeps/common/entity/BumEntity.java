@@ -363,7 +363,7 @@ public class BumEntity extends MobEntity
                 }
                 else if (itemstack != null && itemstack.getItem() == Items.BUCKET)
                 {
-                    if (!((ServerPlayerEntity)PlayerEntity).getStats().hasAchievementUnlocked(ModAdvancementList.bumpot) && ((ServerPlayerEntity)PlayerEntity).getStats().hasAchievementUnlocked(MoreCreepsReboot.bumflower))
+                    if (!((ServerPlayerEntity)PlayerEntity).getStats().hasAchievementUnlocked(ModAdvancementList.bumpot) && ((ServerPlayerEntity)PlayerEntity).getStats().hasAchievementUnlocked(ModAdvancementList.bumflower))
                     {
                         world.playSound(PlayerEntity, PlayerEntity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
                         PlayerEntity.addStat(ModAdvancementList.bumpot, 1);
@@ -384,14 +384,14 @@ public class BumEntity extends MobEntity
                 }
                 else if (itemstack != null && itemstack.getItem() == Items.LAVA_BUCKET)
                 {
-                    if (!((ServerPlayerEntity)PlayerEntity).getStats().hasAchievementUnlocked(MoreCreepsReboot.bumlava) && ((ServerPlayerEntity)PlayerEntity).getStats().hasAchievementUnlocked(MoreCreepsReboot.achievebumpot))
+                    if (!((ServerPlayerEntity)PlayerEntity).getStats().hasAchievementUnlocked(ModAdvancementList.bumlava) && ((ServerPlayerEntity)PlayerEntity).getStats().hasAchievementUnlocked(ModAdvancementList.bumpot))
                     {
                         world.playSound(PlayerEntity, PlayerEntity.getPosition(), SoundsHandler.ACHIEVEMENT, SoundCategory.MASTER, 1.0F, 1.0F);
-                        PlayerEntity.addStat(MoreCreepsReboot.bumlava, 1);
+                        PlayerEntity.addStat(ModAdvancementList.bumlava, 1);
                         confetti(PlayerEntity);
                     }
 
-                    PlayerEntity.addStat(MoreCreepsReboot.bumpot, 1);
+                    PlayerEntity.addStat(ModAdvancementList.bumpot, 1);
                     world.playSound(PlayerEntity, PlayerEntity.getPosition(), SoundsHandler.BUM_THANKS, SoundCategory.NEUTRAL, 1.0F, (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
                     timetopee = rand.nextInt(1900) + 1500;
 

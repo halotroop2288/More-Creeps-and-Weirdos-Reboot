@@ -1,11 +1,13 @@
 package fr.elias.morecreeps.common.entity.ai;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.brain.Brain;
 import fr.elias.morecreeps.common.entity.BabyMummyEntity;
 import fr.elias.morecreeps.common.entity.BigBabyEntity;
 
-public class EntityBigBabyAI extends EntityAIBase {
+@SuppressWarnings("rawtypes")
+public class EntityBigBabyAI extends Brain
+{
 	BigBabyEntity bbaby;
 	public EntityBigBabyAI(BigBabyEntity bigBaby)
 	{
@@ -16,7 +18,7 @@ public class EntityBigBabyAI extends EntityAIBase {
 	public boolean shouldExecute()
 	{
 		LivingEntity entitylivingbase = this.bbaby.getAttackTarget();
-		return entitylivingbase != null && entitylivingbase.isEntityAlive();
+		return entitylivingbase != null && entitylivingbase.isAlive();
 	}
 	
 	public void updateTask()
